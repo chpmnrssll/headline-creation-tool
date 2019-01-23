@@ -20,11 +20,29 @@ const { webRoutes } = require('./src/routes/index')
 mongoose.Promise = global.Promise
 
 // Connect to the database
-mongoose.connect(process.env.MONGO_URI, { useMongoClient: true })
+mongoose.connect(`${process.env.MONGO_URI}/posts`, { useMongoClient: true, useNewUrlParser: true }).catch(() => {
+  // empty catch avoids unhandled rejections
+});
 
-// Fail on connection error.
-mongoose.connection.on('error', error => { throw error })
+mongoose.connection.on('error', function (error) {
+  // If first connect fails because server-database is'nt up yet, try again.
+  // This is only needed for first connect, not for runtime reconnects.
+  // See: https://github.com/Automattic/mongoose/issues/5169
+  if (error.message && error.message.match(/failed to connect to server .* on first connect/)) {
+    setTimeout(function () {
+      mongoose.connect(`${process.env.MONGO_URI}/posts`, { useMongoClient: true, useNewUrlParser: true }).catch(() => {
+        // empty catch avoids unhandled rejections
+      });
+    }, 20 * 1000);
+  } else {
+    // Some other error occurred.  Log it.
+    console.error(new Date(), String(error));
+  }
+});
 
+mongoose.connection.once("open", function(callback){
+  console.log("Connection Succeeded");
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
