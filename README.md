@@ -39,6 +39,8 @@ In both RewriteRule lines, replace XXXXX with the port on which your Node.js app
 
 **A2 Hosting requires using a port between 30000 and 50000 (inclusive)**
 
+**Subdomains can be redirected to the correct port from CPanel**
+
 ## Installation
 
 ```
