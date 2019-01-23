@@ -53,6 +53,12 @@ Then edit your environment variables in .env as needed.
 
 **Changing the PORT variable in the .env will require you to change it in the `views/config/http.js` file.**
 
+5. Build and start the Node.js app in the background with:
+```
+$ npm run build
+$ nohup npm start &
+```
+
 ### Local Setup/Development
 
 Edit your environment variables in .env as needed.
