@@ -11,7 +11,7 @@
       class="primary"
     >
       <v-list>
-        <v-list-tile 
+        <v-list-tile
           v-for="(item, i) in items"
           :key="i"
           value="true"
@@ -30,13 +30,13 @@
 
     <v-toolbar class="primary primaryText--text" fixed app :clipped-left="clipped">
       <v-toolbar-side-icon class="primaryText--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn 
+      <v-btn
         icon
         @click.stop="miniVariant = !miniVariant"
       >
         <v-icon class="primaryText--text" v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
       </v-btn>
-      
+
       <v-toolbar-title> {{ title }} </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="isDarkMode = !isDarkMode" icon>
@@ -45,7 +45,7 @@
       </v-btn>
     </v-toolbar>
 
-    
+
     <main>
       <v-content>
         <v-container fluid >
@@ -57,10 +57,6 @@
         </v-container>
       </v-content>
     </main>
-    
-    <v-footer :fixed="fixed" app>
-      <span> Template created by <a class="lightText--text" href="http://github.com/aturingmachine">Vincent Blom</a></span>
-    </v-footer>
 
     <v-snackbar
     bottom
@@ -96,7 +92,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "MEVN Stack Client",
+      title: "Image Editor",
       alertOpen: false,
       alertString: '',
       alertSuccess: false,
@@ -147,6 +143,6 @@ export default {
     }
   }
 
-  
+
 };
 </script>
