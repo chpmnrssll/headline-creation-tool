@@ -20,6 +20,7 @@
     "mongoose": "^4.12.3",
     "nodemon": "^1.17.5",
     "serve-favicon": "~2.4.5",
+    "sprite-vue": "^0.21.3",
     "trunks-log": "^2.0.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
