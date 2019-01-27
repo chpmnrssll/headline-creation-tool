@@ -8,7 +8,7 @@ Vue.use(Router)
 
 const router = new Router ({
   root: '/home',
-  routes: 
+  routes:
   [
     {
       path: '/users',
