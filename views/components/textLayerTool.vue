@@ -3,9 +3,7 @@
   <v-layout column>
     <v-select :items="font.families" box label="Font"></v-select>
     <v-slider v-model="font.size" thumb-label thumb-size="12" :min="1" :max="100" label="Size"></v-slider>
-  </v-layout>
 
-  <v-layout row>
     <v-btn-toggle v-model="font.style" multiple>
       <v-btn :value="1" flat>
         <v-icon>format_bold</v-icon>

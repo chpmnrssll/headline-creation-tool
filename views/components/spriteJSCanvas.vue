@@ -1,9 +1,9 @@
 <template>
-<v-container :style="style" id="canvas" pa-0>
+<v-container :style="{ height: '100%', backgroundColor: background.color }" id="canvas" pa-0>
   <svg width="100%" height="100%">
-    <pattern id="pattern" x="0" y="0" :width="pattern.size" :height="pattern.size" patternUnits="userSpaceOnUse">
-      <rect :fill="pattern.color" x="0" y="0" :width="pattern.size/2" :height="pattern.size/2" />
-      <rect :fill="pattern.color" :x="pattern.size/2" :y="pattern.size/2" :width="pattern.size/2" :height="pattern.size/2" />
+    <pattern id="pattern" x="0" y="0" :width="background.pattern.size * 2" :height="background.pattern.size * 2" patternUnits="userSpaceOnUse">
+      <rect :fill="background.pattern.color" x="0" y="0" :width="background.pattern.size" :height="background.pattern.size" />
+      <rect :fill="background.pattern.color" :x="background.pattern.size" :y="background.pattern.size" :width="background.pattern.size" :height="background.pattern.size" />
     </pattern>
     <rect fill="url(#pattern)" x="0" y="0" width="100%" height="100%" />
   </svg>
@@ -11,111 +11,103 @@
 </template>
 
 <script>
-export default {
-  data: () => ({
-    style: {
-      height: '75vh',
-      backgroundColor: '#eee'
-    },
-    pattern: {
-      color: '#88888888',
-      size: 16,
-    },
-    text: 'Hello World !\nSpriteJS.org',
-    font: 'bold 48px Arial',
-    color: '#ffdc45',
-    backgroundColor: '#aaa',
-    texture: 'https://picsum.photos/600/300/?random'
-  }),
+const {
+  Scene,
+  Sprite,
+  Label
+} = spritejs;
 
-  // props: {
-  //   pattern: {
-  //     type: Object
-  //   }
-  // },
+export default {
+  // data: () => ({
+  //   text: 'Hello World !\nSpriteJS.org',
+  //   font: 'bold 48px Arial',
+  //   color: '#ffdc45',
+  //   texture: 'https://picsum.photos/960/540/?random'
+  // }),
+
+  props: {
+    background: {
+      type: Object,
+    },
+    layers: {
+      type: Array,
+    }
+  },
 
   watch: {
-    text: function (newText, oldText) {
-      this.textLabel.attr({
-        text: newText
+    layers(oldValue, newValue) {
+      this.updateLayers()
+    }
+  },
+
+  methods: {
+    updateLayers() {
+      this.layers.map(layer => {
+        layer.update(layer.canvas)
       })
     },
-    font: function (newFont, oldFont) {
-      this.textLabel.attr({
-        font: newFont
-      })
-    },
-    color: function (newColor, oldColor) {
-      this.textLabel.attr({
-        color: newColor
-      })
-    },
-    backgroundColor: function (newColor, oldColor) {
-      this.bglayer.canvas.style.backgroundColor = newColor
-    },
-    texture: function (newImg, oldImg) {
-      this.bgImg.attr({
-        textures: newImg
+
+    drawLayers() {
+      this.layers.reverse().map(layer => {
+        layer.canvas = this.scene.layer(layer.name)
+
+        switch (layer.type) {
+        case 'image':
+          layer.image = new Sprite({
+            anchor: [0.5, 0.5],
+            pos: ['50%', '50%'],
+            textures: layer.url
+          })
+
+          layer.canvas.append(layer.image)
+          break;
+        case 'text':
+          layer.label = new Label({
+            anchor: [0.5, 0.5],
+            color: layer.font.color,
+            font: `${layer.font.style} ${layer.font.size} ${layer.font.family}`,
+            pos: ['50%', '50%'],
+            text: layer.text,
+          });
+
+          layer.label.animate([{
+            scale: 1.5,
+            rotate: -15
+          }, {
+            scale: 1,
+            rotate: 0
+          }, {
+            scale: 1.5,
+            rotate: 15
+          }, ], {
+            duration: 3000,
+            iterations: Infinity,
+            direction: 'alternate',
+          });
+
+          layer.canvas.append(layer.label)
+          break;
+        }
       })
     }
   },
 
-  // methods: {
-  //   load() {
-  //   }
-  // },
-
-  mounted() {
-    const {
-      Scene,
-      Sprite,
-      Label
-    } = spritejs;
+  async mounted() {
+    // artificial delay fixes layer positioning on start
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve()
+      }, 500, 1)
+    })
 
     this.scene = new Scene('#canvas', {
-      // resolution: ['auto', 'auto'],
       // stickmode: 'width',
       stickExtend: true,
-      viewport: ['auto', 'auto'],
-    });
+      resolution: 'flex',
+      viewport: 'auto',
+    })
 
-    this.bglayer = this.scene.layer('bglayer');
-    // this.bglayer.canvas.style.backgroundColor = this.backgroundColor;
-
-    this.bgImg = new Sprite({
-      anchor: [0.5, 0.5],
-      pos: ['50%', '50%'],
-      textures: this.texture
-    });
-
-    this.bglayer.append(this.bgImg);
-
-    this.fglayer = this.scene.layer('fglayer');
-
-    this.textLabel = new Label({
-      anchor: [0.5, 0.5],
-      color: this.color,
-      font: this.font,
-      pos: ['50%', '50%'],
-      text: this.text
-    });
-
-    this.textLabel.animate([{
-      scale: 1.5,
-      rotate: -15
-    }, {
-      scale: 1,
-      rotate: 0
-    }, {
-      scale: 1.5,
-      rotate: 15
-    }, ], {
-      duration: 6000,
-      iterations: Infinity,
-      direction: 'alternate',
-    });
-
-    this.fglayer.append(this.textLabel);
+    this.drawLayers()
   },
 }
 </script>

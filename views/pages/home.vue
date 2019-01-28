@@ -1,22 +1,20 @@
 <template>
 <v-container :style="style">
-  <v-layout row fill-height>
+  <v-layout row>
     <v-flex grow>
-      <v-card>
-        <spriteJSCanvas></spriteJSCanvas>
-      </v-card>
+      <spriteJSCanvas :background="background" :layers="layers"></spriteJSCanvas>
     </v-flex>
     <v-flex xs4 ml-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary" fixed-tabs>
 
         <v-tab ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab></layersTab>
+          <layersTab :layers="layers" :pagination="pagination"></layersTab>
         </v-tab-item>
 
         <v-tab ripple>Settings</v-tab>
         <v-tab-item>
-          <settingsTab></settingsTab>
+          <settingsTab :background="background"></settingsTab>
         </v-tab-item>
       </v-tabs>
     </v-flex>
@@ -34,6 +32,35 @@ export default {
     style: {
       // height: '75vh',
       // backgroundColor: '#444'
+    },
+    layers: [
+      {
+        type: 'text',
+        name: 'Text Layer',
+        text: 'Hello World!\nSpriteJS.org',
+        font: {
+          family: 'Arial',
+          style: 'bold',
+          size: '48px',
+          color: '#ffdc45',
+        }
+      },
+      {
+        type: 'image',
+        name: 'Image Layer',
+        url: 'https://picsum.photos/960/540/?random',
+      },
+    ],
+    background: {
+      color: '#eeeeee',
+      pattern: {
+        color: '#88888888',
+        size: 8,
+      },
+    },
+    pagination: {
+      // descending: true,
+      // sortBy: 'index',
     },
     activeTab: null,
     isDarkMode: false,

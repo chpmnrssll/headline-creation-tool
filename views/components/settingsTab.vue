@@ -1,7 +1,12 @@
 <template>
-<v-container>
-  <v-slider v-model="pattern.size" thumb-label thumb-size="12" :min="1" :max="100" label="Size"></v-slider>
-  <color-picker :style="style" theme="light" :color="pattern.color" sucker-hide @changeColor="changeColor"/>
+<v-container class="pa-0">
+  <v-card class="pa-4">
+    <v-layout align-center justify-center column>
+      <v-slider v-model="background.pattern.size" thumb-label :min="1" :max="100" label="Background Size"></v-slider>
+      <label :style="labelStyle">Background Color</label>
+      <color-picker :style="pickerStyle" theme="light" :color="background.color" sucker-hide @changeColor="changeColor" />
+    </v-layout>
+  </v-card>
 </v-container>
 </template>
 
@@ -13,21 +18,24 @@ export default {
     colorPicker
   },
   data: () => ({
-    style: {
-      // height: '75vh',
-      // backgroundColor: '#59c7f9',
-      width: '62%',
+    labelStyle: {
+      color: 'rgba(0, 0, 0, .54)',
+      fontSize: '18px',
     },
-    pattern: {
-      size: 24,
-      color: 'rgba(127, 127, 127, .5)',
-    }
+    pickerStyle: {
+      width: '218px',
+    },
   }),
+
+  props: {
+    background: {
+      type: Object,
+    }
+  },
 
   methods: {
     changeColor(color) {
-      const { r, g, b, a } = color.rgba
-      this.pattern.color = `rgba(${r, g, b, a})`
+      this.background.color = color.rgba.toHexString()
     },
   },
 }
