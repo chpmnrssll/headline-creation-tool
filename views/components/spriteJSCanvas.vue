@@ -18,13 +18,6 @@ const {
 } = spritejs;
 
 export default {
-  // data: () => ({
-  //   text: 'Hello World !\nSpriteJS.org',
-  //   font: 'bold 48px Arial',
-  //   color: '#ffdc45',
-  //   texture: 'https://picsum.photos/960/540/?random'
-  // }),
-
   props: {
     background: {
       type: Object,
@@ -35,21 +28,22 @@ export default {
   },
 
   watch: {
-    layers(oldValue, newValue) {
-      this.updateLayers()
+    layers: {
+      deep: true,
+      handler: (newLayers, oldLayers) => {
+        newLayers.forEach(layer => {
+          layer.spriteJSLayer.canvas.style.zIndex = layer.zIndex
+        })
+      },
     }
   },
 
   methods: {
-    updateLayers() {
-      this.layers.map(layer => {
-        layer.update(layer.canvas)
-      })
-    },
-
     drawLayers() {
-      this.layers.reverse().map(layer => {
-        layer.canvas = this.scene.layer(layer.name)
+      this.layers.sort((a, b) => {
+        return a.zIndex - b.zIndex
+      }).map((layer, index) => {
+        layer.spriteJSLayer = this.scene.layer(layer.name)
 
         switch (layer.type) {
         case 'image':
@@ -58,8 +52,7 @@ export default {
             pos: ['50%', '50%'],
             textures: layer.url
           })
-
-          layer.canvas.append(layer.image)
+          layer.spriteJSLayer.append(layer.image)
           break;
         case 'text':
           layer.label = new Label({
@@ -69,23 +62,7 @@ export default {
             pos: ['50%', '50%'],
             text: layer.text,
           });
-
-          layer.label.animate([{
-            scale: 1.5,
-            rotate: -15
-          }, {
-            scale: 1,
-            rotate: 0
-          }, {
-            scale: 1.5,
-            rotate: 15
-          }, ], {
-            duration: 3000,
-            iterations: Infinity,
-            direction: 'alternate',
-          });
-
-          layer.canvas.append(layer.label)
+          layer.spriteJSLayer.append(layer.label)
           break;
         }
       })
@@ -94,11 +71,11 @@ export default {
 
   async mounted() {
     // artificial delay fixes layer positioning on start
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve()
-      }, 500, 1)
-    })
+    // await new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve()
+    //   }, 500, 1)
+    // })
 
     this.scene = new Scene('#canvas', {
       // stickmode: 'width',

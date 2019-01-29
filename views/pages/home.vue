@@ -2,14 +2,14 @@
 <v-container :style="style">
   <v-layout row>
     <v-flex grow>
-      <spriteJSCanvas :background="background" :layers="layers"></spriteJSCanvas>
+      <spriteJSCanvas :background="background" :layers="layers" style="min-height: 75vh"></spriteJSCanvas>
     </v-flex>
     <v-flex xs4 ml-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary" fixed-tabs>
 
         <v-tab ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab :layers="layers" :pagination="pagination"></layersTab>
+          <layersTab :layers="layers" @update:layer="updateLayer" @update:text="updateText"></layersTab>
         </v-tab-item>
 
         <v-tab ripple>Settings</v-tab>
@@ -33,7 +33,34 @@ export default {
       // height: '75vh',
       // backgroundColor: '#444'
     },
+    activeTab: null,
+    isDarkMode: false,
+    background: {
+      color: '#eeeeee',
+      pattern: {
+        color: '#88888888',
+        size: 8,
+      },
+    },
     layers: [
+      {
+        type: 'image',
+        name: 'Image Layer',
+        url: 'https://picsum.photos/960/540/?random',
+        zIndex: 0,
+      },
+      {
+        type: 'text',
+        name: 'Another Text Layer',
+        text: 'Foo:Bar',
+        font: {
+          family: 'Arial',
+          style: 'bold',
+          size: '84px',
+          color: '#45dcff',
+        },
+        zIndex: 2,
+      },
       {
         type: 'text',
         name: 'Text Layer',
@@ -43,27 +70,10 @@ export default {
           style: 'bold',
           size: '48px',
           color: '#ffdc45',
-        }
-      },
-      {
-        type: 'image',
-        name: 'Image Layer',
-        url: 'https://picsum.photos/960/540/?random',
+        },
+        zIndex: 1,
       },
     ],
-    background: {
-      color: '#eeeeee',
-      pattern: {
-        color: '#88888888',
-        size: 8,
-      },
-    },
-    pagination: {
-      // descending: true,
-      // sortBy: 'index',
-    },
-    activeTab: null,
-    isDarkMode: false,
   }),
 
   watch: {
@@ -85,6 +95,16 @@ export default {
         }
       }
     }
+  },
+
+  methods: {
+    updateLayer({ index, z }) {
+      this.$set(this.layers[index], 'zIndex', z)
+    },
+    updateText({ zIndex, text }) {
+      console.log(`updateText(${zIndex}, ${text})`)
+      this.$set(this.layers.filter(layer => layer.zIndex === zIndex)[0], 'zIndex', z)
+    },
   },
 
   components: {

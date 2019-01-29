@@ -2,24 +2,24 @@
 <v-container class="pa-0" :style="style">
   <v-card class="pa-4">
     <v-card class="mb-4">
-      <v-data-table :items="layers" :pagination="pagination" class="elevation-1" hide-actions hide-headers select-all>
+      <v-data-table v-model="selected" :items="layers" item-key="zIndex" :pagination.sync="pagination" class="elevation-1" hide-actions hide-headers select-all>
         <template slot="items" slot-scope="props">
-          <div @click="loadTool(props.item.type)">
-            <td class="px-1">
+          <tr :active="props.selected" @click="props.selected = !props.selected">
+            <td class="px-3">
               <v-text-field v-model="props.item.name"></v-text-field>
             </td>
             <td class="px-0">
-              <v-btn class="ma-0" icon small @click="move(props.index, props.index - 1)">
+              <v-btn class="ma-0" icon small @click="moveLayer(props.item.zIndex, 1)">
                 <v-icon small>arrow_upward</v-icon>
               </v-btn>
-              <v-btn class="ma-0" icon small ma-0 @click="move(props.index, props.index + 1)">
+              <v-btn class="ma-0" icon small ma-0 @click="moveLayer(props.item.zIndex, -1)">
                 <v-icon small>arrow_downward</v-icon>
               </v-btn>
               <v-btn class="ma-0" icon small ma-0>
                 <v-icon small color="error">delete_forever</v-icon>
               </v-btn>
             </td>
-          </div>
+          </tr>
         </template>
       </v-data-table>
       <v-btn color="primary" icon small absolute bottom right>
@@ -28,7 +28,7 @@
     </v-card>
 
     <v-card v-if="toolType == 'text'">
-      <textLayerTool></textLayerTool>
+      <textLayerTool :layer="selected[0]" @update:text="$emit('update:text', $event)"></textLayerTool>
     </v-card>
     <v-card v-else="toolType == 'image'">
       <imageLayerTool></imageLayerTool>
@@ -44,31 +44,65 @@ import imageLayerTool from '../components/imageLayerTool'
 
 export default {
   data: () => ({
-    selected: [],
     style: {
       // height: '75vh',
       // backgroundColor: '#444'
     },
+    selected: [],
     toolType: null,
+    pagination: {
+      descending: true,
+      sortBy: 'zIndex',
+    }
   }),
 
   props: {
     layers: {
       type: Array,
     },
-    pagination: {
-      type: Object,
-    }
+  },
+
+  watch: {
+    selected(n, o) {
+      if (n.length > 1) {
+        this.selected.splice(0, 1)
+      } else {
+        this.toolType = this.selected[0].type
+      }
+    },
+    layers: {
+      deep: true,
+      handler: (val, old) => {
+        // console.log(`layersTab: ${val}`)
+      },
+    },
+  },
+
+  mounted() {
+    this.selected = this.layers.filter(layer => layer.zIndex == this.layers.length - 1);
   },
 
   methods: {
-    loadTool(toolType) {
-      this.toolType = toolType
-    },
-    move(oldIndex, newIndex) {
-      let arr = this.layers
-      return arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0])
-    },
+    moveLayer(oldZ, direction) {
+      const newZ = oldZ + direction
+      const oldIndex = this.layers.findIndex(layer => {
+        return layer.zIndex == oldZ
+      })
+
+      if (newZ >= 0 && newZ < this.layers.length) {
+        const newIndex = this.layers.findIndex(layer => layer.zIndex == newZ)
+
+        this.$emit('update:layer', {
+          index: newIndex,
+          z: oldZ
+        })
+
+        this.$emit('update:layer', {
+          index: oldIndex,
+          z: newZ
+        })
+      }
+    }
   },
 
   components: {
