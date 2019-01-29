@@ -52,14 +52,14 @@ export default {
       {
         type: 'text',
         name: 'Another Text Layer',
-        text: 'Foo:Bar',
+        text: 'More Text',
         font: {
-          family: 'Arial',
+          family: 'Calibri',
           style: 'bold',
-          size: '84px',
-          color: '#45dcff',
+          size: '96px',
+          color: '#ff45dc',
         },
-        zIndex: 2,
+        zIndex: 1,
       },
       {
         type: 'text',
@@ -71,7 +71,7 @@ export default {
           size: '48px',
           color: '#ffdc45',
         },
-        zIndex: 1,
+        zIndex: 2,
       },
     ],
   }),
