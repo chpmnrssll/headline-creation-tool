@@ -63,15 +63,15 @@ export default {
       },
       {
         icon: "folder",
-        title: "Database",
-        href: "/#/users",
+        title: "Headlines",
+        href: "/#/headlines",
         router: true
       },
     ],
     miniVariant: false,
     right: true,
     rightDrawer: false,
-    title: "Application Title",
+    title: "Headline Creation Tool",
     alertOpen: false,
     alertString: '',
     alertSuccess: false,

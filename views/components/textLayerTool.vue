@@ -1,6 +1,7 @@
 <template>
 <v-container :style="style">
   <v-layout column>
+    <v-text-field v-model="layer.text"></v-text-field>
     <v-select :items="font.families" box label="Font"></v-select>
     <v-slider v-model="layer.font.size" thumb-label thumb-size="12" :min="1" :max="100" label="Size"></v-slider>
 
@@ -39,8 +40,6 @@
         <v-icon>format_align_justify</v-icon>
       </v-btn>
     </v-btn-toggle>
-
-    <v-text-field v-model="layer.text"></v-text-field>
   </v-layout>
   <!-- <v-textarea name="input-7-1" label="Default style" value="v-textarea.value" hint="Hint text"></v-textarea> -->
 </v-container>

@@ -1,19 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import usersPage from '../pages/users.vue'
+import headlinesPage from '../pages/headlines.vue'
 import homePage from '../pages/home.vue'
 
 Vue.use(Router)
 
-const router = new Router ({
+const router = new Router({
   root: '/home',
-  routes:
-  [
-    {
-      path: '/users',
-      name: 'users',
-      component: usersPage
+  routes: [{
+      path: '/headlines',
+      name: 'headlines',
+      component: headlinesPage
     },
     {
       path: '/home',

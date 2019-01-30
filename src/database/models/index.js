@@ -1,8 +1,8 @@
 //bring in the seperate models
-const User = require('./user')
+const Headline = require('./headline')
 //import other models in the same manner
 
-//export em in a good ol' bundle 
+//export em in a good ol' bundle
 module.exports = {
-  User
+  Headline,
 }

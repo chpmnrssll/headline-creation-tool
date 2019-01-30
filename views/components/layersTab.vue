@@ -22,11 +22,14 @@
           </tr>
         </template>
       </v-data-table>
-      <v-btn color="primary" icon small absolute bottom right>
+      <v-btn color="primary" icon small absolute top left>
         <v-icon small>add</v-icon>
       </v-btn>
+      <v-btn color="primary" @click="addDialog = true" icon small absolute top right>
+        <v-icon small>save</v-icon>
+      </v-btn>
     </v-card>
-
+    <v-divider></v-divider>
     <v-card v-if="toolType == 'text'">
       <textLayerTool :layer="selected[0]" @update:text="$emit('update:text', $event)"></textLayerTool>
     </v-card>
@@ -35,10 +38,25 @@
     </v-card>
   </v-card>
 
+  <!-- Add Dialog Button -->
+  <v-dialog v-model="addDialog" lazy absolute max-width="50%">
+    <v-btn class="primaryText--text" icon slot="activator">
+      <v-icon> control_point </v-icon>
+    </v-btn>
+
+    <!-- Add Dialog -->
+    <headlineSaveDialog @closeAdd="addDialog = false" @alert="alert" :headline="headline">
+    </headlineSaveDialog>
+  </v-dialog>
+
 </v-container>
 </template>
 
 <script>
+import {
+  http
+} from "../config/http.js"
+import headlineSaveDialog from "../components/headlineSaveDialog.vue"
 import textLayerTool from '../components/textLayerTool'
 import imageLayerTool from '../components/imageLayerTool'
 
@@ -48,13 +66,23 @@ export default {
       // height: '75vh',
       // backgroundColor: '#444'
     },
+    addDialog: false,
     selected: [],
     toolType: null,
     pagination: {
       descending: true,
       sortBy: 'zIndex',
-    }
+    },
   }),
+
+  computed: {
+    headline: () => {
+      return {
+        name: 'fdsa',
+        layers: this.layers,
+      }
+    }
+  },
 
   props: {
     layers: {
@@ -67,15 +95,15 @@ export default {
       if (n.length > 1) {
         this.selected.splice(0, 1)
       } else {
-        this.toolType = this.selected[0].type
+        this.toolType = this.selected[0].layerType
       }
     },
-    layers: {
-      deep: true,
-      handler: (val, old) => {
-        // console.log(`layersTab: ${val}`)
-      },
-    },
+    // layers: {
+    //   deep: true,
+    //   handler: (val, old) => {
+    //     // console.log(`layersTab: ${val}`)
+    //   },
+    // },
   },
 
   mounted() {
@@ -83,6 +111,19 @@ export default {
   },
 
   methods: {
+    saveHeadline() {
+      window.alert('saveHeadline')
+    },
+
+    //build the alert info for us
+    //Will emit an alert, followed by a boolean for success, the type of call made, and the name of the
+    //resource we are working on
+    alert(success, callName, resource) {
+      console.log('Page Alerting')
+      this.$emit('alert', success, callName, resource)
+      // this.load()
+    },
+
     moveLayer(oldZ, direction) {
       const newZ = oldZ + direction
       const oldIndex = this.layers.findIndex(layer => {
@@ -108,6 +149,7 @@ export default {
   components: {
     textLayerTool: textLayerTool,
     imageLayerTool: imageLayerTool,
+    headlineSaveDialog: headlineSaveDialog,
   },
 }
 </script>

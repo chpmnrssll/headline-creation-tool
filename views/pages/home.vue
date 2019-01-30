@@ -1,11 +1,11 @@
 <template>
 <v-container :style="style">
   <v-layout row>
-    <v-flex grow>
-      <spriteJSCanvas :background="background" :layers="layers" style="min-height: 75vh"></spriteJSCanvas>
+    <v-flex>
+      <spriteJSCanvas :background="background" :layers="layers"></spriteJSCanvas>
     </v-flex>
     <v-flex xs4 ml-4>
-      <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary" fixed-tabs>
+      <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
 
         <v-tab ripple>Layers</v-tab>
         <v-tab-item>
@@ -41,37 +41,52 @@ export default {
         color: '#88888888',
         size: 8,
       },
+      width: null,
+      height: null,
     },
-    layers: [
-      {
-        type: 'image',
-        name: 'Image Layer',
+    layers: [{
+        layerType: 'image',
+        name: 'Random 960x540 Image',
         url: 'https://picsum.photos/960/540/?random',
         zIndex: 0,
       },
       {
-        type: 'text',
-        name: 'Another Text Layer',
-        text: 'More Text',
+        layerType: 'text',
+        name: 'Little Text',
+        text: 'Now with 99% More Canvas',
         font: {
           family: 'Calibri',
           style: 'bold',
-          size: '96px',
-          color: '#ff45dc',
+          size: '48px',
+          color: '#bb99cc',
         },
-        zIndex: 1,
+        shadow: {
+          blur: 5,
+          color: '#000',
+          offset: [2, 2],
+        },
+        rotate: -5,
+        translate: [0, 75],
+        zIndex: 2,
       },
       {
-        type: 'text',
-        name: 'Text Layer',
-        text: 'Hello World!\nSpriteJS.org',
+        layerType: 'text',
+        name: 'Big Text',
+        text: 'Headline\nCreation Tool',
         font: {
           family: 'Arial',
           style: 'bold',
-          size: '48px',
+          size: '128px',
           color: '#ffdc45',
         },
-        zIndex: 2,
+        shadow: {
+          blur: 15,
+          color: '#000',
+          offset: [4, 8],
+        },
+        rotate: -5,
+        translate: [0, -75],
+        zIndex: 1,
       },
     ],
   }),
@@ -98,10 +113,16 @@ export default {
   },
 
   methods: {
-    updateLayer({ index, z }) {
+    updateLayer({
+      index,
+      z
+    }) {
       this.$set(this.layers[index], 'zIndex', z)
     },
-    updateText({ zIndex, text }) {
+    updateText({
+      zIndex,
+      text
+    }) {
       console.log(`updateText(${zIndex}, ${text})`)
       this.$set(this.layers.filter(layer => layer.zIndex === zIndex)[0], 'zIndex', z)
     },
