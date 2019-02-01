@@ -2,14 +2,14 @@
 <v-container :style="style">
   <v-layout row>
     <v-flex>
-      <spriteJSCanvas :background="background" :layers="layers"></spriteJSCanvas>
+      <spriteJSCanvas :background="background"></spriteJSCanvas>
     </v-flex>
     <v-flex xs4 ml-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
 
         <v-tab ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab :layers="layers" @update:layer="updateLayer" @update:text="updateText"></layersTab>
+          <layersTab></layersTab>
         </v-tab-item>
 
         <v-tab ripple>Settings</v-tab>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import layersTab from '../components/layersTab'
 import settingsTab from '../components/settingsTab'
 import spriteJSCanvas from '../components/spriteJSCanvas'
@@ -44,51 +45,10 @@ export default {
       width: null,
       height: null,
     },
-    layers: [{
-        layerType: 'image',
-        name: 'Random 960x540 Image',
-        url: 'https://picsum.photos/960/540/?random',
-        zIndex: 0,
-      },
-      {
-        layerType: 'text',
-        name: 'Little Text',
-        text: 'Now with 99% More Canvas',
-        font: {
-          family: 'Calibri',
-          style: 'bold',
-          size: '48px',
-          color: '#bb99cc',
-        },
-        shadow: {
-          blur: 5,
-          color: '#000',
-          offset: [2, 2],
-        },
-        rotate: -5,
-        translate: [0, 75],
-        zIndex: 2,
-      },
-      {
-        layerType: 'text',
-        name: 'Big Text',
-        text: 'Headline\nCreation Tool',
-        font: {
-          family: 'Arial',
-          style: 'bold',
-          size: '128px',
-          color: '#ffdc45',
-        },
-        shadow: {
-          blur: 15,
-          color: '#000',
-          offset: [4, 8],
-        },
-        rotate: -5,
-        translate: [0, -75],
-        zIndex: 1,
-      },
-    ],
+  }),
+
+  computed: mapState({
+    layers: state => state.layers
   }),
 
   watch: {
@@ -112,20 +72,8 @@ export default {
     }
   },
 
-  methods: {
-    updateLayer({
-      index,
-      z
-    }) {
-      this.$set(this.layers[index], 'zIndex', z)
-    },
-    updateText({
-      zIndex,
-      text
-    }) {
-      console.log(`updateText(${zIndex}, ${text})`)
-      this.$set(this.layers.filter(layer => layer.zIndex === zIndex)[0], 'zIndex', z)
-    },
+  created() {
+    this.$store.dispatch('layers/loadMockLayers')
   },
 
   components: {

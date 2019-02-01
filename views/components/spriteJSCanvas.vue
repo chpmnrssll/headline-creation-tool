@@ -11,6 +11,10 @@
 </template>
 
 <script>
+import {
+  mapState,
+  mapActions
+} from 'vuex'
 const {
   Scene,
   Sprite,
@@ -22,9 +26,12 @@ export default {
     background: {
       type: Object,
     },
-    layers: {
-      type: Array,
-    }
+  },
+
+  computed: {
+    ...mapState({
+      layers: state => state.layers.all
+    })
   },
 
   watch: {
@@ -34,35 +41,28 @@ export default {
         this.background = newBackground
       },
     },
-    layers: {
-      deep: true,
-      handler: (newLayers, oldLayers) => {
-        newLayers.forEach(layer => {
-          layer.spriteJSLayer.canvas.style.zIndex = layer.zIndex
-        })
-      },
-    }
   },
 
   methods: {
-    drawLayers() {
-      this.layers.sort((a, b) => {
-        return a.zIndex - b.zIndex
-      }).map((layer, index) => {
-        layer.spriteJSLayer = this.scene.layer(layer.name)
+    buildLayers() {
+      // const sorted = this.layers.sort((a, b) => a.zIndex - b.zIndex)
+
+      this.layers.forEach((layer, index) => {
+        let newLayer = layer
+        newLayer.spriteJSLayer = this.scene.layer(layer.name)
 
         switch (layer.layerType) {
         case 'image':
-          layer.image = new Sprite({
+          newLayer.content = new Sprite({
             anchor: [0.5, 0.5],
             pos: ['50%', '50%'],
             textures: layer.url
           })
 
-          layer.spriteJSLayer.append(layer.image)
+          newLayer.spriteJSLayer.append(newLayer.content)
           break
         case 'text':
-          layer.label = new Label({
+          newLayer.content = new Label({
             anchor: [0.5, 0.5],
             color: layer.font.color,
             font: `${layer.font.style} ${layer.font.size} ${layer.font.family}`,
@@ -70,7 +70,7 @@ export default {
             text: layer.text,
             border: {
               width: 2,
-              style: [ 10, 10 ],
+              style: [10, 10],
               color: this.background.color,
             },
             rotate: layer.rotate,
@@ -79,16 +79,21 @@ export default {
             shadow: layer.shadow,
           })
 
-          layer.label.animate([{
+          newLayer.content.animate([{
             dashOffset: 20
           }], {
             duration: 1000,
             iterations: Infinity,
           })
 
-          layer.spriteJSLayer.append(layer.label)
+          newLayer.spriteJSLayer.append(newLayer.content)
           break
         }
+
+        this.$store.dispatch('layers/setLayer', {
+          index: index,
+          layer: newLayer
+        })
       })
     }
   },
@@ -107,7 +112,7 @@ export default {
       // viewport: 'auto',
     })
 
-    this.drawLayers()
+    this.buildLayers()
   },
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
 <v-container :style="style">
   <v-layout column>
-    <v-text-field v-model="layer.text"></v-text-field>
-    <v-select :items="font.families" box label="Font"></v-select>
-    <v-slider v-model="layer.font.size" thumb-label thumb-size="12" :min="1" :max="100" label="Size"></v-slider>
+    <v-text-field v-if="selectedLayer" :value="selectedLayer.text" @input="updateLayerText" label="Text"></v-text-field>
+    <v-select v-if="selectedLayer" :value="selectedLayer.font.family" :items="font.families" @input="updateLayerFontFamily" box label="Font"></v-select>
+    <v-slider v-if="selectedLayer" :value="parseInt(selectedLayer.font.size)" @input="updateLayerFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
 
     <v-btn-toggle v-model="font.style" multiple>
       <v-btn :value="1" flat>
@@ -46,6 +46,12 @@
 </template>
 
 <script>
+import {
+  mapActions,
+  mapGetters,
+  mapState,
+} from 'vuex'
+
 export default {
   data: () => ({
     style: {
@@ -56,37 +62,39 @@ export default {
       justify: null,
       size: '16',
       style: [null],
-      families: [{
-          text: 'Arial'
-        },
-        {
-          text: 'Calibri'
-        },
-        {
-          text: 'Courier'
-        },
-        {
-          text: 'Verdana'
-        }
+      families: [
+        'Arial',
+        'Calibri',
+        'Courier',
+        'Verdana',
+        'Luckiest Guy',
+        'Permanent Marker'
       ],
     },
   }),
 
-  props: {
-    layer: Object,
+  computed: {
+    ...mapState({
+      layers: state => Array.from(state.layers.all)
+    }),
+    selectedLayer() {
+      if (this.$store.state.layers.selectedLayer) {
+        return this.$store.state.layers.all.find(layer => layer.selected)
+      }
+      return {}
+    },
   },
 
-  watch: {
-    layer: {
-      deep: true,
-      handler: (newLayer, oldLayer) => {
-        // console.log(`text layer updated`)
-        // this.$emit('update:text', {
-        //   zIndex: newLayer.zIndex,
-        //   text: newLayer.text,
-        // })
-      }
+  methods: {
+    updateLayerText(text) {
+      this.$store.commit('layers/updateLayerText', text)
+    },
+    updateLayerFontSize(size) {
+      this.$store.commit('layers/updateLayerFontSize', size)
+    },
+    updateLayerFontFamily(family) {
+      this.$store.commit('layers/updateLayerFontFamily', family)
     }
-  }
+  },
 }
 </script>
