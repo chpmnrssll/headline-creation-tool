@@ -1,23 +1,22 @@
 <template>
-<v-container :style="style">
+<v-container :style="style" pa-3>
   <v-layout column>
     <v-text-field v-if="selectedLayer" :value="selectedLayer.text" @input="updateLayerText" label="Text"></v-text-field>
-    <v-select v-if="selectedLayer" :value="selectedLayer.font.family" :items="font.families" @input="updateLayerFontFamily" box label="Font"></v-select>
-    <v-slider v-if="selectedLayer" :value="parseInt(selectedLayer.font.size)" @input="updateLayerFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
+
+    <v-select v-if="selectedLayer" :items="font.families" :value="selectedLayer.font.family" @input="updateLayerFontFamily" label="Font" class="mt-0" :style="{ height: '48px' }"></v-select>
+
+    <v-slider v-if="selectedLayer" :value="parseInt(selectedLayer.font.size)" @input="updateLayerFontSize" thumb-label class="mt-0" :min="1" :max="256" label="Size"></v-slider>
 
     <v-btn-toggle v-model="font.style" multiple>
       <v-btn :value="1" flat>
         <v-icon>format_bold</v-icon>
       </v-btn>
-
       <v-btn :value="2" flat>
         <v-icon>format_italic</v-icon>
       </v-btn>
-
       <v-btn :value="3" flat>
         <v-icon>format_underlined</v-icon>
       </v-btn>
-
       <v-btn :value="4" flat>
         <v-icon>format_color_fill</v-icon>
       </v-btn>
@@ -27,15 +26,12 @@
       <v-btn :value="1" flat>
         <v-icon>format_align_left</v-icon>
       </v-btn>
-
       <v-btn :value="2" flat>
         <v-icon>format_align_center</v-icon>
       </v-btn>
-
       <v-btn :value="3" flat>
         <v-icon>format_align_right</v-icon>
       </v-btn>
-
       <v-btn :value="4" flat>
         <v-icon>format_align_justify</v-icon>
       </v-btn>

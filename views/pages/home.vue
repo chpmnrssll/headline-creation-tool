@@ -2,19 +2,17 @@
 <v-container :style="style">
   <v-layout row>
     <v-flex>
-      <spriteJSCanvas :background="background"></spriteJSCanvas>
+      <spriteJSCanvas></spriteJSCanvas>
     </v-flex>
     <v-flex xs4 ml-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
-
         <v-tab ripple>Layers</v-tab>
         <v-tab-item>
           <layersTab></layersTab>
         </v-tab-item>
-
         <v-tab ripple>Settings</v-tab>
         <v-tab-item>
-          <settingsTab :background="background"></settingsTab>
+          <settingsTab></settingsTab>
         </v-tab-item>
       </v-tabs>
     </v-flex>
@@ -23,7 +21,11 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import {
+  mapState,
+  mapActions
+}
+from 'vuex'
 import layersTab from '../components/layersTab'
 import settingsTab from '../components/settingsTab'
 import spriteJSCanvas from '../components/spriteJSCanvas'
@@ -36,15 +38,6 @@ export default {
     },
     activeTab: null,
     isDarkMode: false,
-    background: {
-      color: '#eeeeee',
-      pattern: {
-        color: '#88888888',
-        size: 8,
-      },
-      width: null,
-      height: null,
-    },
   }),
 
   computed: mapState({
@@ -83,7 +76,3 @@ export default {
   },
 }
 </script>
-
-<style>
-
-</style>

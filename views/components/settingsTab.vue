@@ -2,44 +2,45 @@
 <v-container class="pa-0">
   <v-card class="pa-4">
     <v-layout align-center justify-center column>
-      <v-text-field v-model="background.width" label="Canvas Width"></v-text-field>
-      <v-text-field v-model="background.height" label="Canvas Height"></v-text-field>
-      <v-slider v-model="background.pattern.size" thumb-label :min="1" :max="100" label="Background Size"></v-slider>
-      <label :style="labelStyle">Background Color</label>
-      <!-- <color-picker :style="pickerStyle" theme="light" :color="background.color" sucker-hide @changeColor="changeColor" /> -->
+      <label class="v-label theme--light">
+        Color
+        <input type="color" :value="settings.background.color" @input="setBackgroundColor"></input>
+      </label>
+      <v-slider label="Block Size" :value="settings.background.pattern.size" @input="setBackgroundSize" thumb-label :min="1" :max="100"></v-slider>
+      <v-text-field label="Width" :value="settings.background.width" @input="setBackgroundWidth"></v-text-field>
+      <v-text-field label="Height" :value="settings.background.height" @input="setBackgroundHeight"></v-text-field>
     </v-layout>
   </v-card>
 </v-container>
 </template>
 
 <script>
-// import colorPicker from '@caohenghu/vue-colorpicker'
+import {
+  mapActions,
+  mapGetters,
+  mapState,
+} from 'vuex'
 
 export default {
-  components: {
-    // colorPicker
-  },
-
-  data: () => ({
-    labelStyle: {
-      color: 'rgba(0, 0, 0, .54)',
-      fontSize: '18px',
-    },
-    pickerStyle: {
-      width: '218px',
-    },
-  }),
-
-  props: {
-    background: {
-      type: Object,
-    }
+  computed: {
+    ...mapState({
+      settings: state => state.settings
+    }),
   },
 
   methods: {
-    changeColor(color) {
-      this.background.color = color.rgba.toHexString()
+    setBackgroundColor(color) {
+      this.$store.commit('settings/setBackgroundColor', color.target.value)
     },
+    setBackgroundWidth(width) {
+      this.$store.commit('settings/setBackgroundWidth', width)
+    },
+    setBackgroundHeight(height) {
+      this.$store.commit('settings/setBackgroundHeight', height)
+    },
+    setBackgroundSize(size) {
+      this.$store.commit('settings/setBackgroundSize', size)
+    }
   },
 }
 </script>

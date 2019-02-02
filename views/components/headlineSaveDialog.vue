@@ -1,7 +1,7 @@
 <template>
 <v-card>
   <v-toolbar class="primary primaryText--text">
-    <v-toolbar-title> Add A Headline </v-toolbar-title>
+    <v-toolbar-title>Save</v-toolbar-title>
   </v-toolbar>
   <v-container fluid>
     <v-card-text>
@@ -25,19 +25,35 @@
 import {
   http
 } from '../config/http'
+import {
+  mapActions,
+  mapGetters,
+  mapState,
+} from 'vuex'
 
 export default {
   data: () => ({
     submitDone: true,
+    headline: {
+      name: ''
+    }
   }),
 
-  props: {
-    headline: Object,
+  computed: {
+    ...mapState({
+      layers: state => state.layers.all
+    }),
+    // headline() {
+    //   return {
+    //     ...this.layers
+    //   }
+    // }
   },
 
   methods: {
-    submit() {
+    submit(e) {
       this.submitDone = false
+      this.headline.layers = this.layers
       http
         .post("/headlines", this.headline)
         .then(response => {

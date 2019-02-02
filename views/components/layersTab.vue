@@ -1,7 +1,7 @@
 <template>
 <v-container class="pa-0" :style="style">
   <v-card class="pa-4">
-    <v-card class="mb-4">
+    <v-card class="mb-1">
       <v-data-table v-model="selected" :items="layers" item-key="zIndex" :pagination.sync="pagination" class="elevation-1" hide-actions hide-headers select-all>
         <template slot="items" slot-scope="props">
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
@@ -23,30 +23,30 @@
         </template>
       </v-data-table>
       <v-btn color="primary" icon small absolute top left>
-        <v-icon small>add</v-icon>
+        <v-icon small>playlist_add</v-icon>
       </v-btn>
       <v-btn color="primary" @click="addDialog = true" icon small absolute top right>
         <v-icon small>save</v-icon>
       </v-btn>
     </v-card>
     <v-divider></v-divider>
-    <v-card v-if="selectedLayerType === 'text'">
-      <textLayerTool></textLayerTool>
+    <v-card v-if="selectedLayer.layerType === 'text'">
+      <textTool></textTool>
     </v-card>
-    <v-card v-else="selectedLayerType === 'image'">
-      <imageLayerTool></imageLayerTool>
+    <v-card v-else="selectedLayer.layerType === 'image'">
+      <imageTool></imageTool>
     </v-card>
   </v-card>
 
   <!-- Add Dialog Button -->
   <v-dialog v-model="addDialog" lazy absolute max-width="50%">
     <v-btn class="primaryText--text" icon slot="activator">
-      <v-icon> control_point </v-icon>
+      <v-icon>control_point</v-icon>
     </v-btn>
 
     <!-- Add Dialog -->
-    <!-- <headlineSaveDialog @closeAdd="addDialog = false" @alert="alert" :headline="headline">
-    </headlineSaveDialog> -->
+    <headlineSaveDialog @closeAdd="addDialog = false" @alert="alert">
+    </headlineSaveDialog>
   </v-dialog>
 
 </v-container>
@@ -62,13 +62,12 @@ import {
   mapState,
 } from 'vuex'
 import headlineSaveDialog from '../components/headlineSaveDialog.vue'
-import textLayerTool from '../components/textLayerTool'
-import imageLayerTool from '../components/imageLayerTool'
+import textTool from '../components/textTool'
+import imageTool from '../components/imageTool'
 
 export default {
   data: () => ({
     addDialog: false,
-    // selectedLayerType: null,
     selected: [],
     pagination: {
       descending: true,
@@ -85,20 +84,16 @@ export default {
       layers: state => Array.from(state.layers.all)
     }),
     selectedLayer() {
-      return this.$store.state.layers.all.find(layer => layer.selected)
-    },
-    selectedLayerType() {
-      if (this.$store.state.layers.selectedLayer.layerType) {
-        return this.$store.state.layers.selectedLayer.layerType || 'text'
+      if (this.layers.selectedLayer) {
+        this.selected = [ this.layers.selectedLayer.zIndex ]
+        return this.layers.selectedLayer
       }
-      return 'text'
-      // return this.selectedLayer.layerType || 'text'
-      // return this.layers.selectedLayer.layerType
-    }
+      return {}
+    },
   },
 
   mounted() {
-    this.setSelectedLayer(this.layers.length - 1)
+    // this.setSelectedLayer(this.layers.length - 1)
   },
 
   methods: {
@@ -127,8 +122,8 @@ export default {
   },
 
   components: {
-    textLayerTool: textLayerTool,
-    imageLayerTool: imageLayerTool,
+    textTool: textTool,
+    imageTool: imageTool,
     headlineSaveDialog: headlineSaveDialog
   },
 }

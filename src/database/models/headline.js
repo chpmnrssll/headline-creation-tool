@@ -59,7 +59,7 @@ const headlineDefinition = {
     required: true
   },
   layers: {
-    type: layerSchema,
+    type: [layerSchema],
     required: false
   },
 }

@@ -1,6 +1,5 @@
 <template>
-<v-expansion-panel>
-  <v-expansion-panel-content class="elevation-24">
+  <v-container ma-2>
     <v-layout row wrap slot="header">
       <v-flex xs-6 class="text-xs-left headline">
         {{ headline.name }}
@@ -15,15 +14,10 @@
       </v-flex>
     </v-layout>
     <hr>
-    <v-container ma-2>
-      <v-layout column wrap>
-        <v-flex>layerType: {{ headline.layerType }}</v-flex>
-        <v-flex>layerType: {{ headline.layerType }}</v-flex>
-        <v-flex>layerType: {{ headline.layerType }}</v-flex>
-      </v-layout>
-    </v-container>
-  </v-expansion-panel-content>
-</v-expansion-panel>
+    <v-layout column wrap>
+      {{ headline.layers.length }} Layers
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-<v-container :style="{ backgroundColor: background.color, minHeight: '75vh', overflow: 'hidden' }" id="canvas" pa-0>
+<v-container :style="style" id="canvas" pa-0>
   <svg width="100%" height="100%" :style="{ position: 'absolute' }">
-    <pattern id="pattern" x="0" y="0" :width="background.pattern.size * 2" :height="background.pattern.size * 2" patternUnits="userSpaceOnUse">
-      <rect :fill="background.pattern.color" x="0" y="0" :width="background.pattern.size" :height="background.pattern.size" />
-      <rect :fill="background.pattern.color" :x="background.pattern.size" :y="background.pattern.size" :width="background.pattern.size" :height="background.pattern.size" />
+    <pattern id="pattern" x="0" y="0" :width="settings.background.pattern.size * 2" :height="settings.background.pattern.size * 2" patternUnits="userSpaceOnUse">
+      <rect :fill="settings.background.pattern.color" x="0" y="0" :width="settings.background.pattern.size" :height="settings.background.pattern.size" />
+      <rect :fill="settings.background.pattern.color" :x="settings.background.pattern.size" :y="settings.background.pattern.size" :width="settings.background.pattern.size" :height="settings.background.pattern.size" />
     </pattern>
     <rect fill="url(#pattern)" x="0" y="0" width="100%" height="100%" />
   </svg>
@@ -22,89 +22,73 @@ const {
 } = spritejs;
 
 export default {
-  props: {
-    background: {
-      type: Object,
-    },
-  },
-
   computed: {
     ...mapState({
-      layers: state => state.layers.all
-    })
+      layers: state => state.layers.all,
+      settings: state => state.settings
+    }),
+    style() {
+      return {
+        backgroundColor: this.settings.background.color,
+        minHeight: '75vh',
+        overflow: 'hidden'
+      }
+    }
   },
 
   watch: {
-    background: {
+    layers: {
       deep: true,
-      handler: (newBackground, oldBackground) => {
-        this.background = newBackground
-      },
-    },
+      handler: function (newValue, oldValue) {
+        this.buildLayers()
+        this.$router.push('home')
+      }
+    }
   },
 
   methods: {
     buildLayers() {
-      // const sorted = this.layers.sort((a, b) => a.zIndex - b.zIndex)
-
-      this.layers.forEach((layer, index) => {
-        let newLayer = layer
-        newLayer.spriteJSLayer = this.scene.layer(layer.name)
+      Array.from(this.layers).forEach((layer, index) => {
+        layer.spriteJSLayer = this.scene.layer(layer.name, {
+          zIndex: layer.zIndex
+        })
 
         switch (layer.layerType) {
         case 'image':
-          newLayer.content = new Sprite({
+          layer.content = new Sprite({
             anchor: [0.5, 0.5],
             pos: ['50%', '50%'],
-            textures: layer.url
+            textures: layer.url,
+            zIndex: layer.zIndex
           })
-
-          newLayer.spriteJSLayer.append(newLayer.content)
           break
         case 'text':
-          newLayer.content = new Label({
+          layer.content = new Label({
             anchor: [0.5, 0.5],
             color: layer.font.color,
             font: `${layer.font.style} ${layer.font.size} ${layer.font.family}`,
             pos: ['50%', '50%'],
-            text: layer.text,
-            border: {
-              width: 2,
-              style: [10, 10],
-              color: this.background.color,
-            },
             rotate: layer.rotate,
-            translate: layer.translate,
             scale: layer.scale,
             shadow: layer.shadow,
+            text: layer.text,
+            translate: layer.translate,
+            zIndex: layer.zIndex
           })
 
-          newLayer.content.animate([{
-            dashOffset: 20
-          }], {
-            duration: 1000,
-            iterations: Infinity,
-          })
-
-          newLayer.spriteJSLayer.append(newLayer.content)
           break
         }
 
+        layer.spriteJSLayer.append(layer.content)
         this.$store.dispatch('layers/setLayer', {
           index: index,
-          layer: newLayer
+          layer: layer
         })
       })
     }
   },
 
   async mounted() {
-    // artificial delay fixes layer positioning on start
-    // await new Promise((resolve, reject) => {
-    //   setTimeout(() => {
-    //     resolve()
-    //   }, 500, 1)
-    // })
     this.scene = new Scene('#canvas', {
       // stickmode: 'width',
       stickExtend: true,
@@ -113,6 +97,14 @@ export default {
     })
 
     this.buildLayers()
+
+    // artificial delay fixes layer positioning on start
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.$store.commit('layers/setSelectedLayer', this.layers.length - 1)
+        resolve()
+      }, 500, 1)
+    })
   },
 }
 </script>

@@ -8,9 +8,35 @@ export default {
 
   mutations: {
     setSelectedLayer(state, zIndex) {
-      state.all.forEach(layer => layer.selected = false)
+      // Clear border, borderAnimation, and selected state for all layers
+      state.all.forEach(layer => {
+        layer.selected = false
+        layer.content.attr({
+          border: layer.border || null
+        })
+        if (layer.borderAnimation) {
+          layer.borderAnimation.cancel()
+        }
+      })
+
+      // Set the layer at zIndex as selected
       state.selectedLayer = state.all.find(layer => layer.zIndex === zIndex)
       state.selectedLayer.selected = true
+      state.selectedLayer.content.attr({
+        border: {
+          width: 4,
+          style: [10, 10],
+          color: '#eeeeee'
+        }
+      })
+
+      // Animate border dashOffset
+      state.selectedLayer.borderAnimation = state.selectedLayer.content.animate([{
+        dashOffset: 20
+      }], {
+        duration: 1000,
+        iterations: Infinity,
+      })
     },
 
     updateLayerURL(state, url) {
@@ -43,7 +69,10 @@ export default {
       })
     },
 
-    moveLayer(state, { zIndex, direction }) {
+    moveLayer(state, {
+      zIndex,
+      direction
+    }) {
       const newZIndex = zIndex + direction
       let newLayer = state.all.find(layer => layer.zIndex === newZIndex)
       let currentLayer = state.all.find(layer => layer.zIndex === zIndex)
@@ -56,7 +85,11 @@ export default {
       }
     },
 
-    setLayer(state, { index, layer }) {
+    setLayer(state, {
+      index,
+      layer
+    }) {
+      // layer.spriteJSLayer.canvas.style.zIndex = layer.zIndex
       state.all[index] = layer
     },
 
@@ -66,7 +99,10 @@ export default {
   },
 
   actions: {
-    setLayer(context, { index, layer }) {
+    setLayer(context, {
+      index,
+      layer
+    }) {
       context.commit('setLayer', {
         index: index,
         layer: layer
