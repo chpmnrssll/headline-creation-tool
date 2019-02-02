@@ -5,11 +5,11 @@
   </v-toolbar>
 
   <v-card-text>
-    <p>Are you sure you want to delete <strong>{{headline.name}}</strong>? This is <strong>irreversible.</strong></p>
+    <p>Are you sure you want to delete <strong>{{headline.name}}</strong>?</p>
   </v-card-text>
   <v-card-actions>
-    <v-btn @click="confirmDelete()" :loading="!deleteDone" class="green lighten-1 white--text">Confirm</v-btn>
     <v-spacer></v-spacer>
+    <v-btn @click="confirmDelete()" :loading="!deleteDone" class="green lighten-1 white--text">Delete</v-btn>
     <v-btn @click="close()" class="red darken-2 white--text">Cancel</v-btn>
   </v-card-actions>
 </v-card>

@@ -1,7 +1,7 @@
 <template>
 <v-card>
   <v-toolbar class="primary primaryText--text">
-    <v-toolbar-title> Add A Headline </v-toolbar-title>
+    <v-toolbar-title>New Headline </v-toolbar-title>
   </v-toolbar>
   <v-container fluid>
     <v-card-text>
@@ -12,9 +12,9 @@
       </v-form>
 
       <v-card-actions>
-        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">Submit</v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="close()" class="red white--text">Close</v-btn>
+        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">OK</v-btn>
+        <v-btn @click="close()" class="red white--text">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
   </v-container>

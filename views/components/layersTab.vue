@@ -1,33 +1,52 @@
 <template>
 <v-container class="pa-0" :style="style">
   <v-card class="pa-4">
+
     <v-card class="mb-1">
       <v-data-table v-model="selected" :items="layers" item-key="zIndex" :pagination.sync="pagination" class="elevation-1" hide-actions hide-headers select-all>
         <template slot="items" slot-scope="props">
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
             <td class="px-3">
-              <v-text-field v-model="props.item.name" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+              <v-tooltip bottom>
+                <v-text-field slot="activator" :value="props.item.name" @input="updateLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+                <span>Layer Name</span>
+              </v-tooltip>
             </td>
             <td class="px-0">
-              <v-btn class="ma-0" icon small @click="moveLayer(props.item.zIndex, 1)">
-                <v-icon small>arrow_upward</v-icon>
-              </v-btn>
-              <v-btn class="ma-0" icon small ma-0 @click="moveLayer(props.item.zIndex, -1)">
-                <v-icon small>arrow_downward</v-icon>
-              </v-btn>
-              <v-btn class="ma-0" icon small ma-0>
-                <v-icon small color="error">delete_forever</v-icon>
-              </v-btn>
+              <v-tooltip bottom>
+                <v-btn slot="activator" class="ma-0" icon small @click="moveLayer(props.item.zIndex, 1)">
+                  <v-icon small>arrow_upward</v-icon>
+                </v-btn>
+                <span>Move Up</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="moveLayer(props.item.zIndex, -1)">
+                  <v-icon small>arrow_downward</v-icon>
+                </v-btn>
+                <span>Move Down</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <v-btn slot="activator" class="ma-0" icon small ma-0>
+                  <v-icon small color="error">delete_forever</v-icon>
+                </v-btn>
+                <span>Delete Layer</span>
+              </v-tooltip>
             </td>
           </tr>
         </template>
       </v-data-table>
-      <v-btn color="primary" icon small absolute top left>
-        <v-icon small>playlist_add</v-icon>
-      </v-btn>
-      <v-btn color="primary" @click="addDialog = true" icon small absolute top right>
-        <v-icon small>save</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <v-btn slot="activator" color="primary" icon small absolute top left>
+          <v-icon small>playlist_add</v-icon>
+        </v-btn>
+        <span>Add New Layer</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn slot="activator" color="primary" @click="addDialog = true" icon small absolute top right>
+          <v-icon small>save</v-icon>
+        </v-btn>
+        <span>Save Headline</span>
+      </v-tooltip>
     </v-card>
     <v-divider></v-divider>
     <v-card v-if="selectedLayer.layerType === 'text'">
@@ -84,16 +103,12 @@ export default {
       layers: state => Array.from(state.layers.all)
     }),
     selectedLayer() {
-      if (this.layers.selectedLayer) {
-        this.selected = [ this.layers.selectedLayer.zIndex ]
-        return this.layers.selectedLayer
+      if (this.$store.state.layers.selectedLayer) {
+        this.selected = [this.$store.state.layers.selectedLayer.zIndex]
+        return this.$store.state.layers.selectedLayer
       }
       return {}
     },
-  },
-
-  mounted() {
-    // this.setSelectedLayer(this.layers.length - 1)
   },
 
   methods: {
@@ -108,8 +123,12 @@ export default {
       this.$emit('alert', success, callName, resource)
     },
 
+    updateLayerName(name) {
+      this.$store.commit('layers/updateLayerName', name)
+    },
+
     setSelectedLayer(zIndex) {
-      this.selected = [ zIndex ]
+      this.selected = [zIndex]
       this.$store.commit('layers/setSelectedLayer', zIndex)
     },
 

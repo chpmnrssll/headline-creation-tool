@@ -3,6 +3,8 @@ export default {
 
   state: {
     all: [],
+    scene: {},
+    selectedHeadline: {},
     selectedLayer: {}
   },
 
@@ -39,6 +41,30 @@ export default {
       })
     },
 
+    setSelectedHeadline(state, headline) {
+      state.selectedHeadline = headline
+    },
+
+    setScene(state, scene) {
+      state.scene = scene
+    },
+
+    clearScene(state) {
+      if (state.scene.children) {
+        state.scene.children.forEach(child => {
+          state.scene.removeChild(child)
+        })
+      }
+    },
+
+    updateLayerName(state, name) {
+      let layer = state.all.find(layer => layer.selected)
+      layer.content.attr({
+        name: name
+      })
+      layer.name = name
+    },
+
     updateLayerURL(state, url) {
       let layer = state.all.find(layer => layer.selected)
       layer.content.attr({
@@ -49,7 +75,9 @@ export default {
 
     updateLayerText(state, text) {
       let layer = state.all.find(layer => layer.selected)
-      layer.content.text = text
+      layer.content.attr({
+        text: text
+      })
       layer.text = text
     },
 

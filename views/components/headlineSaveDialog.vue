@@ -12,8 +12,8 @@
       </v-form>
 
       <v-card-actions>
-        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">Submit</v-btn>
         <v-spacer></v-spacer>
+        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">OK</v-btn>
         <v-btn @click="close()" class="red white--text">Close</v-btn>
       </v-card-actions>
     </v-card-text>

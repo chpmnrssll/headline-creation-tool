@@ -27,6 +27,9 @@ export default {
       layers: state => state.layers.all,
       settings: state => state.settings
     }),
+    selectedHeadline() {
+      return this.$store.state.layers.selectedHeadline
+    },
     style() {
       return {
         backgroundColor: this.settings.background.color,
@@ -36,19 +39,33 @@ export default {
     }
   },
 
-  watch: {
-    layers: {
-      deep: true,
-      handler: function (newValue, oldValue) {
-        this.buildLayers()
-        this.$router.push('home')
-      }
-    }
-  },
+  // watch: {
+  //   selectedHeadline: {
+  //     deep: true,
+  //     handler: function (newValue, oldValue) {
+  //       this.buildLayers()
+  //       alert('went off')
+  //
+  //       // artificial delay fixes layer positioning on start
+  //       new Promise((resolve, reject) => {
+  //         setTimeout(function () {
+  //           this.$store.commit('layers/setSelectedLayer', this.layers.length - 1)
+  //           resolve()
+  //         }, 500, 1)
+  //       })
+  //     }
+  //   }
+  // },
 
   methods: {
     buildLayers() {
-      Array.from(this.layers).forEach((layer, index) => {
+      // this.$store.commit('layers/clearScene')
+      this.scene.children.forEach(child => {
+        this.scene.removeChild(child)
+      })
+
+      let layers = Array.from(this.layers)
+      layers.forEach((layer, index) => {
         layer.spriteJSLayer = this.scene.layer(layer.name, {
           zIndex: layer.zIndex
         })
@@ -56,24 +73,19 @@ export default {
         switch (layer.layerType) {
         case 'image':
           layer.content = new Sprite({
+            ...layer,
             anchor: [0.5, 0.5],
             pos: ['50%', '50%'],
             textures: layer.url,
-            zIndex: layer.zIndex
           })
           break
         case 'text':
           layer.content = new Label({
+            ...layer,
             anchor: [0.5, 0.5],
+            pos: ['50%', '50%'],
             color: layer.font.color,
             font: `${layer.font.style} ${layer.font.size} ${layer.font.family}`,
-            pos: ['50%', '50%'],
-            rotate: layer.rotate,
-            scale: layer.scale,
-            shadow: layer.shadow,
-            text: layer.text,
-            translate: layer.translate,
-            zIndex: layer.zIndex
           })
 
           break
@@ -89,10 +101,19 @@ export default {
   },
 
   async mounted() {
+    // this.$store.commit('layers/setScene',
+    //   new Scene('#canvas', {
+    //     resolution: 'flex',
+    //     stickExtend: true,
+    //     // stickmode: 'width',
+    //     // viewport: 'auto',
+    //   })
+    // )
+
     this.scene = new Scene('#canvas', {
-      // stickmode: 'width',
-      stickExtend: true,
       resolution: 'flex',
+      stickExtend: true,
+      // stickmode: 'width',
       // viewport: 'auto',
     })
 
