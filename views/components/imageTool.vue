@@ -1,11 +1,12 @@
 <template>
 <v-container :style="style">
-  <v-text-field v-if="selectedLayer" :value="selectedLayer.url" @input="updateLayerURL" label="URL"></v-text-field>
-  <!-- <v-textarea name="input-7-1" label="Default style" value="v-textarea.value" hint="Hint text"></v-textarea> -->
+  <v-text-field v-if="selectedLayer" :value="selectedLayer.textures" @input="updateLayerTextures" label="URL"></v-text-field>
 </v-container>
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapState } from 'vuex'
+
 export default {
   data: () => ({
     style: {
@@ -15,18 +16,16 @@ export default {
   }),
 
   computed: {
-    selectedLayer() {
-      if (this.$store.state.layers.selectedLayer) {
-        return this.$store.state.layers.all.find(layer => layer.selected)
-      }
-      return {}
-    },
+    ...mapState({
+      selectedHeadline: state => state.data.selectedHeadline,
+      selectedLayer: state => state.data.selectedLayer
+    }),
   },
 
   methods: {
-    updateLayerURL(url) {
-      this.$store.commit('layers/updateLayerURL', url)
-    },
+    ...mapMutations({
+      updateLayerTextures: 'data/updateSelectedLayerTextures'
+    })
   }
 }
 </script>

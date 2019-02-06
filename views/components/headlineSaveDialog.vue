@@ -41,13 +41,9 @@ export default {
 
   computed: {
     ...mapState({
-      layers: state => state.layers.all
-    }),
-    // headline() {
-    //   return {
-    //     ...this.layers
-    //   }
-    // }
+      headline: state => state.headline,
+      layers: state => state.headline.layers
+    })
   },
 
   methods: {

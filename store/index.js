@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import layers from './modules/layers'
+import data from './modules/data'
 import settings from './modules/settings'
+// import spriteJS from './modules/spriteJS'
 
 Vue.use(Vuex)
 
@@ -9,8 +10,10 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
   modules: {
-    layers,
-    settings
+    data,
+    settings,
+    // spriteJS,
   },
-  strict: debug,
+  // strict: debug,
+  strict: true,
 })

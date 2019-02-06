@@ -1,5 +1,5 @@
 <template>
-<v-container class="pa-0" :style="style">
+<v-container class="pa-0">
   <v-card class="pa-4">
 
     <v-card class="mb-1">
@@ -8,25 +8,25 @@
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
             <td class="px-3">
               <v-tooltip bottom>
-                <v-text-field slot="activator" :value="props.item.name" @input="updateLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+                <v-text-field slot="activator" :value="props.item.name" @input="updateSelectedLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
                 <span>Layer Name</span>
               </v-tooltip>
             </td>
             <td class="px-0">
               <v-tooltip bottom>
-                <v-btn slot="activator" class="ma-0" icon small @click="moveLayer(props.item.zIndex, 1)">
+                <v-btn slot="activator" class="ma-0" icon small @click="moveLayer({ zIndex: props.item.zIndex, direction: 1 })">
                   <v-icon small>arrow_upward</v-icon>
                 </v-btn>
                 <span>Move Up</span>
               </v-tooltip>
               <v-tooltip bottom>
-                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="moveLayer(props.item.zIndex, -1)">
+                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="moveLayer({ zIndex: props.item.zIndex, direction: -1 })">
                   <v-icon small>arrow_downward</v-icon>
                 </v-btn>
                 <span>Move Down</span>
               </v-tooltip>
               <v-tooltip bottom>
-                <v-btn slot="activator" class="ma-0" icon small ma-0>
+                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="removeLayer(props.item.zIndex)">
                   <v-icon small color="error">delete_forever</v-icon>
                 </v-btn>
                 <span>Delete Layer</span>
@@ -49,11 +49,9 @@
       </v-tooltip>
     </v-card>
     <v-divider></v-divider>
-    <v-card v-if="selectedLayer.layerType === 'text'">
-      <textTool></textTool>
-    </v-card>
-    <v-card v-else="selectedLayer.layerType === 'image'">
-      <imageTool></imageTool>
+    <v-card>
+      <textTool v-if="selectedLayer.layerType === 'text'"></textTool>
+      <imageTool v-else="selectedLayer.layerType === 'image'"></imageTool>
     </v-card>
   </v-card>
 
@@ -72,14 +70,8 @@
 </template>
 
 <script>
-import {
-  http
-} from "../config/http.js"
-import {
-  mapActions,
-  mapGetters,
-  mapState,
-} from 'vuex'
+import { http } from "../config/http.js"
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import headlineSaveDialog from '../components/headlineSaveDialog.vue'
 import textTool from '../components/textTool'
 import imageTool from '../components/imageTool'
@@ -87,31 +79,39 @@ import imageTool from '../components/imageTool'
 export default {
   data: () => ({
     addDialog: false,
-    selected: [],
     pagination: {
       descending: true,
       sortBy: 'zIndex',
     },
-    style: {
-      // height: '75vh',
-      // backgroundColor: '#444'
-    },
+    layers: [],
   }),
 
   computed: {
     ...mapState({
-      layers: state => Array.from(state.layers.all)
+      selectedHeadline: state => state.data.selectedHeadline,
+      selectedLayer: state => state.data.selectedLayer
     }),
-    selectedLayer() {
-      if (this.$store.state.layers.selectedLayer) {
-        this.selected = [this.$store.state.layers.selectedLayer.zIndex]
-        return this.$store.state.layers.selectedLayer
+    selected() {
+      return [ this.selectedLayer.zIndex ]
+    },
+  },
+
+  watch: {
+    selectedHeadline(newValue, oldValue) {
+      if (newValue) {
+        this.layers = newValue.layers
       }
-      return {}
     },
   },
 
   methods: {
+    ...mapMutations({
+      updateSelectedLayerName: 'data/updateSelectedLayerName',
+      setSelectedLayer: 'data/setSelectedLayer',
+      moveLayer: 'data/moveLayer',
+      removeLayer: 'data/removeLayer'
+    }),
+
     saveHeadline() {
       window.alert('saveHeadline')
     },
@@ -122,22 +122,6 @@ export default {
       console.log('Page Alerting')
       this.$emit('alert', success, callName, resource)
     },
-
-    updateLayerName(name) {
-      this.$store.commit('layers/updateLayerName', name)
-    },
-
-    setSelectedLayer(zIndex) {
-      this.selected = [zIndex]
-      this.$store.commit('layers/setSelectedLayer', zIndex)
-    },
-
-    moveLayer(zIndex, direction) {
-      this.$store.commit('layers/moveLayer', {
-        zIndex: zIndex,
-        direction: direction
-      })
-    }
   },
 
   components: {

@@ -49,7 +49,7 @@ export default {
     edit() {
       this.editDone = false
       http
-        .put("/layers/" + this.headline._id, this.changedHeadline)
+        .put("/headlines/" + this.headline._id, this.changedHeadline)
         .then(response => {
           this.alert(true, 'Edit', 'Headline')
           this.editDone = true

@@ -124,8 +124,8 @@ export default {
     },
 
     openCanvas(headline) {
-      this.$store.commit('layers/setLayers', headline.layers)
-      this.$store.commit('layers/setSelectedHeadline', headline)
+      this.$store.commit('headline/setLayers', headline.layers)
+      this.$store.commit('headline/setSelectedHeadline', headline)
       this.$router.push('/#/home')
     },
 

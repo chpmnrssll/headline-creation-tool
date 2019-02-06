@@ -1,12 +1,13 @@
 <template>
-<v-container :style="style">
+<v-container>
   <v-layout row>
     <v-flex>
       <spriteJSCanvas></spriteJSCanvas>
     </v-flex>
+
     <v-flex xs4 ml-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
-        <v-tab ripple>Layers</v-tab>
+        <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
         <v-tab-item>
           <layersTab></layersTab>
         </v-tab-item>
@@ -16,33 +17,58 @@
         </v-tab-item>
       </v-tabs>
     </v-flex>
+
   </v-layout>
 </v-container>
 </template>
 
 <script>
-import {
-  mapState,
-  mapActions
-}
-from 'vuex'
 import layersTab from '../components/layersTab'
 import settingsTab from '../components/settingsTab'
 import spriteJSCanvas from '../components/spriteJSCanvas'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   data: () => ({
-    style: {
-      // height: '75vh',
-      // backgroundColor: '#444'
-    },
     activeTab: null,
     isDarkMode: false,
   }),
 
-  computed: mapState({
-    layers: state => state.layers
-  }),
+  computed: {
+    ...mapState({
+      settings: state => state.settings,
+      headlineLoaded: state => state.data.headlineLoaded
+    }),
+    canvasStyle() {
+      return {
+        backgroundColor: this.settings.background.color,
+        minHeight: '75vh',
+        overflow: 'hidden'
+      }
+    },
+  },
+
+  components: {
+    layersTab: layersTab,
+    settingsTab: settingsTab,
+    spriteJSCanvas: spriteJSCanvas
+  },
+
+  methods: {
+    ...mapActions({
+      defaultHeadline: 'data/defaultHeadline',
+      loadHeadlines: 'data/loadHeadlines',
+    }),
+    ...mapMutations({
+      setHeadlineLoaded: 'data/setHeadlineLoaded'
+    }),
+  },
+
+  mounted() {
+    this.defaultHeadline().then(() => {
+      this.setHeadlineLoaded(true)
+    })
+  },
 
   watch: {
     isDarkMode() {
@@ -65,14 +91,5 @@ export default {
     }
   },
 
-  created() {
-    this.$store.dispatch('layers/loadMockLayers')
-  },
-
-  components: {
-    layersTab: layersTab,
-    settingsTab: settingsTab,
-    spriteJSCanvas: spriteJSCanvas,
-  },
 }
 </script>
