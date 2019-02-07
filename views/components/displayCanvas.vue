@@ -19,8 +19,9 @@ import {
 export default {
   data: () => {
     return {
-      scene: {},
+      fontsLoaded: [],
       images: [],
+      scene: {},
     }
   },
 
@@ -155,7 +156,15 @@ export default {
       // if (font.style.underline) {
       //   style += 'underline '
       // }
-      return `${style} ${font.size}px ${font.family}`
+      if (!this.fontsLoaded.includes(font.family)) {
+        let link = document.createElement('link')
+        let firstScript = document.getElementsByTagName('script')[0]
+        link.rel = "stylesheet"
+        link.href = `https://fonts.googleapis.com/css?family=${font.family}`
+        firstScript.parentNode.insertBefore(link, firstScript)
+        this.fontsLoaded.push(font.family)
+      }
+      return `${style}${font.size}px ${font.family.split(':')[0].replace('+', ' ')}`
     },
 
     measureText(text, font) {

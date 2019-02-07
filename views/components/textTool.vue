@@ -17,7 +17,7 @@
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFont.family" @input="updateLayerPrimaryFontFamily" label="Family"></v-select>
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFontFamily" @change="setPrimaryFontFamily" label="Family"></v-select>
       </v-layout>
 
       <v-layout mx-4>
@@ -69,7 +69,7 @@
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFont.family" @input="updateLayerSecondaryFontFamily" label="Family"></v-select>
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFontFamily" @change="setSecondaryFontFamily" label="Family"></v-select>
       </v-layout>
 
       <v-layout mx-4>
@@ -126,17 +126,31 @@ export default {
       // height: '75vh',
       // backgroundColor: '#444'
     },
+    primaryFontFamily: '',
+    secondaryFontFamily: '',
     font: {
       justify: null,
       size: '16',
       style: [],
       families: [
-        'Arial',
-        'Calibri',
-        'Courier',
-        'Verdana',
-        'Luckiest Guy',
-        'Permanent Marker'
+        { text: 'Arima Madurai', value: 'Arima+Madurai:400,700' },
+        { text: 'Arvo', value: 'Arvo:400,400i,700,700i' },
+        { text: 'Atma', value: 'Atma:400,700' },
+        { text: 'Chewy', value: 'Chewy:400' },
+        { text: 'Comfortaa', value: 'Comfortaa:400,700' },
+        { text: 'Fahkwang', value: 'Fahkwang:400,400i,500,500i' },
+        { text: 'Lato', value: 'Lato:400,400i,700,700i' },
+        { text: 'Lobster', value: 'Lobster:400' },
+        { text: 'Luckiest Guy', value: 'Luckiest+Guy:400' },
+        { text: 'Merriweather', value: 'Merriweather:400,400i,700,700i' },
+        { text: 'Montserrat', value: 'Montserrat:400,400i,700,700i' },
+        { text: 'Open Sans', value: 'Open+Sans:400,400i,700,700i' },
+        { text: 'Overlock', value: 'Overlock:400,400i,700,700i' },
+        { text: 'Permanent Marker', value: 'Permanent+Marker:400' },
+        { text: 'Roboto', value: 'Roboto:400,400i,700,700i' },
+        { text: 'Roboto Condensed', value: 'Roboto+Condensed:400,400i,700,700i' },
+        { text: 'Share', value: 'Share:400,400i,700,700i' },
+        { text: 'Staatliches', value: 'Staatliches:400' },
       ],
     },
   }),
@@ -152,6 +166,14 @@ export default {
     secondaryFont() {
       return this.selectedLayer.font.secondary || this.selectedLayer.font.primary
     },
+  },
+
+  mounted() {
+    this.primaryFontFamily = this.primaryFont.family
+    this.secondaryFontFamily = this.primaryFont.family
+    if(this.secondaryFontFamily) {
+      this.secondaryFontFamily = this.secondaryFont.family
+    }
   },
 
   methods: {
@@ -172,6 +194,16 @@ export default {
       setLayerSecondaryFontUnderline: 'data/setLayerSecondaryFontUnderline',
       setLayerSecondaryFontAlign: 'data/setLayerSecondaryFontAlign',
     }),
+
+    setPrimaryFontFamily(value) {
+      this.updateLayerPrimaryFontFamily(value)
+      this.primaryFontFamily = value
+    },
+    setSecondaryFontFamily(value) {
+      this.updateLayerSecondaryFontFamily(value)
+      this.secondaryFontFamily = value
+    },
+
     triggerPrimaryColorPicker() {
       this.font.style.splice(this.font.style.findIndex(value => value === 'primaryColor'), 1)
       document.getElementById('primaryColorPicker').click()
