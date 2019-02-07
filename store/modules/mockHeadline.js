@@ -19,7 +19,7 @@ export default {
       font: {
         primary: {
           color: '#ffdc45',
-          family: 'Luckiest Guy',
+          family: 'Staatliches:400',
           shadow: {
             blur: 12,
             color: '#000',
@@ -28,10 +28,10 @@ export default {
               y: 4
             },
           },
-          size: 52,
+          size: 64,
           style: {
-            bold: false,
-            italic: false,
+            bold: true,
+            italic: true,
             underline: false
           },
         }
@@ -55,7 +55,7 @@ export default {
       font: {
         primary: {
           color: '#bb99cc',
-          family: 'Permanent Marker',
+          family: 'Permanent+Marker:400',
           shadow: {
             blur: 4,
             color: '#000',
@@ -73,7 +73,7 @@ export default {
         },
         secondary: {
           color: '#99ccbb',
-          family: 'Luckiest Guy',
+          family: 'Luckiest+Guy:400',
           shadow: {
             blur: 10,
             color: '#000',
