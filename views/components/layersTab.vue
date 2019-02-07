@@ -26,7 +26,7 @@
                 <span>Move Down</span>
               </v-tooltip>
               <v-tooltip bottom>
-                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="removeLayer(props.item.zIndex)">
+                <v-btn slot="activator" class="ma-0" icon small ma-0 @click="removeThisLayer(props.item.zIndex)">
                   <v-icon small color="error">delete_forever</v-icon>
                 </v-btn>
                 <span>Delete Layer</span>
@@ -36,34 +36,45 @@
         </template>
       </v-data-table>
       <v-tooltip bottom>
-        <v-btn slot="activator" color="primary" icon small absolute top left>
+        <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
           <v-icon small>playlist_add</v-icon>
         </v-btn>
         <span>Add New Layer</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <v-btn slot="activator" color="primary" @click="addDialog = true" icon small absolute top right>
+        <v-btn slot="activator" color="primary" @click="saveHeadline = true" icon small absolute top right>
           <v-icon small>save</v-icon>
         </v-btn>
         <span>Save Headline</span>
       </v-tooltip>
     </v-card>
     <v-divider></v-divider>
-    <v-card>
+    <v-card v-if="selectedLayer">
       <textTool v-if="selectedLayer.layerType === 'text'"></textTool>
       <imageTool v-else="selectedLayer.layerType === 'image'"></imageTool>
     </v-card>
   </v-card>
 
   <!-- Add Dialog Button -->
-  <v-dialog v-model="addDialog" lazy absolute max-width="50%">
+  <v-dialog v-model="saveHeadline" lazy absolute max-width="50%">
     <v-btn class="primaryText--text" icon slot="activator">
       <v-icon>control_point</v-icon>
     </v-btn>
 
     <!-- Add Dialog -->
-    <headlineSaveDialog @closeAdd="addDialog = false" @alert="alert">
+    <headlineSaveDialog @closeSave="saveHeadline = false" @alert="alert">
     </headlineSaveDialog>
+  </v-dialog>
+
+  <!-- Add Dialog Button -->
+  <v-dialog v-model="addLayer" lazy absolute max-width="50%">
+    <v-btn class="primaryText--text" icon slot="activator">
+      <v-icon>control_point</v-icon>
+    </v-btn>
+
+    <!-- Add Dialog -->
+    <layerAddDialog @closeAdd="addLayer = false" @alert="alert">
+    </layerAddDialog>
   </v-dialog>
 
 </v-container>
@@ -73,12 +84,14 @@
 import { http } from "../config/http.js"
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import headlineSaveDialog from '../components/headlineSaveDialog.vue'
+import layerAddDialog from '../components/layerAddDialog.vue'
 import textTool from '../components/textTool'
 import imageTool from '../components/imageTool'
 
 export default {
   data: () => ({
-    addDialog: false,
+    addLayer: false,
+    saveHeadline: false,
     pagination: {
       descending: true,
       sortBy: 'zIndex',
@@ -89,10 +102,15 @@ export default {
   computed: {
     ...mapState({
       selectedHeadline: state => state.data.selectedHeadline,
-      selectedLayer: state => state.data.selectedLayer
+      selectedLayer: state => state.data.selectedLayer,
+      // refreshLayers: state => state.data.refreshLayers
     }),
     selected() {
-      return [ this.selectedLayer.zIndex ]
+      if (this.selectedLayer) {
+        return [ this.selectedLayer.zIndex ]
+      } else {
+        return []
+      }
     },
   },
 
@@ -108,12 +126,15 @@ export default {
     ...mapMutations({
       updateSelectedLayerName: 'data/updateSelectedLayerName',
       setSelectedLayer: 'data/setSelectedLayer',
+      setRefreshLayers: 'data/setRefreshLayers',
       moveLayer: 'data/moveLayer',
       removeLayer: 'data/removeLayer'
     }),
 
-    saveHeadline() {
-      window.alert('saveHeadline')
+    removeThisLayer(zIndex) {
+      this.setSelectedLayer(0)
+      this.removeLayer(zIndex)
+      this.layers = this.selectedHeadline.layers
     },
 
     // Will emit an alert, followed by a boolean for success, the type of call
@@ -127,7 +148,8 @@ export default {
   components: {
     textTool: textTool,
     imageTool: imageTool,
-    headlineSaveDialog: headlineSaveDialog
+    headlineSaveDialog: headlineSaveDialog,
+    layerAddDialog: layerAddDialog
   },
 }
 </script>

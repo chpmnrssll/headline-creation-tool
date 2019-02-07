@@ -1,6 +1,6 @@
 <template>
 <v-container :style="style">
-  <v-text-field v-if="selectedLayer" :value="selectedLayer.textures" @input="updateLayerTextures" label="URL"></v-text-field>
+  <v-text-field v-if="selectedLayer" :value="selectedLayer.image" @change="updateLayerImage" label="URL"></v-text-field>
 </v-container>
 </template>
 
@@ -24,7 +24,7 @@ export default {
 
   methods: {
     ...mapMutations({
-      updateLayerTextures: 'data/updateSelectedLayerTextures'
+      updateLayerImage: 'data/updateSelectedLayerImage'
     })
   }
 }

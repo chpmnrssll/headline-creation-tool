@@ -1,7 +1,7 @@
 <template>
 <v-card>
   <v-toolbar class="primary primaryText--text">
-    <v-toolbar-title>New Headline </v-toolbar-title>
+    <v-toolbar-title>New Headline</v-toolbar-title>
   </v-toolbar>
   <v-container fluid>
     <v-card-text>
@@ -28,8 +28,6 @@ export default {
   data: () => ({
     headline: {
       name: '',
-      type: '',
-      zIndex: 0,
     },
     submitDone: true,
   }),
@@ -37,38 +35,24 @@ export default {
   methods: {
     submit() {
       this.submitDone = false
-      http
-        .post("/headlines", this.headline)
+      http.post("/headlines", this.headline)
         .then(response => {
-          this.submitDone = true
-          this.alert(true, 'Create', 'Headline')
           this.close()
+          this.alert(true, 'Create', 'Headline')
         })
         .catch(e => {
-          this.submitDone = true
+          this.close()
           this.alert(false, 'Create', 'Headline')
         });
     },
 
-    load() {
-      this.headline = {
-        name: '',
-        layers: [],
-      }
+    close() {
+      this.$emit('closeAdd')
       this.submitDone = true
     },
 
-    close() {
-      this.load()
-      this.$emit('closeAdd')
-    },
-
     checkForm() {
-      if (this.headline.name == '') {
-        return true
-      } else {
-        return false
-      }
+      return this.headline.name === '' ? true : false
     },
 
     alert(success, callName, resource) {

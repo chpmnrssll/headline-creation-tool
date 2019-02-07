@@ -8,13 +8,14 @@
 
       <!-- Begin Input Row -->
       <v-form ref="form">
-        <v-text-field label="Name" v-model="layer.name" required> </v-text-field>
+        <v-text-field v-model="newLayer.name" label="Name" required></v-text-field>
+        <v-select mx-4 v-model="newLayer.layerType" :items="layerTypes" label="Layer Type"></v-select>
       </v-form>
 
       <v-card-actions>
-        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">Submit</v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="close()" class="red white--text">Close</v-btn>
+        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">OK</v-btn>
+        <v-btn @click="close()" class="red white--text">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
   </v-container>
@@ -23,57 +24,50 @@
 
 <script>
 import { http } from '../config/http'
+import { mapMutations } from 'vuex'
 
 export default {
   data: () => ({
-    layer: {
-      name: '',
-      type: '',
-      zIndex: 0,
+    newLayer: {
+      name: 'New Layer',
+      layerType: 'text',
     },
+    layerTypes: [
+      { text: 'Text', value: 'text' },
+      { text: 'Image', value: 'image'}
+    ],
     submitDone: true,
   }),
 
   methods: {
+    ...mapMutations({
+      addLayer: 'data/addLayer'
+    }),
+
     submit() {
       this.submitDone = false
-      http
-        .post("/headlines", this.layer)
-        .then(response => {
-          this.submitDone = true
-          this.alert(true, 'Create', 'Layer')
-          this.close()
-        })
-        .catch(e => {
-          this.submitDone = true
-          this.alert(false, 'Create', 'Layer')
-        });
-    },
 
-    load() {
-      this.layer = {
-        name: '',
-        type: '',
-        zIndex: 0,
+      try {
+        this.addLayer(this.newLayer)
+        this.close()
+        this.alert(true, 'Create', 'Layer')
+      } catch (e) {
+        this.close()
+        this.alert(false, 'Create', 'Layer')
       }
-      this.submitDone = true
     },
 
     close() {
-      this.load()
       this.$emit('closeAdd')
+      this.submitDone = true
     },
 
     checkForm() {
-      if (this.layer.name == '') {
-        return true
-      } else {
-        return false
-      }
+      return this.newLayer.name === '' ? true : false
     },
 
     alert(success, callName, resource) {
-      console.log('Add Alerting')
+      console.log('Add Layer Alerting')
       this.$emit('alert', success, callName, resource)
     }
   }

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import data from './modules/data'
 import settings from './modules/settings'
-// import spriteJS from './modules/spriteJS'
+// import canvas from './modules/canvas'
 
 Vue.use(Vuex)
 
@@ -12,7 +12,7 @@ export default new Vuex.Store({
   modules: {
     data,
     settings,
-    // spriteJS,
+    // canvas,
   },
   // strict: debug,
   strict: true,

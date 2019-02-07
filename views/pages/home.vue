@@ -2,7 +2,7 @@
 <v-container>
   <v-layout row>
     <v-flex>
-      <spriteJSCanvas></spriteJSCanvas>
+      <displayCanvas></displayCanvas>
     </v-flex>
 
     <v-flex xs4 ml-4>
@@ -25,7 +25,7 @@
 <script>
 import layersTab from '../components/layersTab'
 import settingsTab from '../components/settingsTab'
-import spriteJSCanvas from '../components/spriteJSCanvas'
+import displayCanvas from '../components/displayCanvas'
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
@@ -51,7 +51,7 @@ export default {
   components: {
     layersTab: layersTab,
     settingsTab: settingsTab,
-    spriteJSCanvas: spriteJSCanvas
+    displayCanvas: displayCanvas
   },
 
   methods: {

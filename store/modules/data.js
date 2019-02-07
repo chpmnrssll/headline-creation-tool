@@ -1,4 +1,5 @@
-import { http } from "../../views/config/http.js"
+import { http } from "../../views/config/http"
+import mockHeadline from './mockHeadline'
 
 export default {
   namespaced: true,
@@ -6,43 +7,27 @@ export default {
   state: {
     headlines: [],
     headlineLoaded: false,
+    refreshImages: false,
     selectedHeadline: {},
     selectedLayer: {},
-    // selectedLayerFont: '',
-  },
-
-  getters: {
-    getSpriteJSFont: (state, getters) => (name) => {
-      let layer = getters.selectedHeadline.layers.find(layer => layer.name = name)
-      return `${getters.selectedLayer.font.style} ${getters.selectedLayer.font.size}px ${getters.selectedLayer.font.family}`
-    },
-    getSpriteJSLayer: (state, getters) => (name) => {
-      return {
-        ...getters.selectedHeadline.layers.find(layer => layer.name = name),
-        font: getters.getSpriteJSFont(name)
-      }
-    }
   },
 
   actions: {
-
     loadHeadlines(context) {
-      http
-        .get("headlines")
-        .then(response => {
-          return new Promise((resolve, reject) => {
-            context.commit('headlines', response.data.headlines)
-            resolve()
-          })
+      http.get("headlines").then(response => {
+        return new Promise((resolve, reject) => {
+          context.commit('headlines', response.data.headlines)
+          resolve()
         })
-        .catch(e => {
-          this.errors.push(e)
-        })
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
     },
 
     defaultHeadline(context) {
       return new Promise((resolve, reject) => {
-        context.commit('headlines', [ mockHeadline ])
+        context.commit('headlines', [mockHeadline])
         context.commit('setSelectedHeadline', mockHeadline.name)
         context.commit('setSelectedLayer', mockHeadline.layers.length - 1)
         resolve()
@@ -52,6 +37,15 @@ export default {
 
   mutations: {
     headlines(state, headlines) {
+      headlines.forEach(headline => {
+        headline.layers.forEach(layer => {
+          if (layer.font) {
+            if (undefined === layer.font.secondary) {
+              layer.font.secondary = layer.font.primary
+            }
+          }
+        })
+      })
       state.headlines = headlines
     },
 
@@ -74,7 +68,9 @@ export default {
 
       // Set the layer at zIndex as selected
       state.selectedLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
-      state.selectedLayer.selected = true
+      if(state.selectedLayer) {
+        state.selectedLayer.selected = true
+      }
       state.selectedHeadline.layers.sort((a, b) => a.zIndex - b.zIndex)
     },
 
@@ -92,99 +88,248 @@ export default {
       state.selectedHeadline.layers = state.selectedHeadline.layers.filter(layer => layer.zIndex !== zIndex)
     },
 
+    addLayer(state, newLayer) {
+      state.selectedHeadline.layers.push({
+        ...newLayer,
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        },
+        font: {
+          primary: {
+            color: '#000',
+            family: 'Arial',
+            shadow: {
+              blur: 0,
+              color: '#000',
+              offset: {
+                x: 0,
+                y: 0
+              },
+            },
+            size: 16,
+            style: {
+              bold: false,
+              italic: false,
+              underline: false
+            },
+          },
+          secondary: {
+            color: '#000',
+            family: 'Arial',
+            shadow: {
+              blur: 0,
+              color: '#000',
+              offset: {
+                x: 0,
+                y: 0
+              },
+            },
+            size: 16,
+            style: {
+              bold: false,
+              italic: false,
+              underline: false
+            },
+          }
+        },
+        image: '',
+        rotate: -5,
+        text: '',
+        translate: {
+          x: 0,
+          y: 0
+        },
+        zIndex: state.selectedHeadline.layers.length,
+      })
+    },
+
+    setRefreshImages(state, value) {
+      state.refreshImages = value
+    },
+
     updateSelectedHeadlineName(state, name) {
       state.selectedHeadline.name = name
     },
-    updateSelectedLayerName(state, name) {
+    updateLayerName(state, name) {
       state.selectedLayer.name = name
     },
-    updateSelectedLayerTextures(state, textures) {
-      state.selectedLayer.textures = textures
+    updateLayerImage(state, image) {
+      state.selectedLayer.image = image
+      state.refreshImages = true
     },
-    updateSelectedLayerText(state, text) {
+    updateLayerText(state, text) {
       state.selectedLayer.text = text
     },
-    updateSelectedLayerPrimaryFontColor(state, e) {
+
+    updateLayerPrimaryFontColor(state, e) {
       state.selectedLayer.font.primary.color = e.target.value
     },
-    updateSelectedLayerPrimaryFontFamily(state, family) {
+    updateLayerPrimaryFontFamily(state, family) {
       state.selectedLayer.font.primary.family = family
     },
-    updateSelectedLayerPrimaryFontSize(state, size) {
+    updateLayerPrimaryFontSize(state, size) {
       state.selectedLayer.font.primary.size = size
     },
-    updateSelectedLayerSecondaryFontColor(state, e) {
+    setLayerPrimaryFontBold(state, value) {
+      state.selectedLayer.font.primary.style.bold = value
+    },
+    setLayerPrimaryFontItalic(state, value) {
+      state.selectedLayer.font.primary.style.italic = value
+    },
+    setLayerPrimaryFontUnderline(state, value) {
+      state.selectedLayer.font.primary.style.underline = value
+    },
+    setLayerPrimaryFontAlign(state, value) {
+      state.selectedLayer.font.primary.style.align = value
+    },
+
+    updateLayerSecondaryFontColor(state, e) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
       state.selectedLayer.font.secondary.color = e.target.value
     },
-    updateSelectedLayerSecondaryFontFamily(state, family) {
+    updateLayerSecondaryFontFamily(state, family) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
       state.selectedLayer.font.secondary.family = family
     },
-    updateSelectedLayerSecondaryFontSize(state, size) {
+    updateLayerSecondaryFontSize(state, size) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
       state.selectedLayer.font.secondary.size = size
+    },
+    setLayerSecondaryFontBold(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.style.bold = value
+    },
+    setLayerSecondaryFontItalic(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.style.italic = value
+    },
+    setLayerSecondaryFontUnderline(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.style.underline = value
+    },
+    setLayerSecondaryFontAlign(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.style.align = value
     },
   },
 }
 
-const mockHeadline = {
-  name: 'mock headline',
-  layers: [{
-    anchor: [0.5, 0.5],
-    layerType: 'image',
-    name: 'Random 960x540 Image',
-    pos: ['50%', '50%'],
-    textures: 'https://picsum.photos/640/280/?random',
-    zIndex: 0,
-  },
-  {
-    anchor: [0.5, 0.5],
-    font: {
-      primary: {
-        color: '#ffdc45',
-        family: 'Luckiest Guy',
-        style: '',
-        size: 48,
-      }
-    },
-    layerType: 'text',
-    name: 'Big Text',
-    pos: ['50%', '50%'],
-    rotate: -5,
-    shadow: {
-      blur: 15,
-      color: '#000',
-      offset: [4, 8],
-    },
-    text: 'Headline Creation Tool',
-    translate: [0, -50],
-    zIndex: 1,
-  },
-  {
-    anchor: [0.5, 0.5],
-    font: {
-      primary: {
-        color: '#bb99cc',
-        family: 'Permanent Marker',
-        style: '',
-        size: 32,
-      },
-      secondary: {
-        color: '#99ccbb',
-        family: 'Luckiest Guy',
-        style: 'bold',
-        size: 64,
-      }
-    },
-    layerType: 'text',
-    name: 'Little Text',
-    pos: ['50%', '50%'],
-    rotate: -3,
-    shadow: {
-      blur: 5,
-      color: '#000',
-      offset: [2, 2],
-    },
-    text: 'Now with {{99%}} More Canvas',
-    translate: [0, 25],
-    zIndex: 2,
-  }]
-}
+// const mockHeadline = {
+//   name: 'mock headline',
+//   layers: [{
+//       anchor: {
+//         x: 0.5,
+//         y: 0.5
+//       },
+//       layerType: 'image',
+//       name: 'Random Image',
+//       image: 'https://picsum.photos/640/280/?random',
+//       zIndex: 0,
+//     },
+//
+//     {
+//       anchor: {
+//         x: 0.5,
+//         y: 0.5
+//       },
+//       font: {
+//         primary: {
+//           color: '#ffdc45',
+//           family: 'Luckiest Guy',
+//           shadow: {
+//             blur: 12,
+//             color: '#000',
+//             offset: {
+//               x: 2,
+//               y: 4
+//             },
+//           },
+//           size: 52,
+//           style: {
+//             bold: false,
+//             italic: false,
+//             underline: false
+//           },
+//         }
+//       },
+//       layerType: 'text',
+//       name: 'Big Text',
+//       rotate: -5,
+//       text: 'Headline Creation Tool',
+//       translate: {
+//         x: 0,
+//         y: -60
+//       },
+//       zIndex: 2,
+//     },
+//
+//     {
+//       anchor: {
+//         x: 0.5,
+//         y: 0.5
+//       },
+//       font: {
+//         primary: {
+//           color: '#bb99cc',
+//           family: 'Permanent Marker',
+//           shadow: {
+//             blur: 4,
+//             color: '#000',
+//             offset: {
+//               x: 2,
+//               y: 2
+//             },
+//           },
+//           size: 24,
+//           style: {
+//             bold: false,
+//             italic: false,
+//             underline: false
+//           },
+//         },
+//         secondary: {
+//           color: '#99ccbb',
+//           family: 'Luckiest Guy',
+//           shadow: {
+//             blur: 10,
+//             color: '#000',
+//             offset: {
+//               x: 2,
+//               y: 4
+//             },
+//           },
+//           size: 64,
+//           style: {
+//             bold: true,
+//             italic: false,
+//             underline: false
+//           },
+//         }
+//       },
+//       layerType: 'text',
+//       name: 'Little Text',
+//       rotate: -3,
+//       text: 'Now with {{99%}} More {{Canvas!!!}}',
+//       translate: {
+//         x: 0,
+//         y: 75
+//       },
+//       zIndex: 1,
+//     }
+//   ]
+// }
