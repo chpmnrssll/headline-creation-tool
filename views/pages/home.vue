@@ -1,11 +1,11 @@
 <template>
 <v-container>
-  <v-layout row>
-    <v-flex>
+  <v-layout v-bind="layout">
+    <v-flex mb-4>
       <displayCanvas></displayCanvas>
     </v-flex>
 
-    <v-flex xs4 ml-4>
+    <v-flex xs4 mx-4>
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
         <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
         <v-tab-item>
@@ -39,11 +39,11 @@ export default {
       settings: state => state.settings,
       headlineLoaded: state => state.data.headlineLoaded
     }),
-    canvasStyle() {
-      return {
-        backgroundColor: this.settings.background.color,
-        minHeight: '75vh',
-        overflow: 'hidden'
+    layout() {
+      if (this.$vuetify.breakpoint.mdAndUp) {
+        return { row: true }
+      } else {
+        return { column: true }
       }
     },
   },
