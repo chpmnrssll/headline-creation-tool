@@ -1,12 +1,14 @@
-<template>
-<v-container id="canvas" :style="style" pa-0>
-  <svg width="100%" height="100%" :style="{ position: 'absolute' }">
-    <pattern id="pattern" x="0" y="0" :width="settings.background.pattern.size * 2" :height="settings.background.pattern.size * 2" patternUnits="userSpaceOnUse">
-      <rect :fill="settings.background.pattern.color" x="0" y="0" :width="settings.background.pattern.size" :height="settings.background.pattern.size" />
-      <rect :fill="settings.background.pattern.color" :x="settings.background.pattern.size" :y="settings.background.pattern.size" :width="settings.background.pattern.size" :height="settings.background.pattern.size" />
+blockSize<template>
+<v-container :style="containerStyle" pa-0>
+  <svg :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height">
+    <pattern id="pattern" x="0" y="0" :width="settings.background.blockSize * 2" :height="settings.background.blockSize * 2" patternUnits="userSpaceOnUse">
+      <rect :fill="settings.background.color1" x="0" y="0" :width="settings.background.blockSize" :height="settings.background.blockSize" />
+      <rect :fill="settings.background.color1" :x="settings.background.blockSize" :y="settings.background.blockSize" :width="settings.background.blockSize" :height="settings.background.blockSize" />
     </pattern>
+    <rect id="rect" :fill="settings.background.color2" x="0" y="0" width="100%" height="100%" />
     <rect id="rect" fill="url(#pattern)" x="0" y="0" width="100%" height="100%" />
   </svg>
+  <canvas id="canvas" :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height"></canvas>
 </v-container>
 </template>
 
@@ -35,24 +37,23 @@ export default {
       headlineLoaded: state => state.data.headlineLoaded,
       refreshImages: state => state.data.refreshImages,
     }),
-    style() {
+    containerStyle() {
       return {
-        backgroundColor: this.settings.background.color,
+        height: '100%',
+        maxHeight: '75vh',
         minHeight: '75vh',
-        overflow: 'hidden',
+        overflow: 'scroll',
         position: 'relative',
+        // maxWidth: '80vw'
+        width: '100%'
       }
     },
   },
 
   watch: {
     headlineLoaded(newValue, oldValue) {
-      this.canvas = document.createElement('canvas')
-      this.canvas.style.position = 'absolute'
-      this.canvas.width = rect.width.baseVal.value
-      this.canvas.height = rect.height.baseVal.value
+      this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      document.getElementById('canvas').append(this.canvas)
       setTimeout(() => {
         this.loadImages().then(this.drawLayers)
       }, 1000, 1)
