@@ -35,12 +35,14 @@
           </tr>
         </template>
       </v-data-table>
+
       <v-tooltip bottom>
         <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
           <v-icon small>playlist_add</v-icon>
         </v-btn>
         <span>Add New Layer</span>
       </v-tooltip>
+
       <v-tooltip bottom>
         <v-btn slot="activator" color="primary" @click="saveHeadline = true" icon small absolute top right>
           <v-icon small>save</v-icon>
@@ -55,24 +57,14 @@
     </v-card>
   </v-card>
 
-  <!-- Add Dialog Button -->
+  <!-- Save Dialog -->
   <v-dialog v-model="saveHeadline" lazy absolute max-width="50%">
-    <v-btn class="primaryText--text" icon slot="activator">
-      <v-icon>control_point</v-icon>
-    </v-btn>
-
-    <!-- Add Dialog -->
     <headlineSaveDialog @closeSave="saveHeadline = false" @alert="alert">
     </headlineSaveDialog>
   </v-dialog>
 
-  <!-- Add Dialog Button -->
+  <!-- Add Dialog -->
   <v-dialog v-model="addLayer" lazy absolute max-width="50%">
-    <v-btn class="primaryText--text" icon slot="activator">
-      <v-icon>control_point</v-icon>
-    </v-btn>
-
-    <!-- Add Dialog -->
     <layerAddDialog @closeAdd="addLayer = false" @alert="alert">
     </layerAddDialog>
   </v-dialog>
