@@ -17,7 +17,16 @@
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFontFamily" @change="setPrimaryFontFamily" label="Family"></v-select>
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFontFamily" @change="setPrimaryFontFamily" label="Family">
+          <template slot="item" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+          <template slot="selection" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+        </v-select>
       </v-layout>
 
       <v-layout mx-4>
@@ -69,7 +78,16 @@
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFontFamily" @change="setSecondaryFontFamily" label="Family"></v-select>
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFontFamily" @change="setSecondaryFontFamily" label="Family">
+          <template slot="item" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+          <template slot="selection" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+        </v-select>
       </v-layout>
 
       <v-layout mx-4>
@@ -120,6 +138,25 @@ import {
   mapState,
 } from 'vuex'
 
+import FontArimaMadurai from './ArimaMadurai.png'
+import FontArvo from './Arvo.png'
+import FontAtma from './Atma.png'
+import FontChewy from './Chewy.png'
+import FontComfortaa from './Comfortaa.png'
+import FontFahkwang from './Fahkwang.png'
+import FontLato from './Lato.png'
+import FontLobster from './Lobster.png'
+import FontLuckiestGuy from './LuckiestGuy.png'
+import FontMerriweather from './Merriweather.png'
+import FontMontserrat from './Montserrat.png'
+import FontOpenSans from './OpenSans.png'
+import FontOverlock from './Overlock.png'
+import FontPermanentMarker from './PermanentMarker.png'
+import FontRoboto from './Roboto.png'
+import FontRobotoCondensed from './RobotoCondensed.png'
+import FontShare from './Share.png'
+import FontStaatliches from './Staatliches.png'
+
 export default {
   data: () => ({
     style: {
@@ -133,24 +170,24 @@ export default {
       size: '16',
       style: [],
       families: [
-        { text: 'Arima Madurai', value: 'Arima+Madurai:400,700' },
-        { text: 'Arvo', value: 'Arvo:400,400i,700,700i' },
-        { text: 'Atma', value: 'Atma:400,700' },
-        { text: 'Chewy', value: 'Chewy:400' },
-        { text: 'Comfortaa', value: 'Comfortaa:400,700' },
-        { text: 'Fahkwang', value: 'Fahkwang:400,400i,500,500i' },
-        { text: 'Lato', value: 'Lato:400,400i,700,700i' },
-        { text: 'Lobster', value: 'Lobster:400' },
-        { text: 'Luckiest Guy', value: 'Luckiest+Guy:400' },
-        { text: 'Merriweather', value: 'Merriweather:400,400i,700,700i' },
-        { text: 'Montserrat', value: 'Montserrat:400,400i,700,700i' },
-        { text: 'Open Sans', value: 'Open+Sans:400,400i,700,700i' },
-        { text: 'Overlock', value: 'Overlock:400,400i,700,700i' },
-        { text: 'Permanent Marker', value: 'Permanent+Marker:400' },
-        { text: 'Roboto', value: 'Roboto:400,400i,700,700i' },
-        { text: 'Roboto Condensed', value: 'Roboto+Condensed:400,400i,700,700i' },
-        { text: 'Share', value: 'Share:400,400i,700,700i' },
-        { text: 'Staatliches', value: 'Staatliches:400' },
+        { text: 'Arima Madurai', value: 'Arima+Madurai:400,700', img: FontArimaMadurai },
+        { text: 'Arvo', value: 'Arvo:400,400i,700,700i', img: FontArvo },
+        { text: 'Atma', value: 'Atma:400,700', img: FontAtma },
+        { text: 'Chewy', value: 'Chewy:400', img: FontChewy },
+        { text: 'Comfortaa', value: 'Comfortaa:400,700', img: FontComfortaa },
+        { text: 'Fahkwang', value: 'Fahkwang:400,400i,500,500i', img: FontFahkwang },
+        { text: 'Lato', value: 'Lato:400,400i,700,700i', img: FontLato },
+        { text: 'Lobster', value: 'Lobster:400', img: FontLobster },
+        { text: 'Luckiest Guy', value: 'Luckiest+Guy:400', img: FontLuckiestGuy },
+        { text: 'Merriweather', value: 'Merriweather:400,400i,700,700i', img: FontMerriweather },
+        { text: 'Montserrat', value: 'Montserrat:400,400i,700,700i', img: FontMontserrat },
+        { text: 'Open Sans', value: 'Open+Sans:400,400i,700,700i', img: FontOpenSans },
+        { text: 'Overlock', value: 'Overlock:400,400i,700,700i', img: FontOverlock },
+        { text: 'Permanent Marker', value: 'Permanent+Marker:400', img: FontPermanentMarker },
+        { text: 'Roboto', value: 'Roboto:400,400i,700,700i', img: FontRoboto },
+        { text: 'Roboto Condensed', value: 'Roboto+Condensed:400,400i,700,700i', img: FontRobotoCondensed },
+        { text: 'Share', value: 'Share:400,400i,700,700i', img: FontShare },
+        { text: 'Staatliches', value: 'Staatliches:400', img: FontStaatliches },
       ],
     },
   }),
