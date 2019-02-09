@@ -6,7 +6,7 @@ module.exports = {
   entry: './views/main.js',
   output: {
     path: path.resolve(__dirname, './public'),
-    publicPath: '/public/',
+    publicPath: '/',
     filename: 'build.js'
   },
   resolve: {
