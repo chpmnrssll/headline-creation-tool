@@ -2,22 +2,22 @@
   <v-expansion-panel>
     <v-expansion-panel-content>
       <div slot="header">Text</div>
-      <v-textarea v-if="selectedLayer" @input="updateLayerText" :value="selectedLayer.text" class="px-4" box></v-textarea>
+      <v-textarea v-if="selectedLayer" @input="setText" :value="selectedLayer.text" class="px-4" box></v-textarea>
     </v-expansion-panel-content>
 
     <v-expansion-panel-content>
       <div slot="header">Primary Font</div>
       <v-layout row mx-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="updateLayerPrimaryFontSize" thumb-label :min="1" :max="256"></v-slider>
+          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256"></v-slider>
         </v-flex>
-        <v-flex xs2 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="updateLayerPrimaryFontSize" type="number" label="px"></v-text-field>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFontFamily" @change="setPrimaryFontFamily" label="Family">
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFont.family" @change="setPrimaryFontFamily" label="Family">
           <template slot="item" slot-scope="{ item }">
             <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
             <span v-else>{{ item.text }}</span>
@@ -30,7 +30,7 @@
       </v-layout>
 
       <v-layout mx-4>
-        <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="updateLayerPrimaryFontColor" hidden></input>
+        <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
       </v-layout>
 
       <v-layout column mx-4 mb-4>
@@ -70,15 +70,15 @@
       <div slot="header">Secondary Font</div>
       <v-layout row mx-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="updateLayerSecondaryFontSize" thumb-label :min="1" :max="256"></v-slider>
+          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" thumb-label :min="1" :max="256"></v-slider>
         </v-flex>
-        <v-flex xs2 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="updateLayerSecondaryFontSize" type="number" label="px"></v-text-field>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFontFamily" @change="setSecondaryFontFamily" label="Family">
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFont.family" @change="setSecondaryFontFamily" label="Family">
           <template slot="item" slot-scope="{ item }">
             <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
             <span v-else>{{ item.text }}</span>
@@ -91,7 +91,7 @@
       </v-layout>
 
       <v-layout mx-4>
-        <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="updateLayerSecondaryFontColor" hidden></input>
+        <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="setSecondaryFontColor" hidden></input>
       </v-layout>
 
       <v-layout column mx-4 mb-4>
@@ -131,12 +131,7 @@
 </template>
 
 <script>
-import {
-  mapActions,
-  mapGetters,
-  mapMutations,
-  mapState,
-} from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState, } from 'vuex'
 
 import FontArimaMadurai from './ArimaMadurai.png'
 import FontArvo from './Arvo.png'
@@ -163,8 +158,6 @@ export default {
       // height: '75vh',
       // backgroundColor: '#444'
     },
-    primaryFontFamily: '',
-    secondaryFontFamily: '',
     font: {
       justify: null,
       size: '16',
@@ -205,41 +198,24 @@ export default {
     },
   },
 
-  mounted() {
-    this.primaryFontFamily = this.primaryFont.family
-    this.secondaryFontFamily = this.primaryFont.family
-    if(this.secondaryFontFamily) {
-      this.secondaryFontFamily = this.secondaryFont.family
-    }
-  },
-
   methods: {
     ...mapMutations({
-      updateLayerText: 'data/updateLayerText',
-      updateLayerPrimaryFontColor: 'data/updateLayerPrimaryFontColor',
-      updateLayerPrimaryFontFamily: 'data/updateLayerPrimaryFontFamily',
-      updateLayerPrimaryFontSize: 'data/updateLayerPrimaryFontSize',
-      setLayerPrimaryFontBold: 'data/setLayerPrimaryFontBold',
-      setLayerPrimaryFontItalic: 'data/setLayerPrimaryFontItalic',
-      setLayerPrimaryFontUnderline: 'data/setLayerPrimaryFontUnderline',
-      setLayerPrimaryFontAlign: 'data/setLayerPrimaryFontAlign',
-      updateLayerSecondaryFontColor: 'data/updateLayerSecondaryFontColor',
-      updateLayerSecondaryFontFamily: 'data/updateLayerSecondaryFontFamily',
-      updateLayerSecondaryFontSize: 'data/updateLayerSecondaryFontSize',
-      setLayerSecondaryFontBold: 'data/setLayerSecondaryFontBold',
-      setLayerSecondaryFontItalic: 'data/setLayerSecondaryFontItalic',
-      setLayerSecondaryFontUnderline: 'data/setLayerSecondaryFontUnderline',
-      setLayerSecondaryFontAlign: 'data/setLayerSecondaryFontAlign',
+      setText: 'data/setText',
+      setPrimaryFontColor: 'data/setPrimaryFontColor',
+      setPrimaryFontFamily: 'data/setPrimaryFontFamily',
+      setPrimaryFontSize: 'data/setPrimaryFontSize',
+      setPrimaryFontBold: 'data/setPrimaryFontBold',
+      setPrimaryFontItalic: 'data/setPrimaryFontItalic',
+      setPrimaryFontUnderline: 'data/setPrimaryFontUnderline',
+      setPrimaryFontAlign: 'data/setPrimaryFontAlign',
+      setSecondaryFontColor: 'data/setSecondaryFontColor',
+      setSecondaryFontFamily: 'data/setSecondaryFontFamily',
+      setSecondaryFontSize: 'data/setSecondaryFontSize',
+      setSecondaryFontBold: 'data/setSecondaryFontBold',
+      setSecondaryFontItalic: 'data/setSecondaryFontItalic',
+      setSecondaryFontUnderline: 'data/setSecondaryFontUnderline',
+      setSecondaryFontAlign: 'data/setSecondaryFontAlign',
     }),
-
-    setPrimaryFontFamily(value) {
-      this.updateLayerPrimaryFontFamily(value)
-      this.primaryFontFamily = value
-    },
-    setSecondaryFontFamily(value) {
-      this.updateLayerSecondaryFontFamily(value)
-      this.secondaryFontFamily = value
-    },
 
     triggerPrimaryColorPicker() {
       this.font.style.splice(this.font.style.findIndex(value => value === 'primaryColor'), 1)
@@ -253,60 +229,60 @@ export default {
     togglePrimaryFontBold() {
       let index = this.font.style.findIndex(value => value === '0')
       if (index < 0) {
-        this.setLayerPrimaryFontBold(true)
+        this.setPrimaryFontBold(true)
         this.font.style.push('0')
       } else {
-        this.setLayerPrimaryFontBold(false)
+        this.setPrimaryFontBold(false)
         this.font.style.splice(index, 1)
       }
     },
     togglePrimaryFontItalic() {
       let index = this.font.style.findIndex(value => value === '1')
       if (index < 0) {
-        this.setLayerPrimaryFontItalic(true)
+        this.setPrimaryFontItalic(true)
         this.font.style.push('1')
       } else {
-        this.setLayerPrimaryFontItalic(false)
+        this.setPrimaryFontItalic(false)
         this.font.style.splice(index, 1)
       }
     },
     togglePrimaryFontUnderline(newValue, oldValue) {
       let index = this.font.style.findIndex(value => value === '2')
       if (index < 0) {
-        this.setLayerPrimaryFontUnderline(true)
+        this.setPrimaryFontUnderline(true)
         this.font.style.push('2')
       } else {
-        this.setLayerPrimaryFontUnderline(false)
+        this.setPrimaryFontUnderline(false)
         this.font.style.splice(index, 1)
       }
     },
     toggleSecondaryFontBold(newValue, oldValue) {
       let index = this.font.style.findIndex(value => value === '0')
       if (index < 0) {
-        this.setLayerSecondaryFontBold(true)
+        this.setSecondaryFontBold(true)
         this.font.style.push('0')
       } else {
-        this.setLayerSecondaryFontBold(false)
+        this.setSecondaryFontBold(false)
         this.font.style.splice(index, 1)
       }
     },
     toggleSecondaryFontItalic(newValue, oldValue) {
       let index = this.font.style.findIndex(value => value === '1')
       if (index < 0) {
-        this.setLayerSecondaryFontItalic(true)
+        this.setSecondaryFontItalic(true)
         this.font.style.push('1')
       } else {
-        this.setLayerSecondaryFontItalic(false)
+        this.setSecondaryFontItalic(false)
         this.font.style.splice(index, 1)
       }
     },
     toggleSecondaryFontUnderline(newValue, oldValue) {
       let index = this.font.style.findIndex(value => value === '2')
       if (index < 0) {
-        this.setLayerSecondaryFontUnderline(true)
+        this.setSecondaryFontUnderline(true)
         this.font.style.push('2')
       } else {
-        this.setLayerSecondaryFontUnderline(false)
+        this.setSecondaryFontUnderline(false)
         this.font.style.splice(index, 1)
       }
     },

@@ -6,7 +6,7 @@
         <v-flex xs9>
           <v-slider :value="settings.background.width" @input="setBackgroundWidth" thumb-label min="1" max="2048" label="Width"></v-slider>
         </v-flex>
-        <v-flex xs2 mx-4>
+        <v-flex xs3 mx-4>
           <v-text-field :value="settings.background.width" @input="setBackgroundWidth" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
@@ -15,7 +15,7 @@
         <v-flex xs9>
           <v-slider :value="settings.background.height" @input="setBackgroundHeight" thumb-label min="1" max="2048" label="Height"></v-slider>
         </v-flex>
-        <v-flex xs2 mx-4>
+        <v-flex xs3 mx-4>
           <v-text-field :value="settings.background.height" @input="setBackgroundHeight" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
@@ -24,7 +24,7 @@
         <v-flex xs9>
           <v-slider :value="settings.background.blockSize" @input="setBackgroundSize" thumb-label :min="1" :max="256" label="Block Size"></v-slider>
         </v-flex>
-        <v-flex xs2 mx-4>
+        <v-flex xs3 mx-4>
           <v-text-field :value="settings.background.blockSize" @input="setBackgroundSize" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
@@ -46,11 +46,7 @@
 </template>
 
 <script>
-import {
-  mapActions,
-  mapGetters,
-  mapState,
-} from 'vuex'
+import { mapActions, mapGetters, mapState, } from 'vuex'
 
 export default {
   computed: {

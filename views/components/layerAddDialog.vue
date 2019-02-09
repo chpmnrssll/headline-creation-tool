@@ -8,8 +8,8 @@
 
       <!-- Begin Input Row -->
       <v-form ref="form">
-        <v-text-field v-model="newLayer.name" label="Name" required></v-text-field>
-        <v-select mx-4 v-model="newLayer.layerType" :items="layerTypes" label="Layer Type"></v-select>
+        <v-text-field v-model="defaultLayer.name" label="Name" required></v-text-field>
+        <v-select mx-4 v-model="defaultLayer.layerType" :items="layerTypes" label="Layer Type"></v-select>
       </v-form>
 
       <v-card-actions>
@@ -28,15 +28,65 @@ import { mapMutations } from 'vuex'
 
 export default {
   data: () => ({
-    newLayer: {
+    defaultLayer: {
       name: 'New Layer',
       layerType: 'text',
+      anchor: {
+        x: 0.5,
+        y: 0.5
+      },
+      font: {
+        primary: {
+          color: '#000',
+          family: 'Arial',
+          shadow: {
+            blur: 0,
+            color: '#000',
+            offset: {
+              x: 0,
+              y: 0
+            },
+          },
+          size: 16,
+          style: {
+            bold: false,
+            italic: false,
+            underline: false
+          },
+        },
+        secondary: {
+          color: '#000',
+          family: 'Arial',
+          shadow: {
+            blur: 0,
+            color: '#000',
+            offset: {
+              x: 0,
+              y: 0
+            },
+          },
+          size: 16,
+          style: {
+            bold: false,
+            italic: false,
+            underline: false
+          },
+        }
+      },
+      image: '',
+      rotate: 0,
+      text: '',
+      translate: {
+        x: 0,
+        y: 0
+      }
+      // zIndex: state.selectedHeadline.layers.length,
     },
     layerTypes: [
       { text: 'Text', value: 'text' },
       { text: 'Image', value: 'image'}
     ],
-    submitDone: true,
+    submitDone: true
   }),
 
   methods: {
@@ -48,7 +98,7 @@ export default {
       this.submitDone = false
 
       try {
-        this.addLayer(this.newLayer)
+        this.addLayer(this.defaultLayer)
         this.close()
         this.alert(true, 'Create', 'Layer')
       } catch (e) {
@@ -63,7 +113,7 @@ export default {
     },
 
     checkForm() {
-      return this.newLayer.name === '' ? true : false
+      return this.defaultLayer.name === '' ? true : false
     },
 
     alert(success, callName, resource) {

@@ -8,7 +8,7 @@
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
             <td class="px-3">
               <v-tooltip bottom>
-                <v-text-field slot="activator" :value="props.item.name" @input="updateSelectedLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+                <v-text-field slot="activator" :value="props.item.name" @input="setSelectedLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
                 <span>Layer Name</span>
               </v-tooltip>
             </td>
@@ -116,7 +116,7 @@ export default {
 
   methods: {
     ...mapMutations({
-      updateSelectedLayerName: 'data/updateSelectedLayerName',
+      setSelectedLayerName: 'data/setSelectedLayerName',
       setSelectedLayer: 'data/setSelectedLayer',
       setRefreshLayers: 'data/setRefreshLayers',
       moveLayer: 'data/moveLayer',

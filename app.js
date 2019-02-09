@@ -1,18 +1,18 @@
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const express = require('express')
+const path = require('path')
+const favicon = require('serve-favicon')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 const cors = require('cors')
 const trunks = require('trunks-log')
 
-const app = express();
+const app = express()
 
 app.use(cors())
 const logs = new trunks('', 'yellow', '')
 
-// const index = require('./src/routes/index');
+// const index = require('./src/routes/index')
 const { apiRoutes, webRoutes } = require('./src/routes/index')
 
 // Use native ES6 Promises since mongoose's are deprecated.
@@ -23,7 +23,7 @@ mongoose.connect(`${process.env.MONGO_URI}/headlines`, {
   useMongoClient: true
 }).catch(() => {
   // empty catch avoids unhandled rejections
-});
+})
 
 mongoose.connection.on('error', function (error) {
   // If first connect fails because server-database is'nt up yet, try again.
@@ -35,43 +35,41 @@ mongoose.connection.on('error', function (error) {
         useMongoClient: true
       }).catch(() => {
         // empty catch avoids unhandled rejections
-      });
-    }, 20 * 1000);
+      })
+    }, 20 * 1000)
   } else {
     // Some other error occurred.  Log it.
-    console.error(new Date(), String(error));
+    console.error(new Date(), String(error))
   }
-});
+})
 
 mongoose.connection.once("open", function (callback) {
-  console.log("Connection Succeeded");
-});
+  console.log("Connection Succeeded")
+})
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/api', apiRoutes);
+app.use('/api', apiRoutes)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  var err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
 
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-});
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
+})
 
-module.exports = app;
+module.exports = app
 
 logs.success('App running on http://localhost:{}', process.env.PORT)

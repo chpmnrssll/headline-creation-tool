@@ -14,9 +14,9 @@ export default {
 
   actions: {
     loadHeadlines(context) {
-      http.get("headlines").then(response => {
+      http.get('headlines').then(response => {
         return new Promise((resolve, reject) => {
-          context.commit('headlines', response.data.headlines)
+          context.commit('setHeadlines', response.data.headlines)
           resolve()
         })
       })
@@ -27,7 +27,7 @@ export default {
 
     defaultHeadline(context) {
       return new Promise((resolve, reject) => {
-        context.commit('headlines', [mockHeadline])
+        context.commit('setHeadlines', [mockHeadline])
         context.commit('setSelectedHeadline', mockHeadline.name)
         context.commit('setSelectedLayer', mockHeadline.layers.length - 1)
         resolve()
@@ -36,7 +36,7 @@ export default {
   },
 
   mutations: {
-    headlines(state, headlines) {
+    setHeadlines(state, headlines) {
       headlines.forEach(headline => {
         headline.layers.forEach(layer => {
           if (layer.font) {
@@ -49,10 +49,6 @@ export default {
       state.headlines = headlines
     },
 
-    setHeadlineLoaded(state, value) {
-      state.headlineLoaded = value
-    },
-
     setSelectedHeadline(state, name) {
       // Clear selected state for all headlines
       state.headlines.forEach(headline => headline.selected = false)
@@ -60,6 +56,18 @@ export default {
       // Set the headline with 'name' as selected
       state.selectedHeadline = state.headlines.find(headline => headline.name === name)
       state.selectedHeadline.selected = true
+    },
+
+    setSelectedHeadlineName(state, name) {
+      state.selectedHeadline.name = name
+    },
+
+    setHeadlineLoaded(state, value) {
+      state.headlineLoaded = value
+    },
+
+    setRefreshImages(state, value) {
+      state.refreshImages = value
     },
 
     setSelectedLayer(state, zIndex) {
@@ -72,6 +80,17 @@ export default {
         state.selectedLayer.selected = true
       }
       state.selectedHeadline.layers.sort((a, b) => a.zIndex - b.zIndex)
+    },
+
+    setSelectedLayerName(state, name) {
+      state.selectedLayer.name = name
+    },
+
+    addLayer(state, newLayer) {
+      state.selectedHeadline.layers.push({
+        ...newLayer,
+        zIndex: state.selectedHeadline.layers.length
+      })
     },
 
     moveLayer(state, { zIndex, direction }) {
@@ -88,143 +107,78 @@ export default {
       state.selectedHeadline.layers = state.selectedHeadline.layers.filter(layer => layer.zIndex !== zIndex)
     },
 
-    addLayer(state, newLayer) {
-      state.selectedHeadline.layers.push({
-        ...newLayer,
-        anchor: {
-          x: 0.5,
-          y: 0.5
-        },
-        font: {
-          primary: {
-            color: '#000',
-            family: 'Arial',
-            shadow: {
-              blur: 0,
-              color: '#000',
-              offset: {
-                x: 0,
-                y: 0
-              },
-            },
-            size: 16,
-            style: {
-              bold: false,
-              italic: false,
-              underline: false
-            },
-          },
-          secondary: {
-            color: '#000',
-            family: 'Arial',
-            shadow: {
-              blur: 0,
-              color: '#000',
-              offset: {
-                x: 0,
-                y: 0
-              },
-            },
-            size: 16,
-            style: {
-              bold: false,
-              italic: false,
-              underline: false
-            },
-          }
-        },
-        image: '',
-        rotate: -5,
-        text: '',
-        translate: {
-          x: 0,
-          y: 0
-        },
-        zIndex: state.selectedHeadline.layers.length,
-      })
-    },
-
-    setRefreshImages(state, value) {
-      state.refreshImages = value
-    },
-
-    updateSelectedHeadlineName(state, name) {
-      state.selectedHeadline.name = name
-    },
-    updateLayerName(state, name) {
-      state.selectedLayer.name = name
-    },
-    updateLayerImage(state, image) {
+    setImage(state, image) {
       state.selectedLayer.image = image
       state.refreshImages = true
     },
-    updateLayerText(state, text) {
+
+    setText(state, text) {
       state.selectedLayer.text = text
     },
 
-    updateLayerPrimaryFontColor(state, e) {
-      state.selectedLayer.font.primary.color = e.target.value
-    },
-    updateLayerPrimaryFontFamily(state, family) {
-      state.selectedLayer.font.primary.family = family
-    },
-    updateLayerPrimaryFontSize(state, size) {
+    setPrimaryFontSize(state, size) {
       state.selectedLayer.font.primary.size = size
     },
-    setLayerPrimaryFontBold(state, value) {
+    setPrimaryFontFamily(state, family) {
+      state.selectedLayer.font.primary.family = family
+    },
+    setPrimaryFontBold(state, value) {
       state.selectedLayer.font.primary.style.bold = value
     },
-    setLayerPrimaryFontItalic(state, value) {
+    setPrimaryFontItalic(state, value) {
       state.selectedLayer.font.primary.style.italic = value
     },
-    setLayerPrimaryFontUnderline(state, value) {
+    setPrimaryFontUnderline(state, value) {
       state.selectedLayer.font.primary.style.underline = value
     },
-    setLayerPrimaryFontAlign(state, value) {
+    setPrimaryFontColor(state, event) {
+      state.selectedLayer.font.primary.color = event.target.value
+    },
+    setPrimaryFontAlign(state, value) {
       state.selectedLayer.font.primary.style.align = value
     },
 
-    updateLayerSecondaryFontColor(state, e) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.color = e.target.value
-    },
-    updateLayerSecondaryFontFamily(state, family) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.family = family
-    },
-    updateLayerSecondaryFontSize(state, size) {
+    setSecondaryFontSize(state, size) {
       if (!state.selectedLayer.font.secondary) {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.size = size
     },
-    setLayerSecondaryFontBold(state, value) {
+    setSecondaryFontFamily(state, family) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.family = family
+    },
+    setSecondaryFontBold(state, value) {
       if (!state.selectedLayer.font.secondary) {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.style.bold = value
     },
-    setLayerSecondaryFontItalic(state, value) {
+    setSecondaryFontItalic(state, value) {
       if (!state.selectedLayer.font.secondary) {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.style.italic = value
     },
-    setLayerSecondaryFontUnderline(state, value) {
+    setSecondaryFontUnderline(state, value) {
       if (!state.selectedLayer.font.secondary) {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.style.underline = value
     },
-    setLayerSecondaryFontAlign(state, value) {
+    setSecondaryFontColor(state, event) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.color = event.target.value
+    },
+    setSecondaryFontAlign(state, value) {
       if (!state.selectedLayer.font.secondary) {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.style.align = value
-    },
-  },
+    }
+  }
 }
