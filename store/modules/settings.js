@@ -6,8 +6,8 @@ export default {
       blockSize: 6,
       color1: '#cccccc',
       color2: '#eeeeee',
-      width: 720,
-      height: 480,
+      width: 800,
+      height: 600,
     },
   },
 
