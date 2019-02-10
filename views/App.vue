@@ -13,6 +13,15 @@
         </v-list-tile-action>
       </v-list-tile>
 
+      <v-list-tile href="/#/home" :class="getNavClass('/#/home')">
+        <v-list-tile-action>
+          <v-icon class="primaryText--text">color_lens</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title class="primaryText--text">Canvas</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
       <v-list-tile @click="saveHeadline = true">
         <v-list-tile-action>
           <v-btn slot="activator" color="primary" icon>
@@ -21,15 +30,6 @@
         </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title class="primaryText--text">Save Headline</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-
-      <v-list-tile href="/#/home" :class="getNavClass('/#/home')">
-        <v-list-tile-action>
-          <v-icon class="primaryText--text">color_lens</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="primaryText--text">Canvas</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
 
@@ -45,18 +45,28 @@
     </v-list>
   </v-navigation-drawer>
 
-  <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+  <v-toolbar class="elevation-0" fixed app scroll-off-screen :scroll-threshold="0" :clipped-left="clipped">
+    <v-tooltip bottom>
+      <v-toolbar-side-icon slot="activator" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <span>Open Drawer</span>
+    </v-tooltip>
+    <v-tooltip right>
+      <v-text-field slot="activator" :value="selectedHeadline.name" @input="setSelectedHeadlineName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+      <span>Change Headline Name</span>
+    </v-tooltip>
+    <v-spacer></v-spacer>
+    <v-btn @click="isDarkMode = !isDarkMode" icon>
+      <v-icon color="amber lighten-4" v-if="!isDarkMode"> brightness_5 </v-icon>
+      <v-icon color="indigo lighten-4" v-else> brightness_3 </v-icon>
+    </v-btn>
+  </v-toolbar>
+
   <!-- <v-toolbar class="primary primaryText--text" fixed app :clipped-left="clipped">
     <v-toolbar-side-icon class="primaryText--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title> {{ title }} </v-toolbar-title>
-    <v-spacer></v-spacer>
-    <v-btn @click="isDarkMode = !isDarkMode" icon>
-      <v-icon class="primaryText--text" v-if="!isDarkMode"> brightness_5 </v-icon>
-      <v-icon class="primaryText--text" v-else> brightness_3 </v-icon>
-    </v-btn>
   </v-toolbar> -->
 
-  <v-content>
+  <v-content class="pt-6">
     <v-fade-transition mode="out-in">
       <router-view @alert="alert"></router-view>
     </v-fade-transition>
@@ -69,6 +79,8 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
+
 export default {
   data: () => ({
     clipped: true,
@@ -84,6 +96,12 @@ export default {
     alertSuccess: false,
     isDarkMode: false,
   }),
+
+  computed: {
+    ...mapState({
+      selectedHeadline: state => state.data.selectedHeadline,
+    }),
+  },
 
   watch: {
     isDarkMode() {
@@ -106,6 +124,10 @@ export default {
   },
 
   methods: {
+    ...mapMutations({
+      'setSelectedHeadlineName': 'data/setSelectedHeadlineName',
+    }),
+
     alert(success, callName, resource) {
       this.alertOpen = false
       this.alertString = callName + ' ' + resource

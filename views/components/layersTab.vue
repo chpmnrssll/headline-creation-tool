@@ -1,8 +1,15 @@
 <template>
-<v-container class="pa-0">
+<v-container class="pa-0" :style="{ height: '75vh', overflowY: 'auto'}">
   <v-card class="pa-4">
 
-    <v-card class="mb-1">
+    <v-card class="mb-4">
+      <v-tooltip left>
+        <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
+          <v-icon small>playlist_add</v-icon>
+        </v-btn>
+        <span>Add New Layer</span>
+      </v-tooltip>
+
       <v-data-table v-model="selected" :items="layers" item-key="zIndex" :pagination.sync="pagination" class="elevation-1" hide-actions hide-headers select-all>
         <template slot="items" slot-scope="props">
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
@@ -35,13 +42,6 @@
           </tr>
         </template>
       </v-data-table>
-
-      <v-tooltip left>
-        <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
-          <v-icon small>playlist_add</v-icon>
-        </v-btn>
-        <span>Add New Layer</span>
-      </v-tooltip>
 
       <!-- <v-tooltip right>
         <v-btn slot="activator" color="primary" @click="saveHeadline = true" icon small absolute top right>

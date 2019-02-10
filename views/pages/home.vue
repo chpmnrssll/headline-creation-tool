@@ -1,15 +1,32 @@
 <template>
 <v-container row fluid class="pa-0">
   <v-layout v-bind="layout">
-    <v-flex ml-5 mr-2>
+    <v-flex v-if="layout.row" ml-5 mr-2>
       <displayCanvas></displayCanvas>
     </v-flex>
 
-    <v-flex xs4 ml-2 mr-5>
-      <v-tabs v-model="activeTab" :style="{ height: '85vh'}" color="primary" dark slider-color="secondary">
+    <v-flex v-if="layout.column">
+      <displayCanvas></displayCanvas>
+    </v-flex>
+
+    <v-flex v-if="layout.row" xs4 ml-2 mr-5>
+      <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
         <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab :style="{height: '77.5vh', overflowY: 'auto'}"></layersTab>
+          <layersTab></layersTab>
+        </v-tab-item>
+        <v-tab ripple>Settings</v-tab>
+        <v-tab-item>
+          <settingsTab></settingsTab>
+        </v-tab-item>
+      </v-tabs>
+    </v-flex>
+
+    <v-flex v-if="layout.column" xs4>
+      <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
+        <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
+        <v-tab-item>
+          <layersTab></layersTab>
         </v-tab-item>
         <v-tab ripple>Settings</v-tab>
         <v-tab-item>

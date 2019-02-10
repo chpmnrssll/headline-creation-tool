@@ -7,31 +7,6 @@
 
     <v-expansion-panel-content>
       <div slot="header">Primary Font</div>
-      <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFont.family" @change="setPrimaryFontFamily" label="Family">
-          <template slot="item" slot-scope="{ item }">
-            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
-            <span v-else>{{ item.text }}</span>
-          </template>
-          <template slot="selection" slot-scope="{ item }">
-            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
-            <span v-else>{{ item.text }}</span>
-          </template>
-        </v-select>
-      </v-layout>
-
-      <v-layout row mx-4>
-        <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256"></v-slider>
-        </v-flex>
-        <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
-        </v-flex>
-      </v-layout>
-
-      <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
-      <v-layout mx-4>
-      </v-layout>
 
       <v-layout column mx-4 mb-4>
         <v-btn-toggle v-model="font.style" multiple>
@@ -64,21 +39,9 @@
           </v-btn>
         </v-btn-toggle> -->
       </v-layout>
-    </v-expansion-panel-content>
-
-    <v-expansion-panel-content>
-      <div slot="header">Secondary Font</div>
-      <v-layout row mx-4>
-        <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" thumb-label :min="1" :max="256"></v-slider>
-        </v-flex>
-        <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" type="number" label="px"></v-text-field>
-        </v-flex>
-      </v-layout>
 
       <v-layout mx-4>
-        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFont.family" @change="setSecondaryFontFamily" label="Family">
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFont.family" @change="setPrimaryFontFamily" label="Family">
           <template slot="item" slot-scope="{ item }">
             <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
             <span v-else>{{ item.text }}</span>
@@ -90,9 +53,29 @@
         </v-select>
       </v-layout>
 
-      <v-layout mx-4>
-        <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="setSecondaryFontColor" hidden></input>
+      <v-layout row ml-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
+        </v-flex>
       </v-layout>
+
+      <v-layout row ml-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.lineHeight)" @input="setPrimaryFontLineHeight" thumb-label :min="1" :max="256" label="LineHeight"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.lineHeight)" @input="setPrimaryFontLineHeight" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
+    </v-expansion-panel-content>
+
+    <v-expansion-panel-content>
+      <div slot="header">Secondary Font</div>
 
       <v-layout column mx-4 mb-4>
         <v-btn-toggle v-model="font.style" multiple>
@@ -125,6 +108,40 @@
           </v-btn>
         </v-btn-toggle> -->
       </v-layout>
+
+      <v-layout mx-4>
+        <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="secondaryFont.family" @change="setSecondaryFontFamily" label="Family">
+          <template slot="item" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+          <template slot="selection" slot-scope="{ item }">
+            <v-img v-if="item.img" :src="item.img" height="16px" contain></v-img>
+            <span v-else>{{ item.text }}</span>
+          </template>
+        </v-select>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.lineHeight)" @input="setSecondaryFontLineHeight" thumb-label :min="1" :max="256" label="Line Height"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.lineHeight)" @input="setSecondaryFontLineHeight" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="setSecondaryFontColor" hidden></input>
+
     </v-expansion-panel-content>
 
   </v-expansion-panel>
@@ -204,6 +221,7 @@ export default {
       setPrimaryFontColor: 'data/setPrimaryFontColor',
       setPrimaryFontFamily: 'data/setPrimaryFontFamily',
       setPrimaryFontSize: 'data/setPrimaryFontSize',
+      setPrimaryFontLineHeight: 'data/setPrimaryFontLineHeight',
       setPrimaryFontBold: 'data/setPrimaryFontBold',
       setPrimaryFontItalic: 'data/setPrimaryFontItalic',
       setPrimaryFontUnderline: 'data/setPrimaryFontUnderline',
@@ -211,6 +229,7 @@ export default {
       setSecondaryFontColor: 'data/setSecondaryFontColor',
       setSecondaryFontFamily: 'data/setSecondaryFontFamily',
       setSecondaryFontSize: 'data/setSecondaryFontSize',
+      setSecondaryFontLineHeight: 'data/setSecondaryFontLineHeight',
       setSecondaryFontBold: 'data/setSecondaryFontBold',
       setSecondaryFontItalic: 'data/setSecondaryFontItalic',
       setSecondaryFontUnderline: 'data/setSecondaryFontUnderline',

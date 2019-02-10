@@ -39,7 +39,7 @@ export default {
         // height: '100%',
         // maxHeight: '90vh',
         height: '85vh',
-        overflow: 'scroll',
+        overflow: 'auto',
         position: 'relative',
         width: '100%'
       }
@@ -109,9 +109,13 @@ export default {
     },
 
     drawTextLayer(layerData) {
-      let splitStrings = this.splitHandlebars(layerData.text)
+      let splitLines = []
+      let lines = this.splitNewLines(layerData.text)
+      lines.forEach(line => {
+        splitLines.push(this.splitHandlebars(line))
+      })
 
-      if (!splitStrings) {
+      if (!splitLines) {
         return
       }
 
@@ -121,60 +125,95 @@ export default {
         secondaryFont = layerData.font.secondary
       }
 
-      let totalWidth = 0
-      splitStrings.forEach(string => {
-        if (string.font === 'primary') {
-          string.width = this.measureText(string.text, primaryFont)
-        } else {
-          string.width = this.measureText(string.text, secondaryFont)
-        }
-        totalWidth += string.width
+      splitLines.forEach(line => {
+        let lineWidth = 0
+        line.forEach(string => {
+          if (string.font === 'primary') {
+            string.width = this.measureText(string.text, primaryFont)
+          } else {
+            string.width = this.measureText(string.text, secondaryFont)
+          }
+          lineWidth += string.width
+        })
+        line.width = lineWidth
       })
 
-      let x = totalWidth * layerData.anchor.x
-      let y = layerData.font.primary.size * layerData.anchor.y
-      if (layerData.font.secondary && layerData.font.primary.size < layerData.font.secondary.size) {
-        y = layerData.font.secondary.size * layerData.anchor.y
+      let lineHeight = 16
+      let runningWidth = 0
+      let runningLines = 0
+      splitLines.forEach(line => {
+        let x = line.width * layerData.anchor.x
+        let y = layerData.font.primary.size * layerData.anchor.y + (layerData.font.primary.lineHeight * runningLines)
+        if (layerData.font.secondary && layerData.font.primary.size < layerData.font.secondary.size) {
+          y = layerData.font.secondary.size * layerData.anchor.y + (layerData.font.secondary.lineHeight * runningLines)
+        }
+
+        this.context.save()
+        this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
+        this.context.translate(-x, y)
+        this.context.translate(layerData.translate.x, layerData.translate.y)
+        this.context.rotate(layerData.rotate * Math.PI / 180)
+
+        line.forEach(string => {
+          let font = string.font === 'primary' ? primaryFont : secondaryFont
+          this.drawText(string.text, font, runningWidth, 0)
+          runningWidth += string.width
+        })
+        runningWidth = 0
+        runningLines++
+        this.context.restore()
+      })
+    },
+
+    splitNewLines(text) {
+      let newLines = text.split('<br/>')
+      if (newLines.length <= 1) {
+        newLines = text.split('\n')
       }
 
-      this.context.save()
-      this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
-      this.context.translate(-x, y)
-      this.context.translate(layerData.translate.x, layerData.translate.y)
-      this.context.rotate(layerData.rotate * Math.PI / 180)
-
-      let runningWidth = 0
-      splitStrings.forEach((string, index) => {
-        let font = string.font === 'primary' ? primaryFont : secondaryFont
-        this.drawText(string.text, font, runningWidth, 0)
-        runningWidth += string.width
-      })
-
-      this.context.restore()
+      return newLines
     },
 
     splitHandlebars(text) {
-      let output = []
-      let firstSplit = text.split('{{')
+      let handlebars = []
+      let leftHandle = text.split('{{')
 
-      firstSplit.forEach(string1 => {
-        let nextSplit = string1.split('}}')
-        if (nextSplit.length <= 1) {
-          output.push({ text: string1, font: 'primary' })
+      leftHandle.forEach(string1 => {
+        let rightHandle = string1.split('}}')
+        if (rightHandle.length <= 1) {
+          handlebars.push({ text: string1, font: 'primary' })
         } else {
-          nextSplit.forEach((string2, index) => {
+          rightHandle.forEach((string2, index) => {
             if(string2 !== '') {
               if (index % 2 === 0) {
-                output.push({ text: string2, font: 'secondary' })
+                handlebars.push({ text: string2, font: 'secondary' })
               } else {
-                output.push({ text: string2, font: 'primary' })
+                handlebars.push({ text: string2, font: 'primary' })
               }
             }
           })
         }
       })
 
-      return output
+      return handlebars
+    },
+
+    measureText(text, font) {
+      this.context.textAlign = font.style.align
+      this.context.font = this.getFontString(font)
+      let metrics = this.context.measureText(text)
+      return metrics.width
+    },
+
+    drawText(text, font, x, y) {
+      this.context.shadowBlur = font.shadow.blur
+      this.context.shadowColor = font.shadow.color
+      this.context.shadowOffsetX = font.shadow.offset.x
+      this.context.shadowOffsetY = font.shadow.offset.y
+      this.context.textAlign = font.style.align
+      this.context.font = this.getFontString(font)
+      this.context.fillStyle = font.color
+      this.context.fillText(text, x, y)
     },
 
     getFontString(font) {
@@ -197,24 +236,6 @@ export default {
         this.fontsLoaded.push(font.family)
       }
       return `${style}${font.size}px ${font.family.split(':')[0].replace('+', ' ')}`
-    },
-
-    measureText(text, font) {
-      this.context.textAlign = font.style.align
-      this.context.font = this.getFontString(font)
-      let metrics = this.context.measureText(text)
-      return metrics.width
-    },
-
-    drawText(text, font, x, y) {
-      this.context.shadowBlur = font.shadow.blur
-      this.context.shadowColor = font.shadow.color
-      this.context.shadowOffsetX = font.shadow.offset.x
-      this.context.shadowOffsetY = font.shadow.offset.y
-      this.context.textAlign = font.style.align
-      this.context.font = this.getFontString(font)
-      this.context.fillStyle = font.color
-      this.context.fillText(text, x, y)
     },
 
   },

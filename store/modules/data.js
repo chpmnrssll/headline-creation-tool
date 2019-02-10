@@ -119,6 +119,9 @@ export default {
     setPrimaryFontSize(state, size) {
       state.selectedLayer.font.primary.size = size
     },
+    setPrimaryFontLineHeight(state, lineHeight) {
+      state.selectedLayer.font.primary.lineHeight = lineHeight
+    },
     setPrimaryFontFamily(state, family) {
       state.selectedLayer.font.primary.family = family
     },
@@ -143,6 +146,12 @@ export default {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.size = size
+    },
+    setSecondaryFontLineHeight(state, lineHeight) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.lineHeight = lineHeight
     },
     setSecondaryFontFamily(state, family) {
       if (!state.selectedLayer.font.secondary) {
