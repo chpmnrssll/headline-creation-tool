@@ -3,11 +3,11 @@ export default {
 
   state: {
     background: {
-      blockSize: 6,
+      blockSize: 8,
       color1: '#cccccc',
       color2: '#eeeeee',
-      width: 800,
-      height: 600,
+      width: 768,
+      height: 512,
     },
   },
 
@@ -28,7 +28,4 @@ export default {
       state.background.blockSize = size
     },
   },
-
-  // actions: {
-  // },
 }
