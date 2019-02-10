@@ -25,7 +25,7 @@
           <v-slider :value="settings.background.blockSize" @input="setBackgroundSize" thumb-label :min="1" :max="256" label="Block Size"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field :value="settings.background.blockSize" @input="setBackgroundSize" type="number" label="px"></v-text-field>
+          <v-text-field :value="settings.background.blockSize" @input="setBackgroundSize" type="number" :min="1" :max="256" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 

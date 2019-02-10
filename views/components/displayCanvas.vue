@@ -1,4 +1,4 @@
-blockSize<template>
+<template>
 <v-container :style="containerStyle" pa-0>
   <svg :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height">
     <pattern id="pattern" x="0" y="0" :width="settings.background.blockSize * 2" :height="settings.background.blockSize * 2" patternUnits="userSpaceOnUse">
@@ -36,12 +36,11 @@ export default {
     }),
     containerStyle() {
       return {
-        height: '100%',
-        maxHeight: '75vh',
-        minHeight: '75vh',
+        // height: '100%',
+        // maxHeight: '90vh',
+        height: '85vh',
         overflow: 'scroll',
         position: 'relative',
-        // maxWidth: '80vw'
         width: '100%'
       }
     },
@@ -52,7 +51,7 @@ export default {
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
       setTimeout(() => {
-        this.loadImages().then(this.drawLayers)
+        this.loadImages().then(this.drawLayersLoop)
       }, 1000, 1)
     },
   },
@@ -78,69 +77,104 @@ export default {
       return Promise.all(this.imagesLoaded)
     },
 
-    drawLayers() {
+
+    drawLayersLoop() {
       if (!this.refreshImages) {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.selectedHeadline.layers.forEach(layerData => {
           if (layerData.layerType === 'image') {
-            let image = this.images.find(image => image.src === layerData.image)
-            let x = image.width * layerData.anchor.x
-            let y = image.height * layerData.anchor.y
-            this.context.save()
-            this.context.translate((this.canvas.width / 2) - x, (this.canvas.height / 2) - y)
-            this.context.drawImage(image, 0, 0, image.width, image.height)
-            this.context.restore()
+            this.drawImageLayer(layerData)
           } else if (layerData.layerType === 'text') {
-            let splitStrings = this.splitText(layerData.text)
-
-            if (splitStrings) {
-              let primaryFont = layerData.font.primary
-              let secondaryFont = primaryFont
-              if (undefined !== layerData.font.secondary) {
-                secondaryFont = layerData.font.secondary
-              }
-
-              let totalWidth = 0
-              splitStrings.forEach(string => {
-                if (string.font === 'primary') {
-                  string.width = this.measureText(string.text, primaryFont)
-                } else {
-                  string.width = this.measureText(string.text, secondaryFont)
-                }
-                totalWidth += string.width
-              })
-
-              let x = totalWidth * layerData.anchor.x
-              let y = layerData.font.primary.size * layerData.anchor.y
-              if (layerData.font.secondary && layerData.font.primary.size < layerData.font.secondary.size) {
-                y = layerData.font.secondary.size * layerData.anchor.y
-              }
-
-              this.context.save()
-              this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
-              this.context.translate(-x, y)
-              this.context.translate(layerData.translate.x, layerData.translate.y)
-              this.context.rotate(layerData.rotate * Math.PI / 180)
-
-              let runningWidth = 0
-              splitStrings.forEach((string, index) => {
-                let font = string.font === 'primary' ? primaryFont : secondaryFont
-                this.drawText(string.text, font, runningWidth, 0)
-                runningWidth += string.width
-              })
-
-              this.context.restore()
-            }
+            this.drawTextLayer(layerData)
           }
         })
 
-        window.requestAnimationFrame(this.drawLayers)
+        window.requestAnimationFrame(this.drawLayersLoop)
       } else {
         this.loadImages().then(() => {
           this.setRefreshImages(false)
-          window.requestAnimationFrame(this.drawLayers)
+          window.requestAnimationFrame(this.drawLayersLoop)
         })
       }
+    },
+
+    drawImageLayer(layerData) {
+      let image = this.images.find(image => image.src === layerData.image)
+      let x = image.width * layerData.anchor.x
+      let y = image.height * layerData.anchor.y
+      this.context.save()
+      this.context.translate((this.canvas.width / 2) - x, (this.canvas.height / 2) - y)
+      this.context.drawImage(image, 0, 0, image.width, image.height)
+      this.context.restore()
+    },
+
+    drawTextLayer(layerData) {
+      let splitStrings = this.splitHandlebars(layerData.text)
+
+      if (!splitStrings) {
+        return
+      }
+
+      let primaryFont = layerData.font.primary
+      let secondaryFont = primaryFont
+      if (undefined !== layerData.font.secondary) {
+        secondaryFont = layerData.font.secondary
+      }
+
+      let totalWidth = 0
+      splitStrings.forEach(string => {
+        if (string.font === 'primary') {
+          string.width = this.measureText(string.text, primaryFont)
+        } else {
+          string.width = this.measureText(string.text, secondaryFont)
+        }
+        totalWidth += string.width
+      })
+
+      let x = totalWidth * layerData.anchor.x
+      let y = layerData.font.primary.size * layerData.anchor.y
+      if (layerData.font.secondary && layerData.font.primary.size < layerData.font.secondary.size) {
+        y = layerData.font.secondary.size * layerData.anchor.y
+      }
+
+      this.context.save()
+      this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
+      this.context.translate(-x, y)
+      this.context.translate(layerData.translate.x, layerData.translate.y)
+      this.context.rotate(layerData.rotate * Math.PI / 180)
+
+      let runningWidth = 0
+      splitStrings.forEach((string, index) => {
+        let font = string.font === 'primary' ? primaryFont : secondaryFont
+        this.drawText(string.text, font, runningWidth, 0)
+        runningWidth += string.width
+      })
+
+      this.context.restore()
+    },
+
+    splitHandlebars(text) {
+      let output = []
+      let firstSplit = text.split('{{')
+
+      firstSplit.forEach(string1 => {
+        let nextSplit = string1.split('}}')
+        if (nextSplit.length <= 1) {
+          output.push({ text: string1, font: 'primary' })
+        } else {
+          nextSplit.forEach((string2, index) => {
+            if(string2 !== '') {
+              if (index % 2 === 0) {
+                output.push({ text: string2, font: 'secondary' })
+              } else {
+                output.push({ text: string2, font: 'primary' })
+              }
+            }
+          })
+        }
+      })
+
+      return output
     },
 
     getFontString(font) {
@@ -183,29 +217,6 @@ export default {
       this.context.fillText(text, x, y)
     },
 
-    splitText(text) {
-      let output = []
-      let firstSplit = text.split('{{')
-
-      firstSplit.forEach(string1 => {
-        let nextSplit = string1.split('}}')
-        if (nextSplit.length <= 1) {
-          output.push({ text: string1, font: 'primary' })
-        } else {
-          nextSplit.forEach((string2, index) => {
-            if(string2 !== '') {
-              if (index % 2 === 0) {
-                output.push({ text: string2, font: 'secondary' })
-              } else {
-                output.push({ text: string2, font: 'primary' })
-              }
-            }
-          })
-        }
-      })
-
-      return output
-    },
   },
 }
 </script>

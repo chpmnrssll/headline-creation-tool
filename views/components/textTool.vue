@@ -7,15 +7,6 @@
 
     <v-expansion-panel-content>
       <div slot="header">Primary Font</div>
-      <v-layout row mx-4>
-        <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256"></v-slider>
-        </v-flex>
-        <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
-        </v-flex>
-      </v-layout>
-
       <v-layout mx-4>
         <v-select mx-4 v-if="selectedLayer" :items="font.families" :value="primaryFont.family" @change="setPrimaryFontFamily" label="Family">
           <template slot="item" slot-scope="{ item }">
@@ -29,8 +20,17 @@
         </v-select>
       </v-layout>
 
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
       <v-layout mx-4>
-        <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
       </v-layout>
 
       <v-layout column mx-4 mb-4>
@@ -49,7 +49,7 @@
           </v-btn>
         </v-btn-toggle>
 
-        <v-btn-toggle v-model="font.justify" mandatory>
+        <!-- <v-btn-toggle v-model="font.justify" mandatory>
           <v-btn :value="0" flat @click="setPrimaryFontAlign('left')">
             <v-icon>format_align_left</v-icon>
           </v-btn>
@@ -59,10 +59,10 @@
           <v-btn :value="2" flat @click="setPrimaryFontAlign('right')">
             <v-icon>format_align_right</v-icon>
           </v-btn>
-          <!-- <v-btn :value="3" flat>
+          <v-btn :value="3" flat>
             <v-icon>format_align_justify</v-icon>
-          </v-btn> -->
-        </v-btn-toggle>
+          </v-btn>
+        </v-btn-toggle> -->
       </v-layout>
     </v-expansion-panel-content>
 
@@ -110,7 +110,7 @@
           </v-btn>
         </v-btn-toggle>
 
-        <v-btn-toggle v-model="font.justify" mandatory>
+        <!-- <v-btn-toggle v-model="font.justify" mandatory>
           <v-btn :value="0" flat @click="setSecondaryFontAlign('left')">
             <v-icon>format_align_left</v-icon>
           </v-btn>
@@ -120,10 +120,10 @@
           <v-btn :value="2" flat @click="setSecondaryFontAlign('right')">
             <v-icon>format_align_right</v-icon>
           </v-btn>
-          <!-- <v-btn :value="3" flat>
+          <v-btn :value="3" flat>
             <v-icon>format_align_justify</v-icon>
-          </v-btn> -->
-        </v-btn-toggle>
+          </v-btn>
+        </v-btn-toggle> -->
       </v-layout>
     </v-expansion-panel-content>
 

@@ -2,25 +2,51 @@
 <v-app :dark="isDarkMode">
   <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" :temporary="temporary" v-model="drawer" enable-resize-watcher app width="200" class="primary">
     <v-list>
-      <v-list-tile v-for="(item, i) in items" :key="i" value="true" :href="item.href" :class="getNavClass(item.href)">
-        <v-list-tile-action>
-          <v-icon class="primaryText--text" v-html="item.icon"></v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="primaryText--text" v-text="item.title"></v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
       <v-list-tile>
         <v-list-tile-action>
-          <v-btn icon @click.stop="miniVariant = !miniVariant">
-            <v-icon class="primaryText--text" v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-          </v-btn>
+          <v-tooltip right>
+            <v-btn slot="activator" color="primary" @click.stop="miniVariant = !miniVariant" icon>
+              <v-icon class="primaryText--text" v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
+            </v-btn>
+            <span v-html="miniVariant ? 'Expand Drawer' : 'Collapse Drawer'"></span>
+          </v-tooltip>
         </v-list-tile-action>
       </v-list-tile>
+
+      <v-list-tile @click="saveHeadline = true">
+        <v-list-tile-action>
+          <v-btn slot="activator" color="primary" icon>
+            <v-icon class="primaryText--text">save</v-icon>
+          </v-btn>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title class="primaryText--text">Save Headline</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <v-list-tile href="/#/home" :class="getNavClass('/#/home')">
+        <v-list-tile-action>
+          <v-icon class="primaryText--text">color_lens</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title class="primaryText--text">Canvas</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <v-list-tile href="/#/headlines" :class="getNavClass('/#/headlines')">
+        <v-list-tile-action>
+          <v-icon class="primaryText--text">folder</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title class="primaryText--text">Headlines</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
     </v-list>
   </v-navigation-drawer>
 
-  <v-toolbar class="primary primaryText--text" fixed app :clipped-left="clipped">
+  <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+  <!-- <v-toolbar class="primary primaryText--text" fixed app :clipped-left="clipped">
     <v-toolbar-side-icon class="primaryText--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title> {{ title }} </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -28,19 +54,13 @@
       <v-icon class="primaryText--text" v-if="!isDarkMode"> brightness_5 </v-icon>
       <v-icon class="primaryText--text" v-else> brightness_3 </v-icon>
     </v-btn>
-  </v-toolbar>
+  </v-toolbar> -->
 
-  <main>
-    <v-content>
-      <v-container row fluid>
-        <v-layout row>
-          <v-fade-transition mode="out-in">
-            <router-view @alert="alert"></router-view>
-          </v-fade-transition>
-        </v-layout>
-      </v-container>
-    </v-content>
-  </main>
+  <v-content>
+    <v-fade-transition mode="out-in">
+      <router-view @alert="alert"></router-view>
+    </v-fade-transition>
+  </v-content>
 
   <v-snackbar bottom :value="alertOpen" :color="alertSuccess ? 'success' : 'error'">
     {{ alertString }}
@@ -55,19 +75,6 @@ export default {
     drawer: false,
     fixed: false,
     temporary: true,
-    items: [{
-        icon: "color_lens",
-        title: "Canvas",
-        href: "/#/home",
-        router: true
-      },
-      {
-        icon: "folder",
-        title: "Headlines",
-        href: "/#/headlines",
-        router: true
-      },
-    ],
     miniVariant: false,
     right: true,
     rightDrawer: false,

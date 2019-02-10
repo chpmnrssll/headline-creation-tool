@@ -7,13 +7,13 @@
         <template slot="items" slot-scope="props">
           <tr :active="props.item.selected" @click="setSelectedLayer(props.item.zIndex)">
             <td class="px-3">
-              <v-tooltip bottom>
+              <v-tooltip left>
                 <v-text-field slot="activator" :value="props.item.name" @input="setSelectedLayerName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
                 <span>Layer Name</span>
               </v-tooltip>
             </td>
             <td class="px-0">
-              <v-tooltip bottom>
+              <v-tooltip top>
                 <v-btn slot="activator" class="ma-0" icon small @click="moveLayer({ zIndex: props.item.zIndex, direction: 1 })">
                   <v-icon small>arrow_upward</v-icon>
                 </v-btn>
@@ -25,7 +25,7 @@
                 </v-btn>
                 <span>Move Down</span>
               </v-tooltip>
-              <v-tooltip bottom>
+              <v-tooltip right>
                 <v-btn slot="activator" class="ma-0" icon small ma-0 @click="removeThisLayer(props.item.zIndex)">
                   <v-icon small color="error">delete_forever</v-icon>
                 </v-btn>
@@ -36,21 +36,21 @@
         </template>
       </v-data-table>
 
-      <v-tooltip bottom>
+      <v-tooltip left>
         <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
           <v-icon small>playlist_add</v-icon>
         </v-btn>
         <span>Add New Layer</span>
       </v-tooltip>
 
-      <v-tooltip bottom>
+      <!-- <v-tooltip right>
         <v-btn slot="activator" color="primary" @click="saveHeadline = true" icon small absolute top right>
           <v-icon small>save</v-icon>
         </v-btn>
         <span>Save Headline</span>
-      </v-tooltip>
+      </v-tooltip> -->
     </v-card>
-    <v-divider></v-divider>
+
     <v-card v-if="selectedLayer">
       <textTool v-if="selectedLayer.layerType === 'text'"></textTool>
       <imageTool v-else="selectedLayer.layerType === 'image'"></imageTool>
