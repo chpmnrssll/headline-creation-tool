@@ -111,9 +111,23 @@ export default {
       state.selectedLayer.image = image
       state.refreshImages = true
     },
-
     setText(state, text) {
       state.selectedLayer.text = text
+    },
+    setTranslateX(state, value) {
+      state.selectedLayer.translate.x = value
+    },
+    setTranslateY(state, value) {
+      state.selectedLayer.translate.y = value
+    },
+    setRotation(state, value) {
+      state.selectedLayer.rotation = value
+    },
+    setScaleX(state, value) {
+      state.selectedLayer.scale.x = value
+    },
+    setScaleY(state, value) {
+      state.selectedLayer.scale.y = value
     },
 
     setPrimaryFontSize(state, size) {
