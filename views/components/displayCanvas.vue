@@ -54,9 +54,9 @@ export default {
     headlineLoaded(newValue, oldValue) {
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      setTimeout(() => {
+      window.requestAnimationFrame(() => {
         this.loadImages().then(this.drawLayersLoop)
-      }, 1000, 1)
+      })
     },
   },
 
@@ -176,7 +176,6 @@ export default {
       })
       this.context.restore()
 
-      // this.context.translate(0, -anchorY)
       if (layerData == this.selectedLayer) {
         this.drawMarchingAnts(0, 0, dimensions.width, dimensions.height)
       }
