@@ -1,6 +1,6 @@
 {
-  "name": "mevn",
-  "version": "0.0.1",
+  "name": "headline-creation-tool",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node -r dotenv/config ./bin/www",
@@ -21,7 +21,6 @@
     "mongoose": "^4.13.18",
     "nodemon": "^1.18.9",
     "serve-favicon": "~2.4.5",
-    "sprite-vue": "^0.21.3",
     "trunks-log": "^2.0.3",
     "vue": "^2.5.22",
     "vue-router": "^3.0.2",
