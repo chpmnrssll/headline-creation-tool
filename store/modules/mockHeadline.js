@@ -5,127 +5,20 @@ export default {
         x: 0.5,
         y: 0.5
       },
+      image: 'https://picsum.photos/640/320/?random',
       layerType: 'image',
       name: 'Random Image',
-      image: 'https://picsum.photos/640/280/?random',
-      zIndex: 0,
-    },
-
-
-
-    {
-      anchor: {
-        x: 0.5,
-        y: 0.5
+      rotation: 2.5,
+      scale: {
+        x: 1,
+        y: 1
       },
-      font: {
-        primary: {
-          color: '#ffdc45',
-          family: 'Staatliches:400',
-          lineHeight: 48,
-          shadow: {
-            blur: 12,
-            color: '#000',
-            offset: {
-              x: 2,
-              y: 4
-            },
-          },
-          size: 64,
-          style: {
-            bold: true,
-            italic: true,
-            underline: false
-          },
-        },
-        secondary: {
-          color: '#ffdc45',
-          family: 'Arvo:400,400i,700,700i',
-          lineHeight: 48,
-          shadow: {
-            blur: 12,
-            color: '#000',
-            offset: {
-              x: 2,
-              y: 4
-            },
-          },
-          size: 64,
-          style: {
-            bold: true,
-            italic: true,
-            underline: false
-          },
-        }
-      },
-      layerType: 'text',
-      name: 'Big Text',
-      rotate: 0,
-      text: 'Headline Creation Tool',
       translate: {
         x: 0,
-        y: -60
+        y: 0
       },
-      zIndex: 1,
+      zIndex: 0,
     },
-
-    {
-      anchor: {
-        x: 0.5,
-        y: 0.5
-      },
-      font: {
-        primary: {
-          color: '#ff4f28',
-          family: 'Staatliches:400',
-          lineHeight: 18,
-          shadow: {
-            blur: 2,
-            color: '#000',
-            offset: {
-              x: 1,
-              y: 2
-            },
-          },
-          size: 18,
-          style: {
-            bold: false,
-            italic: true,
-            underline: false
-          },
-        },
-        secondary: {
-          color: '#ffdc45',
-          family: 'Arvo:400,400i,700,700i',
-          lineHeight: 32,
-          shadow: {
-            blur: 12,
-            color: '#000',
-            offset: {
-              x: 2,
-              y: 4
-            },
-          },
-          size: 32,
-          style: {
-            bold: true,
-            italic: true,
-            underline: false
-          },
-        }
-      },
-      layerType: 'text',
-      name: 'New Layer',
-      rotate: 0,
-      text: 'New & Improved',
-      translate: {
-        x: 220,
-        y: -30
-      },
-      zIndex: 3,
-    },
-
-
 
     {
       anchor: {
@@ -173,14 +66,126 @@ export default {
         }
       },
       layerType: 'text',
-      name: 'Little Text',
-      rotate: -3,
+      name: 'Sub Heading',
+      rotation: 357,
       text: 'Now with {{99%}} More Canvas!\nPlus multi-line support!',
       translate: {
         x: 0,
-        y: 75
+        y: 60
+      },
+      zIndex: 1,
+    },
+
+    {
+      anchor: {
+        x: 0.5,
+        y: 0.5
+      },
+      font: {
+        primary: {
+          color: '#ffdc45',
+          family: 'Staatliches:400',
+          lineHeight: 48,
+          shadow: {
+            blur: 12,
+            color: '#000',
+            offset: {
+              x: 2,
+              y: 4
+            },
+          },
+          size: 64,
+          style: {
+            bold: true,
+            italic: true,
+            underline: false
+          },
+        },
+        secondary: {
+          color: '#ffdc45',
+          family: 'Arvo:400,400i,700,700i',
+          lineHeight: 1,
+          shadow: {
+            blur: 12,
+            color: '#000',
+            offset: {
+              x: 2,
+              y: 4
+            },
+          },
+          size: 1,
+          style: {
+            bold: false,
+            italic: false,
+            underline: false
+          },
+        }
+      },
+      layerType: 'text',
+      name: 'Headline Text',
+      rotation: 0,
+      text: 'Headline Creation Tool',
+      translate: {
+        x: 0,
+        y: -60
       },
       zIndex: 2,
-    }
+    },
+
+    {
+      anchor: {
+        x: 0.5,
+        y: 0.5
+      },
+      font: {
+        primary: {
+          color: '#ff4f28',
+          family: 'Staatliches:400',
+          lineHeight: 18,
+          shadow: {
+            blur: 2,
+            color: '#000',
+            offset: {
+              x: 1,
+              y: 2
+            },
+          },
+          size: 18,
+          style: {
+            bold: false,
+            italic: true,
+            underline: false
+          },
+        },
+        secondary: {
+          color: '#ffdc45',
+          family: 'Arvo:400,400i,700,700i',
+          lineHeight: 1,
+          shadow: {
+            blur: 12,
+            color: '#000',
+            offset: {
+              x: 2,
+              y: 4
+            },
+          },
+          size: 1,
+          style: {
+            bold: false,
+            italic: false,
+            underline: false
+          },
+        }
+      },
+      layerType: 'text',
+      name: 'New Tag',
+      rotation: 0,
+      text: 'New & Improved',
+      translate: {
+        x: 220,
+        y: -24
+      },
+      zIndex: 3,
+    },
   ]
 }
