@@ -1,6 +1,6 @@
 <template>
 <v-app :dark="isDarkMode">
-  <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" :temporary="temporary" v-model="drawer" enable-resize-watcher app width="200" class="primary">
+  <v-navigation-drawer app enable-resize-watcher clipped temporary persistent :mini-variant="miniVariant" v-model="drawer" width="200" class="primary">
     <v-list>
       <v-list-tile>
         <v-list-tile-action>
@@ -45,7 +45,7 @@
     </v-list>
   </v-navigation-drawer>
 
-  <v-toolbar class="elevation-0" fixed app scroll-off-screen :scroll-threshold="0" :clipped-left="clipped">
+  <v-toolbar class="elevation-0" fixed app clipped-left>
     <v-tooltip bottom>
       <v-toolbar-side-icon slot="activator" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <span>Open Drawer</span>
