@@ -154,6 +154,18 @@ export default {
     setPrimaryFontAlign(state, value) {
       state.selectedLayer.font.primary.style.align = value
     },
+    setPrimaryFontShadowBlur(state, value) {
+      state.selectedLayer.font.primary.shadow.blur = value
+    },
+    setPrimaryFontShadowColor(state, event) {
+      state.selectedLayer.font.primary.shadow.color = event.target.value
+    },
+    setPrimaryFontShadowOffsetX(state, value) {
+      state.selectedLayer.font.primary.shadow.offset.x = value
+    },
+    setPrimaryFontShadowOffsetY(state, value) {
+      state.selectedLayer.font.primary.shadow.offset.y = value
+    },
 
     setSecondaryFontSize(state, size) {
       if (!state.selectedLayer.font.secondary) {
@@ -202,6 +214,30 @@ export default {
         state.selectedLayer.font.secondary = {}
       }
       state.selectedLayer.font.secondary.style.align = value
-    }
+    },
+    setSecondaryFontShadowBlur(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.shadow.blur = value
+    },
+    setSecondaryFontShadowColor(state, event) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.shadow.color = event.target.value
+    },
+    setSecondaryFontShadowOffsetX(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.shadow.offset.x = value
+    },
+    setSecondaryFontShadowOffsetY(state, value) {
+      if (!state.selectedLayer.font.secondary) {
+        state.selectedLayer.font.secondary = {}
+      }
+      state.selectedLayer.font.secondary.shadow.offset.y = value
+    },
   }
 }
