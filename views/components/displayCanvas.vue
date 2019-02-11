@@ -21,6 +21,10 @@ export default {
       fontsLoaded: [],
       images: [],
       scene: {},
+      lineDash: [4, 4],
+      lineDashOffset: 0,
+      lineDashOffsetSpeed: 0.25,
+      lineDashWidth: 1,
     }
   },
 
@@ -100,69 +104,150 @@ export default {
 
     drawImageLayer(layerData) {
       let image = this.images.find(image => image.src === layerData.image)
-      let x = image.width * layerData.anchor.x
-      let y = image.height * layerData.anchor.y
+      let anchorX = (image.width * layerData.scale.x) * layerData.anchor.x
+      let anchorY = (image.height * layerData.scale.y) * layerData.anchor.y
+      let centerX = this.canvas.width / 2
+      let centerY = this.canvas.height / 2
+
       this.context.save()
-      this.context.translate((this.canvas.width / 2) - x, (this.canvas.height / 2) - y)
+      this.context.translate(centerX, centerY)
+      this.context.translate(-anchorX, -anchorY)
+      this.context.translate(layerData.translate.x, layerData.translate.y)
+      this.context.translate(anchorX, anchorY)
+      this.context.rotate(layerData.rotation * Math.PI / 180)
+      this.context.translate(-anchorX, -anchorY)
+      this.context.scale(layerData.scale.x, layerData.scale.y)
       this.context.drawImage(image, 0, 0, image.width, image.height)
+
+      if (layerData == this.selectedLayer) {
+        this.drawMarchingAnts(0, 0, image.width, image.height)
+      }
+
       this.context.restore()
     },
 
     drawTextLayer(layerData) {
-      let splitLines = []
-      let lines = this.splitNewLines(layerData.text)
-      lines.forEach(line => {
-        splitLines.push(this.splitHandlebars(line))
-      })
-
+      let splitLines = this.splitUpLines(layerData)
       if (!splitLines) {
         return
       }
 
       let primaryFont = layerData.font.primary
-      let secondaryFont = primaryFont
+      let secondaryFont = {}
       if (undefined !== layerData.font.secondary) {
         secondaryFont = layerData.font.secondary
       }
 
-      splitLines.forEach(line => {
-        let lineWidth = 0
-        line.forEach(string => {
-          if (string.font === 'primary') {
-            string.width = this.measureText(string.text, primaryFont)
-          } else {
-            string.width = this.measureText(string.text, secondaryFont)
-          }
-          lineWidth += string.width
-        })
-        line.width = lineWidth
-      })
+      let dimensions = this.getTextLayerDimensions(splitLines, primaryFont, secondaryFont)
 
-      let lineHeight = 16
-      let runningWidth = 0
-      let runningLines = 0
-      splitLines.forEach(line => {
-        let x = line.width * layerData.anchor.x
-        let y = layerData.font.primary.size * layerData.anchor.y + (layerData.font.primary.lineHeight * runningLines)
-        if (layerData.font.secondary && layerData.font.primary.size < layerData.font.secondary.size) {
-          y = layerData.font.secondary.size * layerData.anchor.y + (layerData.font.secondary.lineHeight * runningLines)
+      let anchorX = dimensions.width * layerData.anchor.x
+      let anchorY = dimensions.height * layerData.anchor.y
+      let centerX = this.canvas.width / 2
+      let centerY = this.canvas.height / 2
+      let translateX = layerData.translate.x
+      let translateY = layerData.translate.y
+
+      this.context.save()
+      this.context.translate(centerX, centerY)
+      this.context.translate(-anchorX, -anchorY)
+      this.context.translate(translateX, translateY)
+      this.context.translate(anchorX, anchorY)
+      this.context.rotate(layerData.rotation * Math.PI / 180)
+      this.context.translate(-anchorX, -anchorY)
+
+      this.context.save()
+      splitLines.forEach((line, index) => {
+        let startX = 0
+        let startY = 0
+
+        if (index < 1) {
+          this.context.translate(0, line.height)
         }
-
-        this.context.save()
-        this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
-        this.context.translate(-x, y)
-        this.context.translate(layerData.translate.x, layerData.translate.y)
-        this.context.rotate(layerData.rotate * Math.PI / 180)
 
         line.forEach(string => {
           let font = string.font === 'primary' ? primaryFont : secondaryFont
-          this.drawText(string.text, font, runningWidth, 0)
-          runningWidth += string.width
+          this.drawText(string.text, font, startX, 0)
+          startX += string.width
         })
-        runningWidth = 0
-        runningLines++
-        this.context.restore()
+        if (index <  splitLines.length-1) {
+          startY += splitLines[index+1].height
+        }
+        this.context.translate(0, startY)
       })
+      this.context.restore()
+
+      // this.context.translate(0, -anchorY)
+      if (layerData == this.selectedLayer) {
+        this.drawMarchingAnts(0, 0, dimensions.width, dimensions.height)
+      }
+
+      this.context.restore()
+    },
+
+    drawMarchingAnts(x, y, width, height) {
+      this.context.setLineDash(this.lineDash)
+      this.context.lineWidth = this.lineDashWidth
+      this.context.lineDashOffset = this.lineDashOffset
+      this.context.strokeStyle = 'rgba(0,0,0,0.75)'
+      this.context.strokeRect(x, y, width, height)
+      this.context.lineDashOffset = this.lineDashOffset + this.lineDash[0]
+      this.context.strokeStyle = 'rgba(255,255,255,0.75)'
+      this.context.strokeRect(x, y, width, height)
+
+      this.lineDashOffset += this.lineDashOffsetSpeed
+      if (this.lineDashOffset > 16) {
+        this.lineDashOffset = 0
+      }
+    },
+
+    // find the width & height for all the lines
+    getTextLayerDimensions(lines, primaryFont, secondaryFont) {
+      let totalWidth = 0
+      let totalHeight = 0
+
+      lines.forEach(line => {
+        let lineWidth = 0
+        let lineHeight = 0
+
+        line.forEach(string => {
+          if (string.font === 'primary') {
+            let metrics = this.measureText(string.text, primaryFont)
+            string.width = metrics.width
+            string.height = metrics.height
+            if (primaryFont.size > lineHeight) {
+              lineHeight = primaryFont.size
+            }
+          } else {
+            let metrics = this.measureText(string.text, secondaryFont)
+            string.width = metrics.width
+            string.height = metrics.height
+            if (lineHeight = secondaryFont.size) {
+              lineHeight = secondaryFont.size
+            }
+          }
+          lineWidth += string.width
+          line.width = lineWidth
+          line.height = lineHeight
+        })
+
+        if (lineWidth > totalWidth) {
+          totalWidth = lineWidth
+        }
+        totalHeight += lineHeight
+      })
+
+      return { width: totalWidth, height: totalHeight }
+    },
+
+    splitUpLines(layerData) {
+      let splitLines = []
+      let lines = this.splitNewLines(layerData.text)
+
+      lines.forEach(line => {
+        splitLines.push(this.splitHandlebars(line))
+      })
+
+      return splitLines
     },
 
     splitNewLines(text) {
@@ -202,7 +287,8 @@ export default {
       this.context.textAlign = font.style.align
       this.context.font = this.getFontString(font)
       let metrics = this.context.measureText(text)
-      return metrics.width
+      metrics.height = font.size
+      return metrics
     },
 
     drawText(text, font, x, y) {
@@ -224,9 +310,6 @@ export default {
       if (font.style.italic) {
         style += 'italic '
       }
-      // if (font.style.underline) {
-      //   style += 'underline '
-      // }
       if (!this.fontsLoaded.includes(font.family)) {
         let link = document.createElement('link')
         let firstScript = document.getElementsByTagName('script')[0]
