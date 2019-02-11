@@ -3,6 +3,33 @@
     <v-expansion-panel-content>
       <div slot="header">Text</div>
       <v-textarea v-if="selectedLayer" @input="setText" :value="selectedLayer.text" class="px-4" box></v-textarea>
+
+      <v-layout row ml-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.x" @input="setTranslateX" min="-1000" max="1000" label="X"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.x" @input="setTranslateX" min="-1000" max="1000" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row ml-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.y" @input="setTranslateY" min="-1000" max="1000" label="Y"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.y" @input="setTranslateY" min="-1000" max="1000" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row ml-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" label="Rotation"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" type="number" label="deg"></v-text-field>
+        </v-flex>
+      </v-layout>
     </v-expansion-panel-content>
 
     <v-expansion-panel-content>
@@ -55,23 +82,59 @@
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
+          <v-slider v-if="selectedLayer" :value="primaryFont.size" @input="setPrimaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.size)" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="primaryFont.size" @input="setPrimaryFontSize" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
-      <v-layout row ml-4>
+      <!-- <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(primaryFont.lineHeight)" @input="setPrimaryFontLineHeight" thumb-label :min="1" :max="256" label="LineHeight"></v-slider>
+          <v-slider v-if="selectedLayer" :value="primaryFont.lineHeight" @input="setPrimaryFontLineHeight" thumb-label :min="1" :max="256" label="LineHeight"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(primaryFont.lineHeight)" @input="setPrimaryFontLineHeight" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="primaryFont.lineHeight" @input="setPrimaryFontLineHeight" type="number" label="px"></v-text-field>
         </v-flex>
-      </v-layout>
+      </v-layout> -->
 
       <input id="primaryColorPicker" type="color" :value="primaryFont.color" @input="setPrimaryFontColor" hidden></input>
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="primaryFont.shadow.blur" @input="setPrimaryFontShadowBlur" thumb-label :min="1" :max="16" label="Shadow Blur"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="primaryFont.shadow.blur" @input="setPrimaryFontShadowBlur" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="primaryFont.shadow.offset.x" @input="setPrimaryFontShadowOffsetX" thumb-label :min="1" :max="16" label="Shadow X"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="primaryFont.shadow.offset.x" @input="setPrimaryFontShadowOffsetX" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="primaryFont.shadow.offset.y" @input="setPrimaryFontShadowOffsetY" thumb-label :min="1" :max="16" label="Shadow Y"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="primaryFont.shadow.offset.y" @input="setPrimaryFontShadowOffsetY" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <label class="v-label theme--light">Shadow Color</label>
+        <v-btn flat @click="triggerPrimaryShadowColorPicker">
+          <v-icon>format_color_fill</v-icon>
+        </v-btn>
+      </v-layout>
+
+      <input id="primaryShadowColorPicker" type="color" v-if="selectedLayer" :value="primaryFont.shadow.color" @input="setPrimaryFontShadowColor" hidden></input>
     </v-expansion-panel-content>
 
     <v-expansion-panel-content>
@@ -92,6 +155,8 @@
             <v-icon>format_color_fill</v-icon>
           </v-btn>
         </v-btn-toggle>
+
+        <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="setSecondaryFontColor" hidden></input>
 
         <!-- <v-btn-toggle v-model="font.justify" mandatory>
           <v-btn :value="0" flat @click="setSecondaryFontAlign('left')">
@@ -124,23 +189,56 @@
 
       <v-layout row mx-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
+          <v-slider v-if="selectedLayer" :value="secondaryFont.size" @input="setSecondaryFontSize" thumb-label :min="1" :max="256" label="Size"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.size)" @input="setSecondaryFontSize" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="secondaryFont.size" @input="setSecondaryFontSize" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <!-- <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="secondaryFont.lineHeight" @input="setSecondaryFontLineHeight" thumb-label :min="1" :max="256" label="Line Height"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="secondaryFont.lineHeight" @input="setSecondaryFontLineHeight" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout> -->
+
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="secondaryFont.shadow.blur" @input="setSecondaryFontShadowBlur" thumb-label :min="1" :max="16" label="Shadow Blur"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="secondaryFont.shadow.blur" @input="setSecondaryFontShadowBlur" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row mx-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" :value="parseInt(secondaryFont.lineHeight)" @input="setSecondaryFontLineHeight" thumb-label :min="1" :max="256" label="Line Height"></v-slider>
+          <v-slider v-if="selectedLayer" :value="secondaryFont.shadow.offset.x" @input="setSecondaryFontShadowOffsetX" thumb-label :min="1" :max="16" label="Shadow X"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="parseInt(secondaryFont.lineHeight)" @input="setSecondaryFontLineHeight" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="secondaryFont.shadow.offset.x" @input="setSecondaryFontShadowOffsetX" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
-      <input id="secondaryColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.color" @input="setSecondaryFontColor" hidden></input>
+      <v-layout row mx-4>
+        <v-flex xs9>
+          <v-slider v-if="selectedLayer" :value="secondaryFont.shadow.offset.y" @input="setSecondaryFontShadowOffsetY" thumb-label :min="1" :max="16" label="Shadow Y"></v-slider>
+        </v-flex>
+        <v-flex xs3 mx-4>
+          <v-text-field v-if="selectedLayer" :value="secondaryFont.shadow.offset.y" @input="setSecondaryFontShadowOffsetY" type="number" label="px"></v-text-field>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row mx-4>
+        <label class="v-label theme--light">Shadow Color</label>
+        <v-btn flat @click="triggerSecondaryShadowColorPicker">
+          <v-icon>format_color_fill</v-icon>
+        </v-btn>
+      </v-layout>
+      <input id="secondaryShadowColorPicker" type="color" v-if="selectedLayer" :value="secondaryFont.shadow.color" @input="setSecondaryFontShadowColor" hidden></input>
 
     </v-expansion-panel-content>
 
@@ -218,6 +316,9 @@ export default {
   methods: {
     ...mapMutations({
       setText: 'data/setText',
+      setTranslateX: 'data/setTranslateX',
+      setTranslateY: 'data/setTranslateY',
+      setRotation: 'data/setRotation',
       setPrimaryFontColor: 'data/setPrimaryFontColor',
       setPrimaryFontFamily: 'data/setPrimaryFontFamily',
       setPrimaryFontSize: 'data/setPrimaryFontSize',
@@ -226,6 +327,10 @@ export default {
       setPrimaryFontItalic: 'data/setPrimaryFontItalic',
       setPrimaryFontUnderline: 'data/setPrimaryFontUnderline',
       setPrimaryFontAlign: 'data/setPrimaryFontAlign',
+      setPrimaryFontShadowBlur: 'data/setPrimaryFontShadowBlur',
+      setPrimaryFontShadowColor: 'data/setPrimaryFontShadowColor',
+      setPrimaryFontShadowOffsetX: 'data/setPrimaryFontShadowOffsetX',
+      setPrimaryFontShadowOffsetY: 'data/setPrimaryFontShadowOffsetY',
       setSecondaryFontColor: 'data/setSecondaryFontColor',
       setSecondaryFontFamily: 'data/setSecondaryFontFamily',
       setSecondaryFontSize: 'data/setSecondaryFontSize',
@@ -234,6 +339,10 @@ export default {
       setSecondaryFontItalic: 'data/setSecondaryFontItalic',
       setSecondaryFontUnderline: 'data/setSecondaryFontUnderline',
       setSecondaryFontAlign: 'data/setSecondaryFontAlign',
+      setSecondaryFontShadowBlur: 'data/setSecondaryFontShadowBlur',
+      setSecondaryFontShadowColor: 'data/setSecondaryFontShadowColor',
+      setSecondaryFontShadowOffsetX: 'data/setSecondaryFontShadowOffsetX',
+      setSecondaryFontShadowOffsetY: 'data/setSecondaryFontShadowOffsetY',
     }),
 
     triggerPrimaryColorPicker() {
@@ -243,6 +352,12 @@ export default {
     triggerSecondaryColorPicker() {
       this.font.style.splice(this.font.style.findIndex(value => value === 'secondaryColor'), 1)
       document.getElementById('secondaryColorPicker').click()
+    },
+    triggerPrimaryShadowColorPicker() {
+      document.getElementById('primaryShadowColorPicker').click()
+    },
+    triggerSecondaryShadowColorPicker() {
+      document.getElementById('secondaryShadowColorPicker').click()
     },
 
     togglePrimaryFontBold() {
