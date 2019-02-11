@@ -29,12 +29,11 @@ export default {
         primary: {
           color: '#bb99cc',
           family: 'Permanent+Marker:400',
-          lineHeight: 24,
           shadow: {
             blur: 2,
-            color: '#000',
+            color: '#271f2a',
             offset: {
-              x: 1,
+              x: 2,
               y: 2
             },
           },
@@ -48,10 +47,9 @@ export default {
         secondary: {
           color: '#99ccbb',
           family: 'Luckiest+Guy:400',
-          lineHeight: 24,
           shadow: {
-            blur: 10,
-            color: '#000',
+            blur: 4,
+            color: '#3a4d47',
             offset: {
               x: 2,
               y: 4
@@ -85,12 +83,11 @@ export default {
         primary: {
           color: '#ffdc45',
           family: 'Staatliches:400',
-          lineHeight: 48,
           shadow: {
-            blur: 12,
-            color: '#000',
+            blur: 8,
+            color: '#5a5000',
             offset: {
-              x: 2,
+              x: 3,
               y: 4
             },
           },
@@ -104,7 +101,6 @@ export default {
         secondary: {
           color: '#ffdc45',
           family: 'Arvo:400,400i,700,700i',
-          lineHeight: 1,
           shadow: {
             blur: 12,
             color: '#000',
@@ -141,12 +137,11 @@ export default {
         primary: {
           color: '#ff4f28',
           family: 'Staatliches:400',
-          lineHeight: 18,
           shadow: {
             blur: 2,
-            color: '#000',
+            color: '#642314',
             offset: {
-              x: 1,
+              x: 2,
               y: 2
             },
           },
@@ -160,7 +155,6 @@ export default {
         secondary: {
           color: '#ffdc45',
           family: 'Arvo:400,400i,700,700i',
-          lineHeight: 1,
           shadow: {
             blur: 12,
             color: '#000',
