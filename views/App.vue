@@ -13,7 +13,7 @@
         </v-list-tile-action>
       </v-list-tile>
 
-      <v-list-tile href="/#/home" :class="getNavClass('/#/home')">
+      <v-list-tile href="/#/" :class="getNavClass('/#/')">
         <v-list-tile-action>
           <v-icon class="primaryText--text">color_lens</v-icon>
         </v-list-tile-action>

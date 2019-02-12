@@ -1,64 +1,52 @@
-# [**M**ongo](https://www.mongodb.com/) [**E**xpress](https://expressjs.com/) [**V**ueJS](https://vuejs.org/) [**N**ode](https://nodejs.org/en/) stack.
+# Headline Creation Tool and API
 
-## A2 Hosting Setup
+Based on the [**M**ongo](https://www.mongodb.com/) [**E**xpress](https://expressjs.com/) [**V**ueJS](https://vuejs.org/) [**N**ode](https://nodejs.org/en/) stack.
+
+## Installation on A2 unmanaged VPS
 
 1. [Get SSH access](https://www.a2hosting.com/kb/getting-started-guide/accessing-your-account/using-ssh-secure-shell)
-2. [Install Node.js](https://www.a2hosting.com/kb/installable-applications/manual-installations/installing-node-js-on-managed-hosting-accounts)
 
-3. Install MongoDB from SSH:
-```
-$ cd ~
-$ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.0.5.tgz
-$ tar xvf mongodb-linux-x86_64-rhel62-4.0.5.tgz
-$ cp mongodb-linux-x86_64-rhel62-4.0.5/bin/* ~/bin
-```
+2. [Install Node.js](https://linuxize.com/post/how-to-install-node-js-on-centos-7/)
 
-4. Create ~/mongod.conf with the following:
+3. [Install MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/#configure-the-package-management-system-yum)
+
+4. Start mongod:
 ```
-bind_ip = 127.0.0.1
-quiet = true
-dbpath = db
-logpath = logs/mongod.log
-logappend = true
+$ systemctl start mongod
 ```
 
-5. Start mongod in the background with:
+5. Stop/Disable httpd:
 ```
-$ nohup mongod --config ~/mongod.conf &
+$ systemctl stop httpd
+$ systemctl disable httpd
 ```
 
-6. Edit/Create /home/username/public_html/.htaccess with the following:
+6. Clone repository:
 ```
-RewriteEngine On
-RewriteRule ^$ http://127.0.0.1:XXXXX/ [P,L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ http://127.0.0.1:XXXXX/$1 [P,L]
+$ git clone https://github.com/chpmnrssll/headline-creation-tool.git
+$ cd headline-creation-tool
 ```
-In both RewriteRule lines, replace XXXXX with the port on which your Node.js application listens.
 
-**A2 Hosting requires using a port between 30000 and 50000 (inclusive)**
-
-**Subdomains can be redirected to the correct port from CPanel**
-
-## Installation
-
+7. Setup environment variables:
 ```
-$ git clone https://github.com/chpmnrssll/mevn-stack.git <dir name>
-$ cd <dir name>
-$ npm install
 $ cp .env.example .env
 ```
-Then edit your environment variables in .env as needed.
-
-**A2 Hosting requires using a port between 30000 and 50000 (inclusive)**
-
 **Changing the PORT variable in the .env will require you to change it in the `views/config/http.js` file.**
 
-5. Build and start the Node.js app in the background with:
+8. Install node_modules
+```
+$ npm install
+```
+
+9. Build and start the Node.js app in the background with:
 ```
 $ npm run build
 $ nohup npm start &
+```
+
+The server can be shutdown with:
+```
+$ pkill -kill npm
 ```
 
 ### Local Setup/Development
@@ -66,18 +54,17 @@ $ nohup npm start &
 Edit your environment variables in .env as needed.
 
 To develop using this project you can run
+```
+$ npm run dev:serve & npm run dev:client
+```
 
-`npm run dev:serve`
-
-and
-
-`npm run dev:client`
-
-in seperate terminal instances. This will allow hot reloading of both changes to the server and changes to the client.
+This will allow hot reloading of both changes to the server and changes to the client.
 
 The server will require you to be running a local instance of [MongoDB](https://www.mongodb.com/).
 
-`npm run static` will build the client-side JavaScript and start the hot reloading of the server environment. `npm run dev:serve` can also be used to just start the API if you are working on that prior to worrying about the client.
+`npm run static` will build the client-side JavaScript and start the hot reloading of the server environment.
+
+`npm run dev:serve` can also be used to just start the API if you are working on that prior to worrying about the client.
 
 #### Scripts
 

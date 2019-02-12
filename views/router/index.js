@@ -7,21 +7,18 @@ import homePage from '../pages/home.vue'
 Vue.use(Router)
 
 const router = new Router({
-  root: '/home',
-  routes: [{
-      path: '/headlines',
-      name: 'headlines',
-      component: headlinesPage
-    },
+  root: '/',
+  routes: [
     {
-      path: '/home',
+      path: '/',
       name: 'home',
       component: homePage
     },
     {
-      path: '/',
-      redirect: '/home'
-    }
+      path: '/headlines',
+      name: 'headlines',
+      component: headlinesPage
+    },
   ]
 })
 

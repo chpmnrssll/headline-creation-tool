@@ -5,7 +5,7 @@ export default {
         x: 0.5,
         y: 0.5
       },
-      image: 'https://picsum.photos/640/320/?random',
+      image: 'https://source.unsplash.com/640x320',
       layerType: 'image',
       name: 'Random Image',
       rotation: 2.5,
@@ -84,11 +84,11 @@ export default {
           color: '#ffdc45',
           family: 'Staatliches:400',
           shadow: {
-            blur: 8,
+            blur: 3,
             color: '#5a5000',
             offset: {
               x: 3,
-              y: 4
+              y: 3
             },
           },
           size: 64,
@@ -141,8 +141,8 @@ export default {
             blur: 2,
             color: '#642314',
             offset: {
-              x: 2,
-              y: 2
+              x: 1,
+              y: 1
             },
           },
           size: 18,
