@@ -114,6 +114,11 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.selectedHeadline) {
+      this.layers = this.selectedHeadline.layers
+    }
+  },
   methods: {
     ...mapMutations({
       setSelectedLayerName: 'data/setSelectedLayerName',
