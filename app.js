@@ -6,13 +6,19 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const trunks = require('trunks-log')
+var compression = require('compression')
 
 const app = express()
 
 app.use(cors())
+
+// compress all responses
+app.use(compression({
+  level: 9
+}))
+
 const logs = new trunks('', 'yellow', '')
 
-// const index = require('./src/routes/index')
 const { apiRoutes, webRoutes } = require('./src/routes/index')
 
 // Use native ES6 Promises since mongoose's are deprecated.

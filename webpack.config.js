@@ -17,13 +17,11 @@ module.exports = {
     }
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          loaders: {
-          }
+          loaders: {}
           // other vue-loader options go here
         }
       },
@@ -58,7 +56,6 @@ module.exports = {
     new VueLoaderPlugin()
   ]
 }
-
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = 'source-map'
