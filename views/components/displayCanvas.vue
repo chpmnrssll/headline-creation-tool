@@ -8,7 +8,7 @@
     <rect id="rect" :fill="settings.background.color2" x="0" y="0" width="100%" height="100%" />
     <rect id="rect" fill="url(#pattern)" x="0" y="0" width="100%" height="100%" />
   </svg>
-  <canvas id="canvas" :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height"></canvas>
+  <canvas id="canvas" @click="clickedCanvas" :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height"></canvas>
 </v-container>
 </template>
 
@@ -60,10 +60,57 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.headlineLoaded) {
+      this.canvas = document.getElementById('canvas')
+      this.context = this.canvas.getContext('2d')
+      window.requestAnimationFrame(() => {
+        this.loadImages().then(this.drawLayersLoop)
+      })
+    }
+  },
+
   methods: {
     ...mapMutations({
       'setRefreshImages': 'data/setRefreshImages'
     }),
+
+    clickedCanvas(e) {
+      let element = this.canvas
+      let offsetX = 0
+      let offsetY = 0
+
+      // Compute the total offset
+      if (element.offsetParent !== undefined) {
+        do {
+          offsetX += element.offsetLeft
+          offsetY += element.offsetTop
+        } while ((element = element.offsetParent))
+      }
+
+      let style = window.getComputedStyle(this.canvas)
+      let stylePaddingLeft = parseInt(style.paddingLeft) || 0
+      let stylePaddingTop  = parseInt(style.paddingTop) || 0
+      let styleBorderLeft  = parseInt(style.borderLeftWidth) || 0
+      let styleBorderTop   = parseInt(style.borderTopWidth) || 0
+      let html = document.body.parentNode
+      let htmlTop = html.offsetTop
+      let htmlLeft = html.offsetLeft
+
+      // Add padding and border style widths to offset
+      // Also add the offsets in case there's a position:fixed bar
+      offsetX += stylePaddingLeft + styleBorderLeft
+      offsetY += stylePaddingTop + styleBorderTop
+
+      let mx = e.pageX - offsetX
+      let my = e.pageY - offsetY
+
+      this.layers.forEach(layer => {
+        console.log(layer)
+      })
+      // We return a simple javascript object (a hash) with x and y defined
+      // return {x: mx, y: my}
+    },
 
     loadImages() {
       this.imagesLoaded = []
