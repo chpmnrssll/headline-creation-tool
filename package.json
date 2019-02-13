@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node -r dotenv/config ./bin/www",
+    "dev": "npm run dev:build && npm run dev:serve && npm run dev:client",
+    "dev:build": "webpack --mode development --progress",
     "dev:serve": "nodemon -r dotenv/config ./bin/www",
     "dev:client": "webpack-dev-server --mode development --open --inline --hot --content-base ./views",
     "build": "webpack --mode production --progress --hide-modules",
