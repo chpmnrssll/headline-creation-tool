@@ -1,6 +1,7 @@
 export default {
   name: 'Mock-up Headline',
-  layers: [{
+  layers: [
+    {
       anchor: {
         x: 0.5,
         y: 0.5
@@ -14,8 +15,8 @@ export default {
         y: 1
       },
       translate: {
-        x: 0,
-        y: 0
+        x: 384,
+        y: 256
       },
       zIndex: 0,
     },
@@ -68,8 +69,8 @@ export default {
       rotation: 357,
       text: 'Now with {{99%}} More Canvas!\nPlus multi-line support!',
       translate: {
-        x: 0,
-        y: 60
+        x: 384,
+        y: 316
       },
       zIndex: 1,
     },
@@ -122,8 +123,8 @@ export default {
       rotation: 0,
       text: 'Headline Creation Tool',
       translate: {
-        x: 0,
-        y: -60
+        x: 384,
+        y: 196
       },
       zIndex: 2,
     },
@@ -176,8 +177,8 @@ export default {
       rotation: 0,
       text: 'New & Improved',
       translate: {
-        x: 220,
-        y: -24
+        x: 604,
+        y: 232
       },
       zIndex: 3,
     },
