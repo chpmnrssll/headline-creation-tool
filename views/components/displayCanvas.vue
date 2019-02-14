@@ -1,5 +1,5 @@
 <template>
-<v-container :style="containerStyle" pa-0>
+<v-container id="canvasContainer" :style="containerStyle" pa-0>
   <svg :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height">
     <pattern id="pattern" x="0" y="0" :width="settings.background.blockSize * 2" :height="settings.background.blockSize * 2" patternUnits="userSpaceOnUse">
       <rect :fill="settings.background.color1" x="0" y="0" :width="settings.background.blockSize" :height="settings.background.blockSize" />
@@ -23,7 +23,7 @@ export default {
     images: [],
     lineDash: [4, 4],
     lineDashOffset: 0,
-    lineDashOffsetSpeed: 0.25,
+    lineDashOffsetSpeed: 0.5,
     lineDashWidth: 1,
   }),
 
@@ -72,6 +72,7 @@ export default {
     }),
 
     start() {
+      this.canvasContainer = document.getElementById('canvasContainer')
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
       this.clickMask = document.createElement('canvas')
@@ -79,17 +80,20 @@ export default {
       this.clickMask.height = this.settings.background.height
       this.clickMaskContext = this.clickMask.getContext('2d')
 
+      // this.clickMask.style.border = '1px solid black'
       // document.body.append(this.clickMask)
       window.requestAnimationFrame(() => {
         this.loadImages()
           .then(this.loadText)
-          .then(this.setRefreshImages(true))
-          .then(this.setRefreshText(true))
+          .then(() => {
+            this.setRefreshImages(true)
+            this.setRefreshText(true)
+          })
           .then(this.drawLayersLoop)
       })
     },
 
-    clickedCanvas(e) {
+    clickedCanvas(event) {
       let element = this.canvas
       let offsetX = 0
       let offsetY = 0
@@ -113,13 +117,12 @@ export default {
 
       // Add padding and border style widths to offset
       // Also add the offsets in case there's a position:fixed bar
-      offsetX += stylePaddingLeft + styleBorderLeft
-      offsetY += stylePaddingTop + styleBorderTop
-
+      offsetX += stylePaddingLeft + styleBorderLeft - this.canvasContainer.scrollLeft
+      offsetY += stylePaddingTop + styleBorderTop - this.canvasContainer.scrollTop
 
       this.click = {
-        x: e.pageX - offsetX,
-        y: e.pageY - offsetY
+        x: event.pageX - offsetX,
+        y: event.pageY - offsetY
       }
 
       this.setRefreshClickMask(true)
@@ -192,8 +195,6 @@ export default {
         })
       } else {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        if (this.refreshClickMask) {
-        }
 
         this.selectedHeadline.layers.forEach(layer => {
           if (layer.layerType === 'image') {
@@ -207,9 +208,12 @@ export default {
           // get the zIndex from the red component of color at x,y
           const zIndex = this.clickMaskContext.getImageData(this.click.x, this.click.y, 1, 1).data[0] - 1
           this.setSelectedLayer(zIndex)
-          this.setRefreshClickMask(false)
 
-          this.clickMaskContext.clearRect(0, 0, this.clickMask.width, this.clickMask.height)
+          window.requestAnimationFrame(() => {
+            // clear the clickMask for next time
+            this.clickMaskContext.clearRect(0, 0, this.clickMask.width, this.clickMask.height)
+            this.setRefreshClickMask(false)
+          })
         }
 
         window.requestAnimationFrame(this.drawLayersLoop)
