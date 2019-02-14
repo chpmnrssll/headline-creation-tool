@@ -14,19 +14,18 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import { splitLines } from '../components/splitLines.js'
 
 export default {
-  data: () => {
-    return {
-      fontsLoaded: [],
-      images: [],
-      scene: {},
-      lineDash: [4, 4],
-      lineDashOffset: 0,
-      lineDashOffsetSpeed: 0.25,
-      lineDashWidth: 1,
-    }
-  },
+  data: () => ({
+    click: {},
+    fontsLoaded: [],
+    images: [],
+    lineDash: [4, 4],
+    lineDashOffset: 0,
+    lineDashOffsetSpeed: 0.25,
+    lineDashWidth: 1,
+  }),
 
   computed: {
     ...mapState({
@@ -37,11 +36,11 @@ export default {
       layers: state => state.data.selectedHeadline.layers,
       headlineLoaded: state => state.data.headlineLoaded,
       refreshImages: state => state.data.refreshImages,
+      refreshText: state => state.data.refreshText,
+      refreshClickMask: state => state.data.refreshClickMask,
     }),
     containerStyle() {
       return {
-        // height: '100%',
-        // maxHeight: '90vh',
         height: '85vh',
         overflow: 'auto',
         position: 'relative',
@@ -52,28 +51,43 @@ export default {
 
   watch: {
     headlineLoaded(newValue, oldValue) {
-      this.canvas = document.getElementById('canvas')
-      this.context = this.canvas.getContext('2d')
-      window.requestAnimationFrame(() => {
-        this.loadImages().then(this.drawLayersLoop)
-      })
+      this.start()
     },
   },
 
   mounted() {
     if (this.headlineLoaded) {
-      this.canvas = document.getElementById('canvas')
-      this.context = this.canvas.getContext('2d')
-      window.requestAnimationFrame(() => {
-        this.loadImages().then(this.drawLayersLoop)
-      })
+      this.start()
     }
   },
 
   methods: {
     ...mapMutations({
-      'setRefreshImages': 'data/setRefreshImages'
+      'setSelectedLayer': 'data/setSelectedLayer',
+      'setRefreshImages': 'data/setRefreshImages',
+      'setRefreshText': 'data/setRefreshText',
+      'setRefreshClickMask': 'data/setRefreshClickMask',
+      'setSize': 'data/setSize',
+      'setLines': 'data/setLines',
     }),
+
+    start() {
+      this.canvas = document.getElementById('canvas')
+      this.context = this.canvas.getContext('2d')
+      this.clickMask = document.createElement('canvas')
+      this.clickMask.width = this.settings.background.width
+      this.clickMask.height = this.settings.background.height
+      this.clickMaskContext = this.clickMask.getContext('2d')
+
+      // document.body.append(this.clickMask)
+      window.requestAnimationFrame(() => {
+        this.loadImages()
+          .then(this.loadText)
+          .then(this.setRefreshImages(true))
+          .then(this.setRefreshText(true))
+          .then(this.drawLayersLoop)
+      })
+    },
 
     clickedCanvas(e) {
       let element = this.canvas
@@ -90,9 +104,9 @@ export default {
 
       let style = window.getComputedStyle(this.canvas)
       let stylePaddingLeft = parseInt(style.paddingLeft) || 0
-      let stylePaddingTop  = parseInt(style.paddingTop) || 0
-      let styleBorderLeft  = parseInt(style.borderLeftWidth) || 0
-      let styleBorderTop   = parseInt(style.borderTopWidth) || 0
+      let stylePaddingTop = parseInt(style.paddingTop) || 0
+      let styleBorderLeft = parseInt(style.borderLeftWidth) || 0
+      let styleBorderTop = parseInt(style.borderTopWidth) || 0
       let html = document.body.parentNode
       let htmlTop = html.offsetTop
       let htmlLeft = html.offsetLeft
@@ -102,14 +116,13 @@ export default {
       offsetX += stylePaddingLeft + styleBorderLeft
       offsetY += stylePaddingTop + styleBorderTop
 
-      let mx = e.pageX - offsetX
-      let my = e.pageY - offsetY
 
-      this.layers.forEach(layer => {
-        console.log(layer)
-      })
-      // We return a simple javascript object (a hash) with x and y defined
-      // return {x: mx, y: my}
+      this.click = {
+        x: e.pageX - offsetX,
+        y: e.pageY - offsetY
+      }
+
+      this.setRefreshClickMask(true)
     },
 
     loadImages() {
@@ -118,6 +131,14 @@ export default {
         this.imagesLoaded.push(new Promise((resolve, reject) => {
           let image = new Image()
           image.addEventListener('load', () => {
+            image.crossOrigin = "Anonymous"
+            this.setSize({
+              zIndex: imageLayer.zIndex,
+              size: {
+                width: image.width,
+                height: image.height
+              }
+            })
             this.images.push(image)
             resolve()
           }, false)
@@ -128,82 +149,131 @@ export default {
       return Promise.all(this.imagesLoaded)
     },
 
+    loadText() {
+      return new Promise((resolve, reject) => {
+        this.selectedHeadline.layers.forEach(layer => {
+          if (layer.layerType === 'text') {
+            let lines = splitLines(layer)
+            if (!lines) {
+              return
+            }
 
-    drawLayersLoop() {
-      if (!this.refreshImages) {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        this.selectedHeadline.layers.forEach(layerData => {
-          if (layerData.layerType === 'image') {
-            this.drawImageLayer(layerData)
-          } else if (layerData.layerType === 'text') {
-            this.drawTextLayer(layerData)
+            let primaryFont = layer.font.primary
+            let secondaryFont = {}
+            if (undefined !== layer.font.secondary) {
+              secondaryFont = layer.font.secondary
+            }
+
+            let dimensions = this.getTextLayerDimensions(lines, primaryFont, secondaryFont)
+            this.setSize({
+              zIndex: layer.zIndex,
+              size: dimensions
+            })
+            this.setLines({
+              zIndex: layer.zIndex,
+              lines: lines
+            })
           }
         })
+        resolve()
+      })
+    },
 
-        window.requestAnimationFrame(this.drawLayersLoop)
-      } else {
+    drawLayersLoop() {
+      if (this.refreshImages) {
         this.loadImages().then(() => {
           this.setRefreshImages(false)
           window.requestAnimationFrame(this.drawLayersLoop)
         })
+      } else if (this.refreshText) {
+        this.loadText().then(() => {
+          this.setRefreshText(false)
+          window.requestAnimationFrame(this.drawLayersLoop)
+        })
+      } else {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        if (this.refreshClickMask) {
+        }
+
+        this.selectedHeadline.layers.forEach(layer => {
+          if (layer.layerType === 'image') {
+            this.drawImageLayer(layer)
+          } else if (layer.layerType === 'text') {
+            this.drawTextLayer(layer)
+          }
+        })
+
+        if (this.refreshClickMask) {
+          // get the zIndex from the red component of color at x,y
+          const zIndex = this.clickMaskContext.getImageData(this.click.x, this.click.y, 1, 1).data[0] - 1
+          this.setSelectedLayer(zIndex)
+          this.setRefreshClickMask(false)
+
+          this.clickMaskContext.clearRect(0, 0, this.clickMask.width, this.clickMask.height)
+        }
+
+        window.requestAnimationFrame(this.drawLayersLoop)
       }
     },
 
-    drawImageLayer(layerData) {
-      let image = this.images.find(image => image.src === layerData.image)
-      let anchorX = (image.width * layerData.scale.x) * layerData.anchor.x
-      let anchorY = (image.height * layerData.scale.y) * layerData.anchor.y
-      let centerX = this.canvas.width / 2
-      let centerY = this.canvas.height / 2
+    drawImageLayer(layer) {
+      let image = this.images.find(image => image.src === layer.image)
+      let anchorX = (image.width * layer.scale.x) * layer.anchor.x
+      let anchorY = (image.height * layer.scale.y) * layer.anchor.y
 
       this.context.save()
-      this.context.translate(centerX, centerY)
       this.context.translate(-anchorX, -anchorY)
-      this.context.translate(layerData.translate.x, layerData.translate.y)
+      this.context.translate(layer.translate.x, layer.translate.y)
       this.context.translate(anchorX, anchorY)
-      this.context.rotate(layerData.rotation * Math.PI / 180)
+      this.context.rotate(layer.rotation * Math.PI / 180)
       this.context.translate(-anchorX, -anchorY)
-      this.context.scale(layerData.scale.x, layerData.scale.y)
+      this.context.scale(layer.scale.x, layer.scale.y)
       this.context.drawImage(image, 0, 0, image.width, image.height)
 
-      if (layerData == this.selectedLayer) {
+      if (layer == this.selectedLayer) {
         this.drawMarchingAnts(0, 0, image.width, image.height)
       }
 
       this.context.restore()
+
+      if (this.refreshClickMask) {
+        this.clickMaskContext.save()
+        this.clickMaskContext.translate(this.canvas.width / 2, this.canvas.height / 2)
+        this.clickMaskContext.translate(-anchorX, -anchorY)
+        this.clickMaskContext.translate(layer.translateX, layer.translateY)
+        this.clickMaskContext.translate(anchorX, anchorY)
+        this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)
+        this.clickMaskContext.translate(-anchorX, -anchorY)
+
+        // store zIndex in red component of color
+        const zIndex = layer.zIndex + 1
+        this.clickMaskContext.fillStyle = `rgb(${zIndex},0,0)`
+        this.clickMaskContext.fillRect(0, 0, image.width, image.height)
+        this.clickMaskContext.restore()
+      }
     },
 
-    drawTextLayer(layerData) {
-      let splitLines = this.splitUpLines(layerData)
-      if (!splitLines) {
-        return
-      }
-
-      let primaryFont = layerData.font.primary
+    drawTextLayer(layer) {
+      let primaryFont = layer.font.primary
       let secondaryFont = {}
-      if (undefined !== layerData.font.secondary) {
-        secondaryFont = layerData.font.secondary
+      if (undefined !== layer.font.secondary) {
+        secondaryFont = layer.font.secondary
       }
 
-      let dimensions = this.getTextLayerDimensions(splitLines, primaryFont, secondaryFont)
-
-      let anchorX = dimensions.width * layerData.anchor.x
-      let anchorY = dimensions.height * layerData.anchor.y
-      let centerX = this.canvas.width / 2
-      let centerY = this.canvas.height / 2
-      let translateX = layerData.translate.x
-      let translateY = layerData.translate.y
+      let anchorX = layer.size.width * layer.anchor.x
+      let anchorY = layer.size.height * layer.anchor.y
+      let translateX = layer.translate.x
+      let translateY = layer.translate.y
 
       this.context.save()
-      this.context.translate(centerX, centerY)
       this.context.translate(-anchorX, -anchorY)
       this.context.translate(translateX, translateY)
       this.context.translate(anchorX, anchorY)
-      this.context.rotate(layerData.rotation * Math.PI / 180)
+      this.context.rotate(layer.rotation * Math.PI / 180)
       this.context.translate(-anchorX, -anchorY)
 
       this.context.save()
-      splitLines.forEach((line, index) => {
+      layer.lines.forEach((line, index) => {
         let startX = 0
         let startY = 0
 
@@ -216,18 +286,44 @@ export default {
           this.drawText(string.text, font, startX, 0)
           startX += string.width
         })
-        if (index <  splitLines.length-1) {
-          startY += splitLines[index+1].height
+        if (index < layer.lines.length - 1) {
+          startY += layer.lines[index + 1].height
         }
         this.context.translate(0, startY)
       })
       this.context.restore()
 
-      if (layerData == this.selectedLayer) {
-        this.drawMarchingAnts(0, 0, dimensions.width, dimensions.height)
+      if (layer == this.selectedLayer) {
+        this.drawMarchingAnts(0, 0, layer.size.width, layer.size.height)
       }
 
       this.context.restore()
+
+      if (this.refreshClickMask) {
+        this.clickMaskContext.save()
+        this.clickMaskContext.translate(-anchorX, -anchorY)
+        this.clickMaskContext.translate(translateX, translateY)
+        this.clickMaskContext.translate(anchorX, anchorY)
+        this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)
+        this.clickMaskContext.translate(-anchorX, -anchorY)
+
+        // store zIndex in red component of color
+        const zIndex = layer.zIndex + 1
+        this.clickMaskContext.fillStyle = `rgb(${zIndex},0,0)`
+        this.clickMaskContext.fillRect(0, 0, layer.size.width, layer.size.height)
+        this.clickMaskContext.restore()
+      }
+    },
+
+    drawText(text, font, x, y) {
+      this.context.shadowBlur = font.shadow.blur
+      this.context.shadowColor = font.shadow.color
+      this.context.shadowOffsetX = font.shadow.offset.x
+      this.context.shadowOffsetY = font.shadow.offset.y
+      this.context.textAlign = font.style.align
+      this.context.font = this.getFontString(font)
+      this.context.fillStyle = font.color
+      this.context.fillText(text, x, y)
     },
 
     drawMarchingAnts(x, y, width, height) {
@@ -267,7 +363,7 @@ export default {
             let metrics = this.measureText(string.text, secondaryFont)
             string.width = metrics.width
             string.height = metrics.height
-            if (lineHeight = secondaryFont.size) {
+            if (secondaryFont.size > lineHeight) {
               lineHeight = secondaryFont.size
             }
           }
@@ -282,51 +378,10 @@ export default {
         totalHeight += lineHeight
       })
 
-      return { width: totalWidth, height: totalHeight }
-    },
-
-    splitUpLines(layerData) {
-      let splitLines = []
-      let lines = this.splitNewLines(layerData.text)
-
-      lines.forEach(line => {
-        splitLines.push(this.splitHandlebars(line))
-      })
-
-      return splitLines
-    },
-
-    splitNewLines(text) {
-      let newLines = text.split('<br/>')
-      if (newLines.length <= 1) {
-        newLines = text.split('\n')
+      return {
+        width: totalWidth,
+        height: totalHeight
       }
-
-      return newLines
-    },
-
-    splitHandlebars(text) {
-      let handlebars = []
-      let leftHandle = text.split('{{')
-
-      leftHandle.forEach(string1 => {
-        let rightHandle = string1.split('}}')
-        if (rightHandle.length <= 1) {
-          handlebars.push({ text: string1, font: 'primary' })
-        } else {
-          rightHandle.forEach((string2, index) => {
-            if(string2 !== '') {
-              if (index % 2 === 0) {
-                handlebars.push({ text: string2, font: 'secondary' })
-              } else {
-                handlebars.push({ text: string2, font: 'primary' })
-              }
-            }
-          })
-        }
-      })
-
-      return handlebars
     },
 
     measureText(text, font) {
@@ -335,17 +390,6 @@ export default {
       let metrics = this.context.measureText(text)
       metrics.height = font.size
       return metrics
-    },
-
-    drawText(text, font, x, y) {
-      this.context.shadowBlur = font.shadow.blur
-      this.context.shadowColor = font.shadow.color
-      this.context.shadowOffsetX = font.shadow.offset.x
-      this.context.shadowOffsetY = font.shadow.offset.y
-      this.context.textAlign = font.style.align
-      this.context.font = this.getFontString(font)
-      this.context.fillStyle = font.color
-      this.context.fillText(text, x, y)
     },
 
     getFontString(font) {
