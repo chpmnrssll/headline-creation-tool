@@ -1,6 +1,6 @@
 import axios from 'axios'
 
 export const http = axios.create({
-  // baseURL: 'http://pod.buyboxguardian.com:30000/api', //base URL goes here
-  baseURL: 'http://localhost:30000/api',
+  baseURL: 'http://server.mozotools.com/api', // production base URL
+  // baseURL: 'http://localhost:3000/api', // local dev base URL
 })
