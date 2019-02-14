@@ -8,6 +8,8 @@ export default {
     headlines: [],
     headlineLoaded: false,
     refreshImages: false,
+    refreshText: false,
+    refreshClickMask: false,
     selectedHeadline: {},
     selectedLayer: {},
   },
@@ -33,6 +35,16 @@ export default {
         resolve()
       })
     },
+
+    setFont({commit, state}, {desc, key, value}) {
+      return new Promise((resolve, reject) => {
+        if (!state.selectedLayer.font[desc]) {
+          state.selectedLayer.font[desc] = {}
+        }
+        commit(`setFont${key}`, {desc, value})
+        resolve()
+      })
+    }
   },
 
   mutations: {
@@ -49,6 +61,22 @@ export default {
       state.headlines = headlines
     },
 
+    setHeadlineLoaded(state, value) {
+      state.headlineLoaded = value
+    },
+
+    setRefreshImages(state, value) {
+      state.refreshImages = value
+    },
+
+    setRefreshText(state, value) {
+      state.refreshText = value
+    },
+
+    setRefreshClickMask(state, value) {
+      state.refreshClickMask = value
+    },
+
     setSelectedHeadline(state, name) {
       // Clear selected state for all headlines
       state.headlines.forEach(headline => headline.selected = false)
@@ -60,30 +88,6 @@ export default {
 
     setSelectedHeadlineName(state, name) {
       state.selectedHeadline.name = name
-    },
-
-    setHeadlineLoaded(state, value) {
-      state.headlineLoaded = value
-    },
-
-    setRefreshImages(state, value) {
-      state.refreshImages = value
-    },
-
-    setSelectedLayer(state, zIndex) {
-      // Clear selected state for all layers
-      state.selectedHeadline.layers.forEach(layer => layer.selected = false)
-
-      // Set the layer at zIndex as selected
-      state.selectedLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
-      if(state.selectedLayer) {
-        state.selectedLayer.selected = true
-      }
-      state.selectedHeadline.layers.sort((a, b) => a.zIndex - b.zIndex)
-    },
-
-    setSelectedLayerName(state, name) {
-      state.selectedLayer.name = name
     },
 
     addLayer(state, newLayer) {
@@ -107,12 +111,46 @@ export default {
       state.selectedHeadline.layers = state.selectedHeadline.layers.filter(layer => layer.zIndex !== zIndex)
     },
 
+    setWidth(state, {zIndex, width}) {
+      let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      layer.width = width
+    },
+    setHeight(state, {zIndex, height}) {
+      let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      layer.height = height
+    },
+    setSize(state, {zIndex, size}) {
+      let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      layer.size = size
+    },
+    setLines(state, {zIndex, lines}) {
+      let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      layer.lines = lines
+    },
+
+    // selectedLayer mutations
+    setSelectedLayer(state, zIndex) {
+      // Clear selected state for all layers
+      state.selectedHeadline.layers.forEach(layer => layer.selected = false)
+
+      // Set the layer at zIndex as selected
+      state.selectedLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      if(state.selectedLayer) {
+        state.selectedLayer.selected = true
+      }
+      state.selectedHeadline.layers.sort((a, b) => a.zIndex - b.zIndex)
+    },
+
+    setSelectedLayerName(state, name) {
+      state.selectedLayer.name = name
+    },
     setImage(state, image) {
       state.selectedLayer.image = image
       state.refreshImages = true
     },
     setText(state, text) {
       state.selectedLayer.text = text
+      state.refreshText = true
     },
     setTranslateX(state, value) {
       state.selectedLayer.translate.x = value
@@ -130,114 +168,41 @@ export default {
       state.selectedLayer.scale.y = value
     },
 
-    setPrimaryFontSize(state, size) {
-      state.selectedLayer.font.primary.size = size
+    setFontSize(state, {desc, value}) {
+      state.selectedLayer.font[desc].size = value
     },
-    setPrimaryFontLineHeight(state, lineHeight) {
-      state.selectedLayer.font.primary.lineHeight = lineHeight
+    setFontLineHeight(state, {desc, value}) {
+      state.selectedLayer.font[desc].lineHeight = value
     },
-    setPrimaryFontFamily(state, family) {
-      state.selectedLayer.font.primary.family = family
+    setFontFamily(state, {desc, value}) {
+      state.selectedLayer.font[desc].family = value
     },
-    setPrimaryFontBold(state, value) {
-      state.selectedLayer.font.primary.style.bold = value
+    setFontBold(state, {desc, value}) {
+      state.selectedLayer.font[desc].style.bold = value
     },
-    setPrimaryFontItalic(state, value) {
-      state.selectedLayer.font.primary.style.italic = value
+    setFontItalic(state, {desc, value}) {
+      state.selectedLayer.font[desc].style.italic = value
     },
-    setPrimaryFontUnderline(state, value) {
-      state.selectedLayer.font.primary.style.underline = value
+    setFontUnderline(state, {desc, value}) {
+      state.selectedLayer.font[desc].style.underline = value
     },
-    setPrimaryFontColor(state, event) {
-      state.selectedLayer.font.primary.color = event.target.value
+    setFontColor(state, {desc, value}) {
+      state.selectedLayer.font[desc].color = value
     },
-    setPrimaryFontAlign(state, value) {
-      state.selectedLayer.font.primary.style.align = value
+    setFontShadowColor(state, {desc, value}) {
+      state.selectedLayer.font[desc].shadow.color = value
     },
-    setPrimaryFontShadowBlur(state, value) {
-      state.selectedLayer.font.primary.shadow.blur = value
+    setFontAlign(state, {desc, value}) {
+      state.selectedLayer.font[desc].style.align = value
     },
-    setPrimaryFontShadowColor(state, event) {
-      state.selectedLayer.font.primary.shadow.color = event.target.value
+    setFontShadowBlur(state, {desc, value}) {
+      state.selectedLayer.font[desc].shadow.blur = value
     },
-    setPrimaryFontShadowOffsetX(state, value) {
-      state.selectedLayer.font.primary.shadow.offset.x = value
+    setFontShadowOffsetX(state, {desc, value}) {
+      state.selectedLayer.font[desc].shadow.offset.x = value
     },
-    setPrimaryFontShadowOffsetY(state, value) {
-      state.selectedLayer.font.primary.shadow.offset.y = value
-    },
-
-    setSecondaryFontSize(state, size) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.size = size
-    },
-    setSecondaryFontLineHeight(state, lineHeight) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.lineHeight = lineHeight
-    },
-    setSecondaryFontFamily(state, family) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.family = family
-    },
-    setSecondaryFontBold(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.style.bold = value
-    },
-    setSecondaryFontItalic(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.style.italic = value
-    },
-    setSecondaryFontUnderline(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.style.underline = value
-    },
-    setSecondaryFontColor(state, event) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.color = event.target.value
-    },
-    setSecondaryFontAlign(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.style.align = value
-    },
-    setSecondaryFontShadowBlur(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.shadow.blur = value
-    },
-    setSecondaryFontShadowColor(state, event) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.shadow.color = event.target.value
-    },
-    setSecondaryFontShadowOffsetX(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.shadow.offset.x = value
-    },
-    setSecondaryFontShadowOffsetY(state, value) {
-      if (!state.selectedLayer.font.secondary) {
-        state.selectedLayer.font.secondary = {}
-      }
-      state.selectedLayer.font.secondary.shadow.offset.y = value
+    setFontShadowOffsetY(state, {desc, value}) {
+      state.selectedLayer.font[desc].shadow.offset.y = value
     },
   }
 }
