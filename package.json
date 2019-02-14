@@ -7,7 +7,7 @@
     "dev": "npm run dev:build && npm run dev:serve && npm run dev:client",
     "dev:build": "webpack --mode development --progress",
     "dev:serve": "nodemon -r dotenv/config ./bin/www",
-    "dev:client": "webpack-dev-server --mode development --open --inline --hot --content-base ./views",
+    "dev:client": "webpack-dev-server --mode development --port 3030 --open --inline --hot --content-base ./public",
     "build": "webpack --mode production --progress --hide-modules",
     "static": "npm run build && npm run dev:serve"
   },
@@ -35,7 +35,6 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-2": "^6.24.1",
-    "cross-env": "^5.2.0",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
     "node-sass": "^4.11.0",
