@@ -6,14 +6,11 @@
   <v-container fluid>
     <v-card-text>
 
-      <!-- Begin Input Row -->
-      <v-form ref="form">
-        <v-text-field label="Name" v-model="headline.name" required> </v-text-field>
-      </v-form>
+      <v-text-field label="Name" v-model="newHeadline.name" required></v-text-field>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">OK</v-btn>
+        <v-btn @click="addHeadline()" class="green lighten-1 white--text" :disabled="checkName()" :loading="!addDone">OK</v-btn>
         <v-btn @click="close()" class="red white--text">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
@@ -26,37 +23,36 @@ import { http } from '../config/http'
 
 export default {
   data: () => ({
-    headline: {
+    addDone: true,
+    newHeadline: {
+      _id: '',
       name: '',
-    },
-    submitDone: true,
+    }
   }),
 
   methods: {
-    submit() {
-      this.submitDone = false
-      http.post("/headlines", this.headline)
+    addHeadline() {
+      this.addDone = false
+      http.post("/headlines", this.newHeadline)
         .then(response => {
           this.close()
           this.alert(true, 'Create', 'Headline')
-        })
-        .catch(e => {
+        }).catch(e => {
           this.close()
           this.alert(false, 'Create', 'Headline')
-        });
+        })
     },
 
     close() {
       this.$emit('closeAdd')
-      this.submitDone = true
+      this.addDone = true
     },
 
-    checkForm() {
-      return this.headline.name === '' ? true : false
+    checkName() {
+      return this.newHeadline.name === '' ? true : false
     },
 
     alert(success, callName, resource) {
-      console.log('Add Alerting')
       this.$emit('alert', success, callName, resource)
     }
   }

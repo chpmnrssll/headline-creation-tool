@@ -22,15 +22,22 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <v-list-tile @click="saveHeadline = true">
+      <v-list-tile @click="saveDialog=true" :disabled="!isHomePage">
         <v-list-tile-action>
-          <v-btn slot="activator" color="primary" icon>
+          <v-btn slot="activator" color="primary" icon :disabled="!isHomePage">
             <v-icon class="primaryText--text">save</v-icon>
           </v-btn>
         </v-list-tile-action>
         <v-list-tile-content>
-          <v-list-tile-title class="primaryText--text">Save Headline</v-list-tile-title>
+          <v-list-tile-title v-if="isHomePage" class="primaryText--text">Save Headline</v-list-tile-title>
+          <v-list-tile-title v-else>Save Headline</v-list-tile-title>
         </v-list-tile-content>
+        <!-- Begin Save Dialog -->
+        <v-dialog v-model="saveDialog" lazy absolute max-width="40%">
+          <dialogSaveHeadline @closeSave="saveDialog=false" @alert="alert">
+          </dialogSaveHeadline>
+        </v-dialog>
+        <!-- End Save Dialog -->
       </v-list-tile>
 
       <v-list-tile href="/#/headlines" :class="getNavClass('/#/headlines')">
@@ -50,9 +57,9 @@
       <v-toolbar-side-icon slot="activator" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <span>Open Drawer</span>
     </v-tooltip>
-    <v-tooltip right>
-      <v-text-field slot="activator" :value="selectedHeadline.name" @input="setSelectedHeadlineName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
-      <span>Change Headline Name</span>
+    <v-tooltip bottom v-if="$route.path === '/'">
+      <v-text-field v-if="selectedHeadline" slot="activator" :value="selectedHeadline.name" @input="setSelectedHeadlineName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
+      <span>Current Headline Name</span>
     </v-tooltip>
     <v-spacer></v-spacer>
     <v-btn @click="isDarkMode = !isDarkMode" icon>
@@ -60,11 +67,6 @@
       <v-icon color="indigo lighten-4" v-else> brightness_3 </v-icon>
     </v-btn>
   </v-toolbar>
-
-  <!-- <v-toolbar class="primary primaryText--text" fixed app :clipped-left="clipped">
-    <v-toolbar-side-icon class="primaryText--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    <v-toolbar-title> {{ title }} </v-toolbar-title>
-  </v-toolbar> -->
 
   <v-content class="pt-6">
     <v-fade-transition mode="out-in">
@@ -81,6 +83,8 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 
+import dialogSaveHeadline from "./components/dialogSaveHeadline.vue"
+
 export default {
   data: () => ({
     clipped: true,
@@ -90,17 +94,24 @@ export default {
     miniVariant: false,
     right: true,
     rightDrawer: false,
-    title: "Headline Creation Tool",
+    saveDialog: false,
     alertOpen: false,
     alertString: '',
     alertSuccess: false,
     isDarkMode: false,
   }),
 
+  components: {
+    dialogSaveHeadline: dialogSaveHeadline
+  },
+
   computed: {
     ...mapState({
       selectedHeadline: state => state.data.selectedHeadline,
     }),
+    isHomePage() {
+      return this.$route.path === '/'
+    }
   },
 
   watch: {

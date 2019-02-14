@@ -30,7 +30,7 @@ export default {
     defaultHeadline(context) {
       return new Promise((resolve, reject) => {
         context.commit('setHeadlines', [mockHeadline])
-        context.commit('setSelectedHeadline', mockHeadline.name)
+        context.commit('setSelectedHeadline', mockHeadline._id)
         context.commit('setSelectedLayer', mockHeadline.layers.length - 1)
         resolve()
       })
@@ -77,13 +77,8 @@ export default {
       state.refreshClickMask = value
     },
 
-    setSelectedHeadline(state, name) {
-      // Clear selected state for all headlines
-      state.headlines.forEach(headline => headline.selected = false)
-
-      // Set the headline with 'name' as selected
-      state.selectedHeadline = state.headlines.find(headline => headline.name === name)
-      state.selectedHeadline.selected = true
+    setSelectedHeadline(state, _id) {
+      state.selectedHeadline = state.headlines.find(headline => headline._id === _id)
     },
 
     setSelectedHeadlineName(state, name) {
@@ -113,11 +108,11 @@ export default {
 
     setWidth(state, {zIndex, width}) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
-      layer.width = width
+      layer.size.width = width
     },
     setHeight(state, {zIndex, height}) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
-      layer.height = height
+      layer.size.height = height
     },
     setSize(state, {zIndex, size}) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
@@ -130,6 +125,9 @@ export default {
 
     // selectedLayer mutations
     setSelectedLayer(state, zIndex) {
+      if (!state.selectedHeadline.layers) {
+        return
+      }
       // Clear selected state for all layers
       state.selectedHeadline.layers.forEach(layer => layer.selected = false)
 

@@ -1,4 +1,5 @@
 export default {
+  _id: '098751jkcz516gfd134',
   name: 'Mock-up Headline',
   layers: [
     {

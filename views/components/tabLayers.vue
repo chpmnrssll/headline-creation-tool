@@ -1,10 +1,9 @@
 <template>
 <v-container class="pa-0" :style="{ height: '75vh', overflowY: 'auto'}">
   <v-card class="pa-4">
-
     <v-card class="mb-4">
       <v-tooltip left>
-        <v-btn slot="activator" color="primary" @click="addLayer = true" icon small absolute top left>
+        <v-btn slot="activator" color="primary" @click="addLayerDialog=true" icon small absolute top left>
           <v-icon small>playlist_add</v-icon>
         </v-btn>
         <span>Add New Layer</span>
@@ -42,13 +41,6 @@
           </tr>
         </template>
       </v-data-table>
-
-      <!-- <v-tooltip right>
-        <v-btn slot="activator" color="primary" @click="saveHeadline = true" icon small absolute top right>
-          <v-icon small>save</v-icon>
-        </v-btn>
-        <span>Save Headline</span>
-      </v-tooltip> -->
     </v-card>
 
     <v-card v-if="selectedLayer">
@@ -57,16 +49,10 @@
     </v-card>
   </v-card>
 
-  <!-- Save Dialog -->
-  <v-dialog v-model="saveHeadline" lazy absolute max-width="50%">
-    <headlineSaveDialog @closeSave="saveHeadline = false" @alert="alert">
-    </headlineSaveDialog>
-  </v-dialog>
-
   <!-- Add Dialog -->
-  <v-dialog v-model="addLayer" lazy absolute max-width="50%">
-    <layerAddDialog @closeAdd="addLayer = false" @alert="alert">
-    </layerAddDialog>
+  <v-dialog v-model="addLayerDialog" lazy absolute max-width="50%">
+    <dialogAddLayer @closeAdd="addLayerDialog=false" @alert="alert">
+    </dialogAddLayer>
   </v-dialog>
 
 </v-container>
@@ -74,16 +60,14 @@
 
 <script>
 import { http } from "../config/http.js"
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import headlineSaveDialog from '../components/headlineSaveDialog.vue'
-import layerAddDialog from '../components/layerAddDialog.vue'
+import { mapMutations, mapState } from 'vuex'
+import dialogAddLayer from '../components/dialogAddLayer.vue'
 import toolText from '../components/toolText'
 import toolImage from '../components/toolImage'
 
 export default {
   data: () => ({
-    addLayer: false,
-    saveHeadline: false,
+    addLayerDialog: false,
     pagination: {
       descending: true,
       sortBy: 'zIndex',
@@ -137,7 +121,6 @@ export default {
     // Will emit an alert, followed by a boolean for success, the type of call
     // made, and the name of the resource we are working on
     alert(success, callName, resource) {
-      console.log('Page Alerting')
       this.$emit('alert', success, callName, resource)
     },
   },
@@ -145,8 +128,7 @@ export default {
   components: {
     toolText: toolText,
     toolImage: toolImage,
-    headlineSaveDialog: headlineSaveDialog,
-    layerAddDialog: layerAddDialog
+    dialogAddLayer: dialogAddLayer
   },
 }
 </script>

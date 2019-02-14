@@ -17,21 +17,21 @@
                 </v-btn>
 
                 <!-- Add Dialog -->
-                <headlineAddDialog @closeAdd="addDialog = false" @alert="alert">
-                </headlineAddDialog>
+                <dialogAddHeadline @closeAdd="addDialog=false" @alert="alert">
+                </dialogAddHeadline>
               </v-dialog>
             </v-toolbar>
 
             <!-- List of Headlines -->
             <v-data-table :items="headlines" item-key="zIndex" :pagination.sync="pagination" class="elevation-1" hide-actions hide-headers select-all>
               <template slot="items" slot-scope="props">
-                <tr :active="props.item.selected">
+                <tr>
                   <td class="pa-4">
                     <v-text-field v-model="props.item.name" class="my-0 py-1" :hint="`${props.item.layers.length} Layers`" persistent-hint></v-text-field>
                   </td>
                   <td class="ma-4">
                     <v-tooltip bottom>
-                      <v-btn slot="activator" icon small class="ma-0" @click="openCanvas(props.item)">
+                      <v-btn slot="activator" icon small class="ma-0" @click="openHeadline(props.item)">
                         <v-icon small color="blue" xs-4 class="text-xs-right">color_lens</v-icon>
                       </v-btn>
                       <span>Open Canvas</span>
@@ -41,18 +41,17 @@
                         <v-icon icon small color="error">delete_forever</v-icon>
                       </v-btn>
                       <span>Delete Headline</span>
+                      <!-- Begin Delete Dialog -->
+                      <v-dialog v-model="deleteDialog" lazy absolute max-width="40%">
+                        <dialogDeleteHeadline :headline="headlineToDelete" @closeDelete="deleteDialog = false" @alert="alert">
+                        </dialogDeleteHeadline>
+                      </v-dialog>
+                      <!-- End Delete Dialog -->
                     </v-tooltip>
                   </td>
                 </tr>
               </template>
             </v-data-table>
-
-            <!-- Begin Delete Dialog -->
-            <v-dialog v-model="deleteDialog" lazy absolute max-width="40%">
-              <headlineDeleteDialog :headline="headlineToDelete" @closeDelete="deleteDialog = false" @alert="alert">
-              </headlineDeleteDialog>
-            </v-dialog>
-            <!-- End Delete Dialog -->
 
           </v-card>
         </v-flex>
@@ -63,21 +62,17 @@
 </template>
 
 <script>
-import {
-  http
-} from "../config/http.js"
-// import headlineItem from "../components/headlineItem.vue"
-import headlineAddDialog from "../components/headlineAddDialog.vue"
-import headlineEditDialog from "../components/headlineEditDialog.vue"
-import headlineDeleteDialog from "../components/headlineDeleteDialog.vue"
+import { http } from "../config/http.js"
+import { mapMutations, mapState } from 'vuex'
+
+import dialogAddHeadline from "../components/dialogAddHeadline.vue"
+import dialogDeleteHeadline from "../components/dialogDeleteHeadline.vue"
 
 export default {
-  //Variables
   data: () => ({
     addDialog: false,
     alertSettings: {}, //this is to abstract our our alerts to make them easier and stop repeating code
     deleteDialog: false,
-    // editDialog: false,
     editName: "",
     errors: [],
     headlines: [],
@@ -89,32 +84,27 @@ export default {
     },
   }),
 
-  //Components this page will need
   components: {
-    // headlineItem: headlineItem,
-    headlineAddDialog: headlineAddDialog,
-    headlineEditDialog: headlineEditDialog,
-    headlineDeleteDialog: headlineDeleteDialog
+    dialogAddHeadline: dialogAddHeadline,
+    dialogDeleteHeadline: dialogDeleteHeadline
   },
 
-  //The methods we will need
   methods: {
-    //load all headlines from DB, we call this often to make sure the data is up to date
-    load() {
-      http
-        .get("headlines")
-        .then(response => {
-          this.headlines = response.data.headlines;
-        })
-        .catch(e => {
-          this.errors.push(e);
-        });
-    },
+    ...mapMutations({
+      'setSelectedHeadline': 'data/setSelectedHeadline',
+      'setSelectedLayer': 'data/setSelectedLayer',
+      'setRefreshImages': 'data/setRefreshImages',
+      'setRefreshText': 'data/setRefreshText',
+    }),
 
-    //opens delete dialog
-    setupDelete(headline) {
-      this.headlineToDelete = headline
-      this.deleteDialog = true
+    //load all headlines from DB
+    load() {
+      http.get("headlines")
+        .then(response => {
+          this.headlines = response.data.headlines
+        }).catch(e => {
+          this.errors.push(e)
+        })
     },
 
     //opens delete dialog
@@ -123,10 +113,9 @@ export default {
       this.deleteDialog = true
     },
 
-    openCanvas(headline) {
-      this.$store.commit('headline/setLayers', headline.layers)
-      this.$store.commit('headline/setSelectedHeadline', headline)
-      this.$router.push('/#/home')
+    openHeadline(headline) {
+      this.setSelectedHeadline(headline._id)
+      this.$router.push('/')
     },
 
     //build the alert info for us

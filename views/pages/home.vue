@@ -2,11 +2,11 @@
 <v-container row fluid class="pa-0">
   <v-layout v-bind="layout">
     <v-flex v-if="layout.row" ml-5 mr-2>
-      <displayCanvas></displayCanvas>
+      <layerCanvas></layerCanvas>
     </v-flex>
 
     <v-flex v-if="layout.column">
-      <displayCanvas></displayCanvas>
+      <layerCanvas></layerCanvas>
     </v-flex>
 
     <v-flex v-if="layout.row" xs4 ml-2 mr-5>
@@ -40,9 +40,9 @@
 </template>
 
 <script>
+import layerCanvas from '../components/layerCanvas'
 import tabLayers from '../components/tabLayers'
 import tabSettings from '../components/tabSettings'
-import displayCanvas from '../components/displayCanvas'
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
@@ -68,7 +68,7 @@ export default {
   components: {
     tabLayers: tabLayers,
     tabSettings: tabSettings,
-    displayCanvas: displayCanvas
+    layerCanvas: layerCanvas
   },
 
   methods: {

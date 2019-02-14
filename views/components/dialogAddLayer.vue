@@ -29,6 +29,7 @@ import { mapMutations } from 'vuex'
 export default {
   data: () => ({
     defaultLayer: {
+      new: true,
       name: 'New Layer',
       layerType: 'text',
       anchor: {
@@ -75,6 +76,10 @@ export default {
       },
       image: '',
       rotate: 0,
+      size: {
+        width: 0,
+        height: 0
+      },
       text: '',
       translate: {
         x: 0,

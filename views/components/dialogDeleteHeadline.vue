@@ -32,18 +32,16 @@ export default {
   methods: {
     confirmDelete() {
       this.deleteDone = false
-      http
-        .delete("/headlines/" + this.headline._id)
+      http.delete("/headlines/" + this.headline._id)
         .then(response => {
           this.deleteDone = true
           this.alert(true, 'Delete', 'Headline')
           this.close()
-        })
-        .catch(e => {
+        }).catch(e => {
           this.deleteDone = true
           this.alert(false, 'Delete', 'Headline')
           this.close()
-        });
+        })
     },
 
     close() {
@@ -53,13 +51,6 @@ export default {
     alert(success, callName, resource) {
       this.$emit('alert', success, callName, resource)
     }
-  },
-
-  mounted() {}
-
+  }
 }
 </script>
-
-<style>
-
-</style>

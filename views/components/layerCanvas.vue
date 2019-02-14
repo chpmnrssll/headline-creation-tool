@@ -130,22 +130,27 @@ export default {
 
     loadImages() {
       this.imagesLoaded = []
-      this.selectedHeadline.layers.filter(layer => layer.layerType === 'image').forEach(imageLayer => {
+
+      this.selectedHeadline.layers.filter(layer => layer.layerType === 'image').forEach(layer => {
         this.imagesLoaded.push(new Promise((resolve, reject) => {
           let image = new Image()
           image.addEventListener('load', () => {
             image.crossOrigin = "Anonymous"
             this.setSize({
-              zIndex: imageLayer.zIndex,
+              zIndex: layer.zIndex,
               size: {
                 width: image.width,
                 height: image.height
               }
             })
             this.images.push(image)
+            if (layer.new) {
+              layer.new = false
+            }
+
             resolve()
           }, false)
-          image.src = imageLayer.image
+          image.src = layer.image
         }))
       })
 
@@ -154,28 +159,30 @@ export default {
 
     loadText() {
       return new Promise((resolve, reject) => {
-        this.selectedHeadline.layers.forEach(layer => {
-          if (layer.layerType === 'text') {
-            let lines = splitLines(layer)
-            if (!lines) {
-              return
-            }
+        this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
+          let lines = splitLines(layer)
+          if (!lines) {
+            return
+          }
 
-            let primaryFont = layer.font.primary
-            let secondaryFont = {}
-            if (undefined !== layer.font.secondary) {
-              secondaryFont = layer.font.secondary
-            }
+          let primaryFont = layer.font.primary
+          let secondaryFont = {}
+          if (undefined !== layer.font.secondary) {
+            secondaryFont = layer.font.secondary
+          }
 
-            let dimensions = this.getTextLayerDimensions(lines, primaryFont, secondaryFont)
-            this.setSize({
-              zIndex: layer.zIndex,
-              size: dimensions
-            })
-            this.setLines({
-              zIndex: layer.zIndex,
-              lines: lines
-            })
+          let dimensions = this.getTextLayerDimensions(lines, primaryFont, secondaryFont)
+          this.setSize({
+            zIndex: layer.zIndex,
+            size: dimensions
+          })
+          this.setLines({
+            zIndex: layer.zIndex,
+            lines: lines
+          })
+
+          if (layer.new) {
+            layer.new = false
           }
         })
         resolve()
@@ -197,10 +204,15 @@ export default {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
         this.selectedHeadline.layers.forEach(layer => {
-          if (layer.layerType === 'image') {
-            this.drawImageLayer(layer)
-          } else if (layer.layerType === 'text') {
-            this.drawTextLayer(layer)
+          if (layer.new) {
+            this.setRefreshText(true)
+            this.setRefreshImages(true)
+          } else {
+            if (layer.layerType === 'image') {
+              this.drawImageLayer(layer)
+            } else if (layer.layerType === 'text') {
+              this.drawTextLayer(layer)
+            }
           }
         })
 

@@ -6,10 +6,42 @@ const options = {
   timestamps: true
 }
 
-//Define all of its fields, like columns of a SQL table
+const fontDefinition = {
+  color: {
+    type: String,
+    required: true
+  },
+  family: {
+    type: String,
+    required: true
+  },
+  shadow: {
+    type: Object,
+    required: true
+  },
+  size: {
+    type: Number,
+    required: true
+  },
+  style: {
+    type: Object,
+    required: true
+  },
+}
+
+const fontSchema = new mongoose.Schema(fontDefinition, options)
+
 const layerDefinition = {
+  new: {
+    type: Boolean,
+    required: false
+  },
   name: {
     type: String,
+    required: true
+  },
+  anchor: {
+    type: Object,
     required: true
   },
   layerType: {
@@ -29,25 +61,8 @@ const layerDefinition = {
     required: false
   },
   font: {
-    type: {
-      color: {
-        type: String,
-        required: false
-      },
-      family: {
-        type: String,
-        required: false
-      },
-      size: {
-        type: String,
-        required: false
-      },
-      style: {
-        type: String,
-        required: false
-      },
-    },
-    required: false
+    type: fontSchema,
+    required: true
   },
 }
 
