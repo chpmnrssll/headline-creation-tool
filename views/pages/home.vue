@@ -13,11 +13,11 @@
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
         <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab></layersTab>
+          <tabLayers></tabLayers>
         </v-tab-item>
         <v-tab ripple>Settings</v-tab>
         <v-tab-item>
-          <settingsTab></settingsTab>
+          <tabSettings></tabSettings>
         </v-tab-item>
       </v-tabs>
     </v-flex>
@@ -26,11 +26,11 @@
       <v-tabs v-model="activeTab" color="primary" dark slider-color="secondary">
         <v-tab :headlineLoaded="headlineLoaded" ripple>Layers</v-tab>
         <v-tab-item>
-          <layersTab></layersTab>
+          <tabLayers></tabLayers>
         </v-tab-item>
         <v-tab ripple>Settings</v-tab>
         <v-tab-item>
-          <settingsTab></settingsTab>
+          <tabSettings></tabSettings>
         </v-tab-item>
       </v-tabs>
     </v-flex>
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import layersTab from '../components/layersTab'
-import settingsTab from '../components/settingsTab'
+import tabLayers from '../components/tabLayers'
+import tabSettings from '../components/tabSettings'
 import displayCanvas from '../components/displayCanvas'
 import { mapActions, mapMutations, mapState } from 'vuex'
 
@@ -66,8 +66,8 @@ export default {
   },
 
   components: {
-    layersTab: layersTab,
-    settingsTab: settingsTab,
+    tabLayers: tabLayers,
+    tabSettings: tabSettings,
     displayCanvas: displayCanvas
   },
 

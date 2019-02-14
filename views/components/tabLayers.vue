@@ -52,8 +52,8 @@
     </v-card>
 
     <v-card v-if="selectedLayer">
-      <textTool v-if="selectedLayer.layerType === 'text'"></textTool>
-      <imageTool v-else="selectedLayer.layerType === 'image'"></imageTool>
+      <toolText v-if="selectedLayer.layerType === 'text'"></toolText>
+      <toolImage v-else="selectedLayer.layerType === 'image'"></toolImage>
     </v-card>
   </v-card>
 
@@ -77,8 +77,8 @@ import { http } from "../config/http.js"
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import headlineSaveDialog from '../components/headlineSaveDialog.vue'
 import layerAddDialog from '../components/layerAddDialog.vue'
-import textTool from '../components/textTool'
-import imageTool from '../components/imageTool'
+import toolText from '../components/toolText'
+import toolImage from '../components/toolImage'
 
 export default {
   data: () => ({
@@ -143,8 +143,8 @@ export default {
   },
 
   components: {
-    textTool: textTool,
-    imageTool: imageTool,
+    toolText: toolText,
+    toolImage: toolImage,
     headlineSaveDialog: headlineSaveDialog,
     layerAddDialog: layerAddDialog
   },
