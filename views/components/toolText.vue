@@ -6,19 +6,19 @@
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.x" @input="setTranslateX" min="-500" max="500" label="X"></v-slider>
+          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" label="X"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.x" @input="setTranslateX" min="-500" max="500" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.y" @input="setTranslateY" min="-500" max="500" label="Y"></v-slider>
+          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" label="Y"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.y" @input="setTranslateY" min="-500" max="500" type="number" label="px"></v-text-field>
+          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" type="number" label="px"></v-text-field>
         </v-flex>
       </v-layout>
 
@@ -45,8 +45,8 @@ import toolFont from '../components/toolFont'
 export default {
   computed: {
     ...mapState({
-      selectedHeadline: state => state.data.selectedHeadline,
       selectedLayer: state => state.data.selectedLayer,
+      settings: state => state.settings
     }),
     primaryFont() {
       return {

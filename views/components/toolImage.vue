@@ -61,7 +61,6 @@ import { mapMutations, mapState } from 'vuex'
 export default {
   computed: {
     ...mapState({
-      selectedHeadline: state => state.data.selectedHeadline,
       selectedLayer: state => state.data.selectedLayer,
       settings: state => state.settings
     }),

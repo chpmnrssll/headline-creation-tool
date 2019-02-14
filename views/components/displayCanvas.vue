@@ -226,32 +226,26 @@ export default {
       let anchorY = (image.height * layer.scale.y) * layer.anchor.y
 
       this.context.save()
-      this.context.translate(-anchorX, -anchorY)
       this.context.translate(layer.translate.x, layer.translate.y)
       this.context.translate(anchorX, anchorY)
       this.context.rotate(layer.rotation * Math.PI / 180)
       this.context.translate(-anchorX, -anchorY)
       this.context.scale(layer.scale.x, layer.scale.y)
       this.context.drawImage(image, 0, 0, image.width, image.height)
-
       if (layer == this.selectedLayer) {
         this.drawMarchingAnts(0, 0, image.width, image.height)
       }
-
       this.context.restore()
 
       if (this.refreshClickMask) {
         this.clickMaskContext.save()
-        this.clickMaskContext.translate(this.canvas.width / 2, this.canvas.height / 2)
-        this.clickMaskContext.translate(-anchorX, -anchorY)
-        this.clickMaskContext.translate(layer.translateX, layer.translateY)
+        this.clickMaskContext.translate(layer.translate.x, layer.translate.y)
         this.clickMaskContext.translate(anchorX, anchorY)
         this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)
         this.clickMaskContext.translate(-anchorX, -anchorY)
-
-        // store zIndex in red component of color
-        const zIndex = layer.zIndex + 1
-        this.clickMaskContext.fillStyle = `rgb(${zIndex},0,0)`
+        this.clickMaskContext.scale(layer.scale.x, layer.scale.y)
+        // store zIndex+1 in red component of color
+        this.clickMaskContext.fillStyle = `rgb(${layer.zIndex + 1},0,0)`
         this.clickMaskContext.fillRect(0, 0, image.width, image.height)
         this.clickMaskContext.restore()
       }
@@ -270,7 +264,6 @@ export default {
       let translateY = layer.translate.y
 
       this.context.save()
-      this.context.translate(-anchorX, -anchorY)
       this.context.translate(translateX, translateY)
       this.context.translate(anchorX, anchorY)
       this.context.rotate(layer.rotation * Math.PI / 180)
@@ -300,12 +293,11 @@ export default {
       if (layer == this.selectedLayer) {
         this.drawMarchingAnts(0, 0, layer.size.width, layer.size.height)
       }
-
       this.context.restore()
 
       if (this.refreshClickMask) {
         this.clickMaskContext.save()
-        this.clickMaskContext.translate(-anchorX, -anchorY)
+        // this.clickMaskContext.translate(-anchorX, -anchorY)
         this.clickMaskContext.translate(translateX, translateY)
         this.clickMaskContext.translate(anchorX, anchorY)
         this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)

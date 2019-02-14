@@ -15,8 +15,8 @@ export default {
         y: 1
       },
       translate: {
-        x: 384,
-        y: 256
+        x: 64,
+        y: 64
       },
       zIndex: 0,
     },
@@ -69,8 +69,8 @@ export default {
       rotation: 357,
       text: 'Now with {{99%}} More Canvas!\nPlus multi-line support!',
       translate: {
-        x: 384,
-        y: 316
+        x: 192,
+        y: 256
       },
       zIndex: 1,
     },
@@ -123,8 +123,8 @@ export default {
       rotation: 0,
       text: 'Headline Creation Tool',
       translate: {
-        x: 384,
-        y: 196
+        x: 128,
+        y: 96
       },
       zIndex: 2,
     },
@@ -177,8 +177,8 @@ export default {
       rotation: 0,
       text: 'New & Improved',
       translate: {
-        x: 604,
-        y: 232
+        x: 570,
+        y: 156
       },
       zIndex: 3,
     },
