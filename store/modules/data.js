@@ -170,39 +170,51 @@ export default {
 
     setFontSize(state, {desc, value}) {
       state.selectedLayer.font[desc].size = value
+      state.refreshText = true
     },
     setFontLineHeight(state, {desc, value}) {
       state.selectedLayer.font[desc].lineHeight = value
+      state.refreshText = true
     },
     setFontFamily(state, {desc, value}) {
       state.selectedLayer.font[desc].family = value
+      state.refreshText = true
     },
     setFontBold(state, {desc, value}) {
       state.selectedLayer.font[desc].style.bold = value
+      state.refreshText = true
     },
     setFontItalic(state, {desc, value}) {
       state.selectedLayer.font[desc].style.italic = value
+      state.refreshText = true
     },
     setFontUnderline(state, {desc, value}) {
       state.selectedLayer.font[desc].style.underline = value
+      state.refreshText = true
     },
     setFontColor(state, {desc, value}) {
       state.selectedLayer.font[desc].color = value
+      state.refreshText = true
     },
     setFontShadowColor(state, {desc, value}) {
       state.selectedLayer.font[desc].shadow.color = value
+      state.refreshText = true
     },
     setFontAlign(state, {desc, value}) {
       state.selectedLayer.font[desc].style.align = value
+      state.refreshText = true
     },
     setFontShadowBlur(state, {desc, value}) {
       state.selectedLayer.font[desc].shadow.blur = value
+      state.refreshText = true
     },
     setFontShadowOffsetX(state, {desc, value}) {
       state.selectedLayer.font[desc].shadow.offset.x = value
+      state.refreshText = true
     },
     setFontShadowOffsetY(state, {desc, value}) {
       state.selectedLayer.font[desc].shadow.offset.y = value
+      state.refreshText = true
     },
   }
 }
