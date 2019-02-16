@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import headlinesPage from '../pages/headlines.vue'
-import homePage from '../pages/home.vue'
+import canvasPage from '../pages/canvas.vue'
 
 Vue.use(Router)
 
@@ -11,13 +11,18 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: homePage
+      // name: 'canvas',
+      component: canvasPage
     },
     {
       path: '/headlines',
-      name: 'headlines',
+      // name: 'headlines',
       component: headlinesPage
+    },
+    {
+      path: '/headlines/:id',
+      // name: 'headlines',
+      component: canvasPage
     },
   ]
 })

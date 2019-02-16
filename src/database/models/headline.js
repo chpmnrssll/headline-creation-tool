@@ -6,77 +6,69 @@ const options = {
   timestamps: true
 }
 
-const fontDefinition = {
-  color: {
-    type: String,
-    required: true
-  },
-  family: {
-    type: String,
-    required: true
-  },
-  shadow: {
-    type: Object,
-    required: true
-  },
-  size: {
-    type: Number,
-    required: true
-  },
-  style: {
-    type: Object,
-    required: true
-  },
-}
-
-const fontSchema = new mongoose.Schema(fontDefinition, options)
-
 const layerDefinition = {
   new: {
     type: Boolean,
     required: false
   },
-  name: {
-    type: String,
-    required: true
-  },
+  name: String,
   anchor: {
-    type: Object,
-    required: true
+    x: Number,
+    y: Number,
   },
-  layerType: {
-    type: String,
-    required: true
-  },
-  zIndex: {
-    type: Number,
-    required: true
-  },
-  url: {
-    type: String,
-    required: false
-  },
-  text: {
-    type: String,
-    required: false
-  },
+  layerType: String,
+  zIndex: Number,
+  url: String,
+  text: String,
   font: {
-    type: fontSchema,
-    required: true
+    primary: {
+      color: String,
+      family: String,
+      shadow: {
+        blur: Number,
+        color: String,
+        offset: {
+          x: Number,
+          y: Number
+        }
+      },
+      size: Number,
+      style: {
+        bold: Boolean,
+        italic: Boolean,
+        underline: Boolean
+      },
+    },
+    secondary: {
+      color: String,
+      family: String,
+      shadow: {
+        blur: Number,
+        color: String,
+        offset: {
+          x: Number,
+          y: Number
+        }
+      },
+      size: Number,
+      style: {
+        bold: Boolean,
+        italic: Boolean,
+        underline: Boolean
+      },
+    },
+
   },
 }
 
 const layerSchema = new mongoose.Schema(layerDefinition, options)
 
 const headlineDefinition = {
-  name: {
-    type: String,
-    required: true
-  },
+  name: String,
   layers: {
     type: [layerSchema],
     required: false
-  },
+  }
 }
 
 //make the schema as a new instance of a mongoose schema, using our definition and options

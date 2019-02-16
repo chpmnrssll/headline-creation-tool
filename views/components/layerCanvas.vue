@@ -8,7 +8,7 @@
     <rect id="rect" :fill="settings.background.color2" x="0" y="0" width="100%" height="100%" />
     <rect id="rect" fill="url(#pattern)" x="0" y="0" width="100%" height="100%" />
   </svg>
-  <canvas id="canvas" @click="clickedCanvas" :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height"></canvas>
+  <canvas id="canvas" @click="canvasClick" :style="{ position: 'absolute' }" :width="settings.background.width" :height="settings.background.height"></canvas>
 </v-container>
 </template>
 
@@ -20,8 +20,7 @@ import FontFaceObserver from 'fontfaceobserver'
 export default {
   data: () => ({
     click: {},
-    fontsLoaded: [],
-    images: [],
+    imageCache: [],
     lineDash: [4, 4],
     lineDashOffset: 0,
     lineDashOffsetSpeed: 0.5,
@@ -48,19 +47,45 @@ export default {
         width: '100%'
       }
     },
+    canvasContainer() {
+      return document.getElementById('canvasContainer')
+    },
+    canvas() {
+      return document.getElementById('canvas')
+    },
+    context() {
+      return this.canvas.getContext('2d')
+    },
+    imageLayers() {
+      return this.selectedHeadline.layers.filter(layer => layer.layerType === 'image')
+    },
+    textLayers() {
+      return this.selectedHeadline.layers.filter(layer => layer.layerType === 'text')
+    }
   },
+
 
   watch: {
     headlineLoaded(newValue, oldValue) {
+      console.log('loaded from watch');
       this.start()
     },
   },
 
+
   mounted() {
+    this.clickMask = document.createElement('canvas')
+    this.clickMask.width = this.settings.background.width
+    this.clickMask.height = this.settings.background.height
+    this.clickMaskContext = this.clickMask.getContext('2d')
+
     if (this.headlineLoaded) {
+      console.log('loaded from mounted');
+      // console.log(this.selectedHeadline)
       this.start()
     }
   },
+
 
   methods: {
     ...mapMutations({
@@ -69,34 +94,28 @@ export default {
       'setRefreshFonts': 'data/setRefreshFonts',
       'setRefreshText': 'data/setRefreshText',
       'setRefreshClickMask': 'data/setRefreshClickMask',
-      'setSize': 'data/setSize',
+      'setHeadlineLoaded': 'data/setHeadlineLoaded',
       'setLines': 'data/setLines',
+      'setSize': 'data/setSize',
+      'setNew': 'data/setNew',
     }),
 
-    start() {
-      this.canvasContainer = document.getElementById('canvasContainer')
-      this.canvas = document.getElementById('canvas')
-      this.context = this.canvas.getContext('2d')
-      this.clickMask = document.createElement('canvas')
-      this.clickMask.width = this.settings.background.width
-      this.clickMask.height = this.settings.background.height
-      this.clickMaskContext = this.clickMask.getContext('2d')
 
+    start() {
       // this.clickMask.style.border = '1px solid black'
       // document.body.append(this.clickMask)
-      window.requestAnimationFrame(() => {
-        this.loadImages()
-          .then(this.loadText)
-          .then(() => {
-            this.setRefreshImages(true)
-            this.setRefreshText(true)
-          })
-          .then(this.drawLayersLoop)
-      })
+      this.loadImages()
         .then(this.loadFonts)
+        .then(this.loadText)
+        .then(() => {
+          this.setRefreshImages(true)
+          this.setRefreshText(true)
+        })
+        .then(this.drawLoop)
     },
 
-    clickedCanvas(event) {
+
+    canvasClick(event) {
       let element = this.canvas
       let offsetX = 0
       let offsetY = 0
@@ -131,10 +150,12 @@ export default {
       this.setRefreshClickMask(true)
     },
 
+
     loadImages() {
       this.imagesLoaded = []
-
-      this.selectedHeadline.layers.filter(layer => layer.layerType === 'image').forEach(layer => {
+      // this.selectedHeadline.layers.filter(layer => layer.layerType === 'image').forEach(layer => {
+      this.imageLayers.forEach(layer => {
+        console.log(layer);
         this.imagesLoaded.push(new Promise((resolve, reject) => {
           let image = new Image()
           image.addEventListener('load', () => {
@@ -146,11 +167,11 @@ export default {
                 height: image.height
               }
             })
-            this.images.push(image)
+            this.imageCache.push(image)
             if (layer.new) {
-              layer.new = false
+              this.setNew({ zIndex: layer.zIndex, value: false })
             }
-
+            console.log('resolved images');
             resolve()
           }, false)
           image.src = layer.image
@@ -185,81 +206,92 @@ export default {
 
     loadText() {
       return new Promise((resolve, reject) => {
-        this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
+        // this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
+        this.textLayers.forEach(layer => {
           let lines = splitLines(layer)
-          if (!lines) {
-            return
-          }
 
-          let primaryFont = layer.font.primary
-          let secondaryFont = {}
-          if (undefined !== layer.font.secondary) {
-            secondaryFont = layer.font.secondary
+          if (lines) {
+            this.setLines({
+              zIndex: layer.zIndex,
+              lines: lines
+            })
+            this.setSize({
+              zIndex: layer.zIndex,
+              size: this.getTextLayerDimensions(layer, lines)
+            })
           }
-
-          let dimensions = this.getTextLayerDimensions(lines, primaryFont, secondaryFont)
-          this.setSize({
-            zIndex: layer.zIndex,
-            size: dimensions
-          })
-          this.setLines({
-            zIndex: layer.zIndex,
-            lines: lines
-          })
 
           if (layer.new) {
-            layer.new = false
+            this.setNew({ zIndex: layer.zIndex, value: false })
           }
         })
+
         resolve()
       })
     },
 
-    drawLayersLoop() {
+
+    drawLoop() {
       if (this.refreshImages) {
         this.loadImages().then(() => {
           this.setRefreshImages(false)
-          window.requestAnimationFrame(this.drawLayersLoop)
+          window.requestAnimationFrame(this.drawLoop)
         })
-      } else if (this.refreshText) {
+        return
+      }
+
+      if (this.refreshFonts) {
+        this.loadFonts().then(() => {
+          this.setRefreshFonts(false)
+          window.requestAnimationFrame(this.drawLoop)
+        })
+      }
+
+      if (this.refreshText) {
         this.loadText().then(() => {
           this.setRefreshText(false)
-          window.requestAnimationFrame(this.drawLayersLoop)
+          window.requestAnimationFrame(this.drawLoop)
         })
-      } else {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-        this.selectedHeadline.layers.forEach(layer => {
-          if (layer.new) {
-            this.setRefreshText(true)
-            this.setRefreshImages(true)
-          } else {
-            if (layer.layerType === 'image') {
-              this.drawImageLayer(layer)
-            } else if (layer.layerType === 'text') {
-              this.drawTextLayer(layer)
-            }
-          }
-        })
-
-        if (this.refreshClickMask) {
-          // get the zIndex from the red component of color at x,y
-          const zIndex = this.clickMaskContext.getImageData(this.click.x, this.click.y, 1, 1).data[0] - 1
-          this.setSelectedLayer(zIndex)
-
-          window.requestAnimationFrame(() => {
-            // clear the clickMask for next time
-            this.clickMaskContext.clearRect(0, 0, this.clickMask.width, this.clickMask.height)
-            this.setRefreshClickMask(false)
-          })
-        }
-
-        window.requestAnimationFrame(this.drawLayersLoop)
+        return
       }
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+      this.selectedHeadline.layers.forEach(layer => {
+        if (layer.new) {
+          this.setRefreshImages(true)
+          this.setRefreshFonts(true)
+          this.setRefreshText(true)
+        } else {
+          switch (layer.layerType) {
+            case 'image':
+              this.drawImageLayer(layer)
+              break
+            case 'text':
+              this.drawTextLayer(layer)
+              break
+          }
+        }
+      })
+
+      if (this.refreshClickMask) {
+        // get the zIndex from the red component-1 of color at mouse position
+        const zIndex = this.clickMaskContext.getImageData(this.click.x, this.click.y, 1, 1).data[0]-1
+        this.setSelectedLayer(zIndex)
+
+        window.requestAnimationFrame(() => {
+          // clear the clickMask for next time on the next frame
+          this.clickMaskContext.clearRect(0, 0, this.clickMask.width, this.clickMask.height)
+          this.setRefreshClickMask(false)
+        })
+      }
+
+      window.requestAnimationFrame(this.drawLoop)
     },
 
+
     drawImageLayer(layer) {
-      let image = this.images.find(image => image.src === layer.image)
+      let image = this.imageCache.find(image => image.src === layer.image)
       let anchorX = (image.width * layer.scale.x) * layer.anchor.x
       let anchorY = (image.height * layer.scale.y) * layer.anchor.y
 
@@ -270,9 +302,11 @@ export default {
       this.context.translate(-anchorX, -anchorY)
       this.context.scale(layer.scale.x, layer.scale.y)
       this.context.drawImage(image, 0, 0, image.width, image.height)
+
       if (layer == this.selectedLayer) {
         this.drawMarchingAnts(0, 0, image.width, image.height)
       }
+
       this.context.restore()
 
       if (this.refreshClickMask) {
@@ -282,20 +316,16 @@ export default {
         this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)
         this.clickMaskContext.translate(-anchorX, -anchorY)
         this.clickMaskContext.scale(layer.scale.x, layer.scale.y)
+
         // store zIndex+1 in red component of color
-        this.clickMaskContext.fillStyle = `rgb(${layer.zIndex + 1},0,0)`
+        this.clickMaskContext.fillStyle = `rgb(${layer.zIndex+1}, 0, 0)`
         this.clickMaskContext.fillRect(0, 0, image.width, image.height)
         this.clickMaskContext.restore()
       }
     },
 
-    drawTextLayer(layer) {
-      let primaryFont = layer.font.primary
-      let secondaryFont = {}
-      if (undefined !== layer.font.secondary) {
-        secondaryFont = layer.font.secondary
-      }
 
+    drawTextLayer(layer) {
       let anchorX = layer.size.width * layer.anchor.x
       let anchorY = layer.size.height * layer.anchor.y
       let translateX = layer.translate.x
@@ -309,45 +339,47 @@ export default {
 
       this.context.save()
       layer.lines.forEach((line, index) => {
-        let startX = 0
-        let startY = 0
+        let xOffset = 0
+        let yOffset = 0
 
         if (index < 1) {
           this.context.translate(0, line.height)
         }
 
         line.forEach(string => {
-          let font = string.font === 'primary' ? primaryFont : secondaryFont
-          this.drawText(string.text, font, startX, 0)
-          startX += string.width
+          let font = string.font === 'primary' ? layer.font.primary : layer.font.secondary
+          this.drawText(string.text, font, xOffset, 0)
+          xOffset += string.width
         })
+
         if (index < layer.lines.length - 1) {
-          startY += layer.lines[index + 1].height
+          yOffset += layer.lines[index + 1].height
         }
-        this.context.translate(0, startY)
+
+        this.context.translate(0, yOffset)
       })
       this.context.restore()
 
-      if (layer == this.selectedLayer) {
+      if (layer === this.selectedLayer) {
         this.drawMarchingAnts(0, 0, layer.size.width, layer.size.height)
       }
       this.context.restore()
 
       if (this.refreshClickMask) {
         this.clickMaskContext.save()
-        // this.clickMaskContext.translate(-anchorX, -anchorY)
         this.clickMaskContext.translate(translateX, translateY)
         this.clickMaskContext.translate(anchorX, anchorY)
         this.clickMaskContext.rotate(layer.rotation * Math.PI / 180)
         this.clickMaskContext.translate(-anchorX, -anchorY)
 
-        // store zIndex in red component of color
-        const zIndex = layer.zIndex + 1
+        // store zIndex+1 in red component of color
+        const zIndex = layer.zIndex+1
         this.clickMaskContext.fillStyle = `rgb(${zIndex},0,0)`
         this.clickMaskContext.fillRect(0, 0, layer.size.width, layer.size.height)
         this.clickMaskContext.restore()
       }
     },
+
 
     drawText(text, font, x, y) {
       this.context.shadowBlur = font.shadow.blur
@@ -360,14 +392,15 @@ export default {
       this.context.fillText(text, x, y)
     },
 
+
     drawMarchingAnts(x, y, width, height) {
       this.context.setLineDash(this.lineDash)
       this.context.lineWidth = this.lineDashWidth
       this.context.lineDashOffset = this.lineDashOffset
-      this.context.strokeStyle = 'rgba(0,0,0,0.75)'
+      this.context.strokeStyle = 'rgba(0, 0, 0, 0.75)'
       this.context.strokeRect(x, y, width, height)
       this.context.lineDashOffset = this.lineDashOffset + this.lineDash[0]
-      this.context.strokeStyle = 'rgba(255,255,255,0.75)'
+      this.context.strokeStyle = 'rgba(255, 255, 255, 0.75)'
       this.context.strokeRect(x, y, width, height)
 
       this.lineDashOffset += this.lineDashOffsetSpeed
@@ -376,40 +409,44 @@ export default {
       }
     },
 
+
     // find the width & height for all the lines
-    getTextLayerDimensions(lines, primaryFont, secondaryFont) {
+    getTextLayerDimensions(layer, lines) {
       let totalWidth = 0
       let totalHeight = 0
 
       lines.forEach(line => {
-        let lineWidth = 0
-        let lineHeight = 0
+        let currentLineWidth = 0
+        let currentLineHeight = 0
 
         line.forEach(string => {
           if (string.font === 'primary') {
-            let metrics = this.measureText(string.text, primaryFont)
+            let metrics = this.measureText(string.text, layer.font.primary)
             string.width = metrics.width
             string.height = metrics.height
-            if (primaryFont.size > lineHeight) {
-              lineHeight = primaryFont.size
+            if (layer.font.primary.size > currentLineHeight) {
+              currentLineHeight = layer.font.primary.size
             }
           } else {
-            let metrics = this.measureText(string.text, secondaryFont)
+            let metrics = this.measureText(string.text, layer.font.secondary)
             string.width = metrics.width
             string.height = metrics.height
-            if (secondaryFont.size > lineHeight) {
-              lineHeight = secondaryFont.size
+            if (layer.font.secondary.size > currentLineHeight) {
+              currentLineHeight = layer.font.secondary.size
             }
           }
-          lineWidth += string.width
-          line.width = lineWidth
-          line.height = lineHeight
+
+          currentLineWidth += string.width
         })
 
-        if (lineWidth > totalWidth) {
-          totalWidth = lineWidth
+        line.width = currentLineWidth
+        line.height = currentLineHeight
+
+        if (currentLineWidth > totalWidth) {
+          totalWidth = currentLineWidth
         }
-        totalHeight += lineHeight
+
+        totalHeight += currentLineHeight
       })
 
       return {
@@ -418,6 +455,7 @@ export default {
       }
     },
 
+
     measureText(text, font) {
       this.context.textAlign = font.style.align
       this.context.font = this.getFontString(font)
@@ -425,6 +463,7 @@ export default {
       metrics.height = font.size
       return metrics
     },
+
 
     getFontString(font) {
       let style = ''

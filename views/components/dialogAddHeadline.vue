@@ -25,7 +25,6 @@ export default {
   data: () => ({
     addDone: true,
     newHeadline: {
-      _id: '',
       name: '',
     }
   }),

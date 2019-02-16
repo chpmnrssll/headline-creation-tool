@@ -31,7 +31,8 @@
                   </td>
                   <td class="ma-4">
                     <v-tooltip bottom>
-                      <v-btn slot="activator" icon small class="ma-0" @click="openHeadline(props.item)">
+                      <!-- <v-btn slot="activator" icon small class="ma-0" @click="openHeadline(props.item)"> -->
+                      <v-btn slot="activator" icon small class="ma-0" :to="`/headlines/${props.item._id}`">
                         <v-icon small color="blue" xs-4 class="text-xs-right">color_lens</v-icon>
                       </v-btn>
                       <span>Open Canvas</span>
@@ -63,7 +64,7 @@
 
 <script>
 import { http } from "../config/http.js"
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 import dialogAddHeadline from "../components/dialogAddHeadline.vue"
 import dialogDeleteHeadline from "../components/dialogDeleteHeadline.vue"
@@ -75,7 +76,7 @@ export default {
     deleteDialog: false,
     editName: "",
     errors: [],
-    headlines: [],
+    // headlines: [],
     headlineToDelete: {},
     headlineToEdit: {},
     newHeadline: {},
@@ -89,23 +90,23 @@ export default {
     dialogDeleteHeadline: dialogDeleteHeadline
   },
 
+  computed: {
+    ...mapState({
+      headlines: state => state.data.headlines
+    })
+  },
+
   methods: {
+    ...mapActions({
+      'loadHeadlines': 'data/loadHeadlines',
+    }),
     ...mapMutations({
       'setSelectedHeadline': 'data/setSelectedHeadline',
+      'setHeadlineLoaded': 'data/setHeadlineLoaded',
       'setSelectedLayer': 'data/setSelectedLayer',
       'setRefreshImages': 'data/setRefreshImages',
       'setRefreshText': 'data/setRefreshText',
     }),
-
-    //load all headlines from DB
-    load() {
-      http.get("headlines")
-        .then(response => {
-          this.headlines = response.data.headlines
-        }).catch(e => {
-          this.errors.push(e)
-        })
-    },
 
     //opens delete dialog
     deleteHeadline(_id) {
@@ -115,6 +116,7 @@ export default {
 
     openHeadline(headline) {
       this.setSelectedHeadline(headline._id)
+      this.setHeadlineLoaded(true)
       this.$router.push('/')
     },
 
@@ -124,13 +126,12 @@ export default {
     alert(success, callName, resource) {
       console.log('Page Alerting')
       this.$emit('alert', success, callName, resource)
-      this.load()
+      this.loadHeadlines()
     }
   },
 
-  //get those headlines
   mounted() {
-    this.load();
+    this.loadHeadlines()
   }
-};
+}
 </script>

@@ -54,7 +54,8 @@ export default {
   computed: {
     ...mapState({
       settings: state => state.settings,
-      headlineLoaded: state => state.data.headlineLoaded
+      headlineLoaded: state => state.data.headlineLoaded,
+      selectedHeadline: state => state.data.selectedHeadline,
     }),
     layout() {
       if (this.$vuetify.breakpoint.mdAndUp) {
@@ -73,18 +74,30 @@ export default {
 
   methods: {
     ...mapActions({
-      defaultHeadline: 'data/defaultHeadline',
-      loadHeadlines: 'data/loadHeadlines',
+      'defaultHeadline': 'data/defaultHeadline',
+      'loadHeadlines': 'data/loadHeadlines'
     }),
     ...mapMutations({
-      setHeadlineLoaded: 'data/setHeadlineLoaded'
+      'setHeadlineLoaded': 'data/setHeadlineLoaded',
+      'setSelectedHeadline': 'data/setSelectedHeadline'
     }),
   },
 
   mounted() {
-    this.defaultHeadline().then(() => {
-      this.setHeadlineLoaded(true)
-    })
+    if (this.$route.params.id) {
+      this.loadHeadlines().then(() => {
+        this.setSelectedHeadline(this.$route.params.id)
+        this.setHeadlineLoaded(true)
+      })
+    }
+    // if (!this.headlineLoaded) {
+    //   this.defaultHeadline().then(() => {
+    //     this.setHeadlineLoaded(true)
+    //   })
+    // } else {
+    //   console.log('load it yourself')
+    //   this.setHeadlineLoaded(true)
+    // }
   },
 
   watch: {

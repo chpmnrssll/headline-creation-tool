@@ -1,5 +1,4 @@
 export default {
-  _id: '098751jkcz516gfd134',
   name: 'Mock-up Headline',
   layers: [
     {
@@ -30,7 +29,7 @@ export default {
       font: {
         primary: {
           color: '#bb99cc',
-          family: 'Permanent+Marker:400',
+          family: 'Permanent Marker',
           shadow: {
             blur: 2,
             color: '#271f2a',
@@ -48,7 +47,7 @@ export default {
         },
         secondary: {
           color: '#99ccbb',
-          family: 'Luckiest+Guy:400',
+          family: 'Luckiest Guy',
           shadow: {
             blur: 4,
             color: '#3a4d47',
@@ -84,7 +83,7 @@ export default {
       font: {
         primary: {
           color: '#ffdc45',
-          family: 'Staatliches:400',
+          family: 'Staatliches',
           shadow: {
             blur: 3,
             color: '#5a5000',
@@ -102,7 +101,7 @@ export default {
         },
         secondary: {
           color: '#ffdc45',
-          family: 'Arvo:400,400i,700,700i',
+          family: 'Arvo',
           shadow: {
             blur: 12,
             color: '#000',
@@ -138,7 +137,7 @@ export default {
       font: {
         primary: {
           color: '#ff4f28',
-          family: 'Staatliches:400',
+          family: 'Staatliches',
           shadow: {
             blur: 2,
             color: '#642314',
@@ -156,7 +155,7 @@ export default {
         },
         secondary: {
           color: '#ffdc45',
-          family: 'Arvo:400,400i,700,700i',
+          family: 'Arvo',
           shadow: {
             blur: 12,
             color: '#000',

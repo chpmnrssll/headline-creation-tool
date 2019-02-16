@@ -22,14 +22,14 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <v-list-tile @click="saveDialog=true" :disabled="!isHomePage">
+      <v-list-tile @click="saveDialog=true" :disabled="isHeadlinesPage">
         <v-list-tile-action>
-          <v-btn slot="activator" color="primary" icon :disabled="!isHomePage">
+          <v-btn slot="activator" color="primary" icon :disabled="isHeadlinesPage">
             <v-icon class="primaryText--text">save</v-icon>
           </v-btn>
         </v-list-tile-action>
         <v-list-tile-content>
-          <v-list-tile-title v-if="isHomePage" class="primaryText--text">Save Headline</v-list-tile-title>
+          <v-list-tile-title v-if="!isHeadlinesPage" class="primaryText--text">Save Headline</v-list-tile-title>
           <v-list-tile-title v-else>Save Headline</v-list-tile-title>
         </v-list-tile-content>
         <!-- Begin Save Dialog -->
@@ -109,8 +109,8 @@ export default {
     ...mapState({
       selectedHeadline: state => state.data.selectedHeadline,
     }),
-    isHomePage() {
-      return this.$route.path === '/'
+    isHeadlinesPage() {
+      return this.$route.path === '/headlines'
     }
   },
 

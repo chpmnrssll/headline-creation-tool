@@ -45,7 +45,7 @@
 
     <v-card v-if="selectedLayer">
       <toolText v-if="selectedLayer.layerType === 'text'"></toolText>
-      <toolImage v-else="selectedLayer.layerType === 'image'"></toolImage>
+      <toolImage v-if="selectedLayer.layerType === 'image'"></toolImage>
     </v-card>
   </v-card>
 

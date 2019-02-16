@@ -8,6 +8,7 @@ export default {
     headlines: [],
     headlineLoaded: false,
     refreshImages: false,
+    refreshFonts: false,
     refreshText: false,
     refreshClickMask: false,
     selectedHeadline: {},
@@ -16,14 +17,14 @@ export default {
 
   actions: {
     loadHeadlines(context) {
-      http.get('headlines').then(response => {
-        return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
+        http.get('headlines').then(response => {
           context.commit('setHeadlines', response.data.headlines)
           resolve()
         })
-      })
-      .catch(e => {
-        this.errors.push(e)
+        .catch(e => {
+          this.errors.push(e)
+        })
       })
     },
 
@@ -69,6 +70,10 @@ export default {
       state.refreshImages = value
     },
 
+    setRefreshFonts(state, value) {
+      state.refreshFonts = value
+    },
+
     setRefreshText(state, value) {
       state.refreshText = value
     },
@@ -78,7 +83,8 @@ export default {
     },
 
     setSelectedHeadline(state, _id) {
-      state.selectedHeadline = state.headlines.find(headline => headline._id === _id)
+      state.selectedHeadline = state.headlines.find(headline => headline._id == _id)
+      state.selectedLayer = state.selectedHeadline.layers.length-1
     },
 
     setSelectedHeadlineName(state, name) {
@@ -106,6 +112,10 @@ export default {
       state.selectedHeadline.layers = state.selectedHeadline.layers.filter(layer => layer.zIndex !== zIndex)
     },
 
+    setNew(state, {zIndex, value}) {
+      let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
+      layer.new = value
+    },
     setWidth(state, {zIndex, width}) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.size.width = width

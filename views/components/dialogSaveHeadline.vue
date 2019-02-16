@@ -6,12 +6,12 @@
   <v-container fluid>
     <v-card-text>
 
-      <v-text-field label="Name" v-model="filename" required></v-text-field>
+      <v-text-field label="Name" :value="filename" required></v-text-field>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="saveHeadline()" class="green lighten-1 white--text" :disabled="checkName()" :loading="!saveDone">OK</v-btn>
-        <v-btn @click="close()" class="red white--text">Cancel</v-btn>
+        <v-btn @click="saveHeadline" class="green lighten-1 white--text" :disabled="checkName" :loading="!saveDone">OK</v-btn>
+        <v-btn @click="close" class="red white--text">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
   </v-container>
@@ -25,18 +25,23 @@ import { mapMutations, mapState, } from 'vuex'
 export default {
   data: () => ({
     saveDone: true,
-    filename: ''
   }),
 
   computed: {
     ...mapState({
       selectedHeadline: state => state.data.selectedHeadline,
     }),
+    filename() {
+      return this.selectedHeadline.name
+    },
+    checkName() {
+      return this.filename && this.filename === '' ? true : false
+    },
   },
 
-  mounted() {
-    this.filename = this.selectedHeadline.name
-  },
+  // mounted() {
+  //   this.filename = this.selectedHeadline.name
+  // },
 
   methods: {
     ...mapMutations({
@@ -45,8 +50,8 @@ export default {
 
     saveHeadline(e) {
       this.saveDone = false
-      this.setSelectedHeadlineName(this.filename)
-      if (this.selectedHeadline._id === '') {
+      // this.setSelectedHeadlineName(this.filename)
+      if (!this.selectedHeadline._id) {
         http.post("/headlines", this.selectedHeadline)
           .then(response => {
             this.alert(true, 'Save', 'Headline')
@@ -72,9 +77,9 @@ export default {
       this.saveDone = true
     },
 
-    checkName() {
-      return this.selectedHeadline.name === '' ? true : false
-    },
+    // checkName() {
+    //   return this.selectedHeadline && this.selectedHeadline.name === '' ? true : false
+    // },
 
     alert(success, callName, resource) {
       this.$emit('alert', success, callName, resource)

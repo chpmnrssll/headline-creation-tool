@@ -3,7 +3,7 @@
   <v-expansion-panel-content>
     <div slot="header">Image</div>
     <v-layout row ml-4>
-      <v-text-field v-if="selectedLayer.image" :value="selectedLayer.image" @change="setImage" label="URL"></v-text-field>
+      <v-text-field v-if="selectedLayer" :value="selectedLayer.image" @change="setImage" label="URL"></v-text-field>
     </v-layout>
 
     <v-layout row ml-4>
