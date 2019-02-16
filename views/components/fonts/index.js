@@ -17,98 +17,94 @@ import FontRobotoCondensed from './RobotoCondensed.png'
 import FontShare from './Share.png'
 import FontStaatliches from './Staatliches.png'
 
-const families = [{
-    name: 'Arima Madurai',
-    value: 'Arima+Madurai:400,700',
+export const families = [{
+    value: 'Arima Madurai',
+    // value: 'Arima+Madurai:400,700',
     previewImage: FontArimaMadurai
   },
   {
-    name: 'Arvo',
-    value: 'Arvo:400,400i,700,700i',
+    value: 'Arvo',
+    // value: 'Arvo:400,400i,700,700i',
     previewImage: FontArvo
   },
   {
-    name: 'Atma',
-    value: 'Atma:400,700',
+    value: 'Atma',
+    // value: 'Atma:400,700',
     previewImage: FontAtma
   },
   {
-    name: 'Chewy',
-    value: 'Chewy:400',
+    value: 'Chewy',
+    // value: 'Chewy:400',
     previewImage: FontChewy
   },
   {
-    name: 'Comfortaa',
-    value: 'Comfortaa:400,700',
+    value: 'Comfortaa',
+    // value: 'Comfortaa:400,700',
     previewImage: FontComfortaa
   },
   {
-    name: 'Fahkwang',
-    value: 'Fahkwang:400,400i,500,500i',
+    value: 'Fahkwang',
+    // value: 'Fahkwang:400,400i,500,500i',
     previewImage: FontFahkwang
   },
   {
-    name: 'Lato',
-    value: 'Lato:400,400i,700,700i',
+    value: 'Lato',
+    // value: 'Lato:400,400i,700,700i',
     previewImage: FontLato
   },
   {
-    name: 'Lobster',
-    value: 'Lobster:400',
+    value: 'Lobster',
+    // value: 'Lobster:400',
     previewImage: FontLobster
   },
   {
-    name: 'Luckiest Guy',
-    value: 'Luckiest+Guy:400',
+    value: 'Luckiest Guy',
+    // value: 'Luckiest+Guy:400',
     previewImage: FontLuckiestGuy
   },
   {
-    name: 'Merriweather',
-    value: 'Merriweather:400,400i,700,700i',
+    value: 'Merriweather',
+    // value: 'Merriweather:400,400i,700,700i',
     previewImage: FontMerriweather
   },
   {
-    name: 'Montserrat',
-    value: 'Montserrat:400,400i,700,700i',
+    value: 'Montserrat',
+    // value: 'Montserrat:400,400i,700,700i',
     previewImage: FontMontserrat
   },
   {
-    name: 'Open Sans',
-    value: 'Open+Sans:400,400i,700,700i',
+    value: 'Open Sans',
+    // value: 'Open+Sans:400,400i,700,700i',
     previewImage: FontOpenSans
   },
   {
-    name: 'Overlock',
-    value: 'Overlock:400,400i,700,700i',
+    value: 'Overlock',
+    // value: 'Overlock:400,400i,700,700i',
     previewImage: FontOverlock
   },
   {
-    name: 'Permanent Marker',
-    value: 'Permanent+Marker:400',
+    value: 'Permanent Marker',
+    // value: 'Permanent+Marker:400',
     previewImage: FontPermanentMarker
   },
   {
-    name: 'Roboto',
-    value: 'Roboto:400,400i,700,700i',
+    value: 'Roboto',
+    // value: 'Roboto:400,400i,700,700i',
     previewImage: FontRoboto
   },
   {
-    name: 'Roboto Condensed',
-    value: 'Roboto+Condensed:400,400i,700,700i',
+    value: 'Roboto Condensed',
+    // value: 'Roboto+Condensed:400,400i,700,700i',
     previewImage: FontRobotoCondensed
   },
   {
-    name: 'Share',
-    value: 'Share:400,400i,700,700i',
+    value: 'Share',
+    // value: 'Share:400,400i,700,700i',
     previewImage: FontShare
   },
   {
-    name: 'Staatliches',
-    value: 'Staatliches:400',
+    value: 'Staatliches',
+    // value: 'Staatliches:400',
     previewImage: FontStaatliches
   }
 ]
-
-export {
-  families
-}

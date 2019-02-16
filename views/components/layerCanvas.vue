@@ -15,6 +15,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { splitLines } from '../components/splitLines.js'
+import FontFaceObserver from 'fontfaceobserver'
 
 export default {
   data: () => ({
@@ -65,6 +66,7 @@ export default {
     ...mapMutations({
       'setSelectedLayer': 'data/setSelectedLayer',
       'setRefreshImages': 'data/setRefreshImages',
+      'setRefreshFonts': 'data/setRefreshFonts',
       'setRefreshText': 'data/setRefreshText',
       'setRefreshClickMask': 'data/setRefreshClickMask',
       'setSize': 'data/setSize',
@@ -91,6 +93,7 @@ export default {
           })
           .then(this.drawLayersLoop)
       })
+        .then(this.loadFonts)
     },
 
     clickedCanvas(event) {
@@ -156,6 +159,29 @@ export default {
 
       return Promise.all(this.imagesLoaded)
     },
+
+
+    loadFonts() {
+      return new Promise((resolve, reject) => {
+        let fontNames = []
+        let observers = []
+
+        // this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
+        this.textLayers.forEach(layer => {
+          if (!fontNames.includes(layer.font.primary.family)) {
+            fontNames.push(layer.font.primary.family)
+            observers.push(new FontFaceObserver(layer.font.primary.family).load())
+          }
+          if (!fontNames.includes(layer.font.secondary.family)) {
+            fontNames.push(layer.font.secondary.family)
+            observers.push(new FontFaceObserver(layer.font.secondary.family).load())
+          }
+        })
+
+        Promise.all(observers).then(resolve)
+      })
+    },
+
 
     loadText() {
       return new Promise((resolve, reject) => {
@@ -408,17 +434,9 @@ export default {
       if (font.style.italic) {
         style += 'italic '
       }
-      if (!this.fontsLoaded.includes(font.family)) {
-        let link = document.createElement('link')
-        let firstScript = document.getElementsByTagName('script')[0]
-        link.rel = "stylesheet"
-        link.href = `https://fonts.googleapis.com/css?family=${font.family}`
-        firstScript.parentNode.insertBefore(link, firstScript)
-        this.fontsLoaded.push(font.family)
-      }
-      return `${style}${font.size}px ${font.family.split(':')[0].replace('+', ' ')}`
-    },
+      return `${style}${font.size}px ${font.family}`
+    }
 
-  },
+  }
 }
 </script>
