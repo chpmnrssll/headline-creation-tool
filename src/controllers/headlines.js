@@ -73,16 +73,13 @@ exports.delete = async (req, res) => {
 
 //edit a headline based on ID
 exports.update = async (req, res) => {
-  if(mongoose.Types.ObjectId.isValid(req.params.id)) {
-    await Headline.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    .exec()
-    .then(headline => {
-      log.success('Updated headline: {}', req.params.id)
-      res.status(200).json({ headline: headline })
-    }).catch(err => {
-      log.error(err, "Could not update headline: {}", req.params.id)
-      res.status(500).json({ err: err })
-    })
-  }
-
+  await Headline.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  .exec()
+  .then(headline => {
+    log.success('Updated headline: {}', req.params.id)
+    res.status(200).json({ headline: headline })
+  }).catch(err => {
+    log.error(err, "Could not update headline: {}", req.params.id)
+    res.status(500).json({ err: err })
+  })
 }
