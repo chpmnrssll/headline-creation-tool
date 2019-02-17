@@ -18,13 +18,26 @@ export default {
   actions: {
     loadHeadlines(context) {
       return new Promise((resolve, reject) => {
-        http.get('headlines').then(response => {
-          context.commit('setHeadlines', response.data.headlines)
-          resolve()
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
+        http.get('headlines')
+          .then(response => {
+            context.commit('setHeadlines', response.data.headlines)
+            resolve()
+          }).catch(e => {
+            this.errors.push(e)
+          })
+      })
+    },
+
+    loadHeadline(context, id) {
+      return new Promise((resolve, reject) => {
+        http.get(`headlines/${id}`)
+          .then(response => {
+            context.commit('setHeadlines', [response.data.headline])
+            resolve()
+          }).catch(e => {
+            console.log(e);
+            this.errors.push(e)
+          })
       })
     },
 
@@ -37,12 +50,12 @@ export default {
       })
     },
 
-    setFont({commit, state}, {desc, key, value}) {
+    setFont(context, { desc, key, value }) {
       return new Promise((resolve, reject) => {
-        if (!state.selectedLayer.font[desc]) {
-          state.selectedLayer.font[desc] = {}
+        if (!context.state.selectedLayer.font[desc]) {
+          context.state.selectedLayer.font[desc] = {}
         }
-        commit(`setFont${key}`, {desc, value})
+        context.commit(`setFont${key}`, { desc, value })
         resolve()
       })
     }
@@ -84,7 +97,7 @@ export default {
 
     setSelectedHeadline(state, _id) {
       state.selectedHeadline = state.headlines.find(headline => headline._id == _id)
-      state.selectedLayer = state.selectedHeadline.layers.length-1
+      state.selectedLayer = state.selectedHeadline.layers.length - 1
     },
 
     setSelectedHeadlineName(state, name) {
@@ -94,11 +107,14 @@ export default {
     addLayer(state, newLayer) {
       state.selectedHeadline.layers.push({
         ...newLayer,
-        zIndex: state.selectedHeadline.layers.length
+        zIndex: state.selectedHeadline.layers.length-1
       })
     },
 
-    moveLayer(state, { zIndex, direction }) {
+    moveLayer(state, {
+      zIndex,
+      direction
+    }) {
       const newZIndex = zIndex + direction
       let oldLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       let newLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === newZIndex)
@@ -112,23 +128,23 @@ export default {
       state.selectedHeadline.layers = state.selectedHeadline.layers.filter(layer => layer.zIndex !== zIndex)
     },
 
-    setNew(state, {zIndex, value}) {
+    setNew(state, { zIndex, value }) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.new = value
     },
-    setWidth(state, {zIndex, width}) {
+    setWidth(state, { zIndex, width }) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.size.width = width
     },
-    setHeight(state, {zIndex, height}) {
+    setHeight(state, { zIndex, height }) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.size.height = height
     },
-    setSize(state, {zIndex, size}) {
+    setSize(state, { zIndex, size }) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.size = size
     },
-    setLines(state, {zIndex, lines}) {
+    setLines(state, { zIndex, lines }) {
       let layer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
       layer.lines = lines
     },
@@ -143,7 +159,7 @@ export default {
 
       // Set the layer at zIndex as selected
       state.selectedLayer = state.selectedHeadline.layers.find(layer => layer.zIndex === zIndex)
-      if(state.selectedLayer) {
+      if (state.selectedLayer) {
         state.selectedLayer.selected = true
       }
       state.selectedHeadline.layers.sort((a, b) => a.zIndex - b.zIndex)
@@ -176,51 +192,51 @@ export default {
       state.selectedLayer.scale.y = value
     },
 
-    setFontSize(state, {desc, value}) {
+    setFontSize(state, { desc, value }) {
       state.selectedLayer.font[desc].size = value
       state.refreshText = true
     },
-    setFontLineHeight(state, {desc, value}) {
+    setFontLineHeight(state, { desc, value }) {
       state.selectedLayer.font[desc].lineHeight = value
       state.refreshText = true
     },
-    setFontFamily(state, {desc, value}) {
+    setFontFamily(state, { desc, value }) {
       state.selectedLayer.font[desc].family = value
       state.refreshText = true
     },
-    setFontBold(state, {desc, value}) {
+    setFontBold(state, { desc, value }) {
       state.selectedLayer.font[desc].style.bold = value
       state.refreshText = true
     },
-    setFontItalic(state, {desc, value}) {
+    setFontItalic(state, { desc, value }) {
       state.selectedLayer.font[desc].style.italic = value
       state.refreshText = true
     },
-    setFontUnderline(state, {desc, value}) {
+    setFontUnderline(state, { desc, value }) {
       state.selectedLayer.font[desc].style.underline = value
       state.refreshText = true
     },
-    setFontColor(state, {desc, value}) {
+    setFontColor(state, { desc, value }) {
       state.selectedLayer.font[desc].color = value
       state.refreshText = true
     },
-    setFontShadowColor(state, {desc, value}) {
+    setFontShadowColor(state, { desc, value }) {
       state.selectedLayer.font[desc].shadow.color = value
       state.refreshText = true
     },
-    setFontAlign(state, {desc, value}) {
+    setFontAlign(state, { desc, value }) {
       state.selectedLayer.font[desc].style.align = value
       state.refreshText = true
     },
-    setFontShadowBlur(state, {desc, value}) {
+    setFontShadowBlur(state, { desc, value }) {
       state.selectedLayer.font[desc].shadow.blur = value
       state.refreshText = true
     },
-    setFontShadowOffsetX(state, {desc, value}) {
+    setFontShadowOffsetX(state, { desc, value }) {
       state.selectedLayer.font[desc].shadow.offset.x = value
       state.refreshText = true
     },
-    setFontShadowOffsetY(state, {desc, value}) {
+    setFontShadowOffsetY(state, { desc, value }) {
       state.selectedLayer.font[desc].shadow.offset.y = value
       state.refreshText = true
     },
