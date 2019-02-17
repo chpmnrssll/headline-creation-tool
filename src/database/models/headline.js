@@ -14,12 +14,21 @@ const layerDefinition = {
   name: String,
   anchor: {
     x: Number,
-    y: Number,
+    y: Number
   },
   layerType: String,
   zIndex: Number,
-  url: String,
+  image: String,
   text: String,
+  rotation: Number,
+  translate: {
+    x: Number,
+    y: Number
+  },
+  scale: {
+    x: Number,
+    y: Number
+  },
   font: {
     primary: {
       color: String,
@@ -55,10 +64,9 @@ const layerDefinition = {
         bold: Boolean,
         italic: Boolean,
         underline: Boolean
-      },
-    },
-
-  },
+      }
+    }
+  }
 }
 
 const layerSchema = new mongoose.Schema(layerDefinition, options)
