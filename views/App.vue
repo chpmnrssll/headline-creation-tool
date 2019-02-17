@@ -22,7 +22,7 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <v-list-tile @click="saveDialog=true" :disabled="isHeadlinesPage">
+      <v-list-tile @click="saveHeadline" :disabled="isHeadlinesPage">
         <v-list-tile-action>
           <v-btn slot="activator" color="primary" icon :disabled="isHeadlinesPage">
             <v-icon class="primaryText--text">save</v-icon>
@@ -32,12 +32,6 @@
           <v-list-tile-title v-if="!isHeadlinesPage" class="primaryText--text">Save Headline</v-list-tile-title>
           <v-list-tile-title v-else>Save Headline</v-list-tile-title>
         </v-list-tile-content>
-        <!-- Begin Save Dialog -->
-        <v-dialog v-model="saveDialog" lazy absolute max-width="40%">
-          <dialogSaveHeadline @closeSave="saveDialog=false" @alert="alert">
-          </dialogSaveHeadline>
-        </v-dialog>
-        <!-- End Save Dialog -->
       </v-list-tile>
 
       <v-list-tile href="/#/headlines" :class="getNavClass('/#/headlines')">
@@ -57,7 +51,7 @@
       <v-toolbar-side-icon slot="activator" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <span>Open Drawer</span>
     </v-tooltip>
-    <v-tooltip bottom v-if="$route.path === '/'">
+    <v-tooltip bottom v-if="!isHeadlinesPage">
       <v-text-field v-if="selectedHeadline" slot="activator" :value="selectedHeadline.name" @input="setSelectedHeadlineName" class="my-0 py-0" :style="{ maxHeight: '32px' }"></v-text-field>
       <span>Current Headline Name</span>
     </v-tooltip>
@@ -82,8 +76,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-
-import dialogSaveHeadline from "./components/dialogSaveHeadline.vue"
+import { http } from './config/http'
 
 export default {
   data: () => ({
@@ -100,10 +93,6 @@ export default {
     alertSuccess: false,
     isDarkMode: false,
   }),
-
-  components: {
-    dialogSaveHeadline: dialogSaveHeadline
-  },
 
   computed: {
     ...mapState({
@@ -150,6 +139,16 @@ export default {
         this.alertString += ' has failed.'
       }
       this.alertOpen = true
+    },
+
+    saveHeadline() {
+      this.drawer = false
+      http.put("/headlines/" + this.selectedHeadline._id, this.selectedHeadline)
+        .then(response => {
+          this.alert(true, 'Save', 'Headline')
+        }).catch(e => {
+          this.alert(false, 'Save', 'Headline')
+        })
     },
 
     getNavClass(href) {
