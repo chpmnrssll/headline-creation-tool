@@ -11,17 +11,14 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      // name: 'canvas',
       component: canvasPage
     },
     {
       path: '/headlines',
-      // name: 'headlines',
       component: headlinesPage
     },
     {
       path: '/headlines/:id',
-      // name: 'headlines',
       component: canvasPage
     },
   ]
