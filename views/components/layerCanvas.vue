@@ -57,17 +57,23 @@ export default {
       return this.canvas.getContext('2d')
     },
     imageLayers() {
-      return this.selectedHeadline.layers.filter(layer => layer.layerType === 'image')
+      if (this.selectedHeadline && this.selectedHeadline.layers) {
+        return this.selectedHeadline.layers.filter(layer => layer.layerType === 'image')
+      }
+      return null
     },
     textLayers() {
-      return this.selectedHeadline.layers.filter(layer => layer.layerType === 'text')
+      if (this.selectedHeadline && this.selectedHeadline.layers) {
+        return this.selectedHeadline.layers.filter(layer => layer.layerType === 'text')
+      }
+      return null
     }
   },
 
 
   watch: {
-    headlineLoaded(newValue, oldValue) {
-      console.log('loaded from watch');
+    selectedHeadline(newValue, oldValue) {
+      // console.log(newValue)
       this.start()
     },
   },
@@ -79,11 +85,10 @@ export default {
     this.clickMask.height = this.settings.background.height
     this.clickMaskContext = this.clickMask.getContext('2d')
 
-    if (this.headlineLoaded) {
-      console.log('loaded from mounted');
-      // console.log(this.selectedHeadline)
-      this.start()
-    }
+    // if (this.selectedHeadline) {
+    //   console.log('loaded from mounted');
+    //   this.start()
+    // }
   },
 
 
@@ -108,6 +113,7 @@ export default {
         .then(this.loadFonts)
         .then(this.loadText)
         .then(() => {
+          // console.log('loadedAll');
           this.setRefreshImages(true)
           this.setRefreshText(true)
         })
@@ -153,9 +159,7 @@ export default {
 
     loadImages() {
       this.imagesLoaded = []
-      // this.selectedHeadline.layers.filter(layer => layer.layerType === 'image').forEach(layer => {
       this.imageLayers.forEach(layer => {
-        console.log(layer);
         this.imagesLoaded.push(new Promise((resolve, reject) => {
           let image = new Image()
           image.addEventListener('load', () => {
@@ -171,7 +175,6 @@ export default {
             if (layer.new) {
               this.setNew({ zIndex: layer.zIndex, value: false })
             }
-            console.log('resolved images');
             resolve()
           }, false)
           image.src = layer.image
@@ -187,15 +190,16 @@ export default {
         let fontNames = []
         let observers = []
 
-        // this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
         this.textLayers.forEach(layer => {
           if (!fontNames.includes(layer.font.primary.family)) {
             fontNames.push(layer.font.primary.family)
-            observers.push(new FontFaceObserver(layer.font.primary.family).load())
+            let observer = new FontFaceObserver(layer.font.primary.family)
+            observers.push(observer.load())
           }
           if (!fontNames.includes(layer.font.secondary.family)) {
             fontNames.push(layer.font.secondary.family)
-            observers.push(new FontFaceObserver(layer.font.secondary.family).load())
+            let observer = new FontFaceObserver(layer.font.secondary.family)
+            observers.push(observer.load())
           }
         })
 
@@ -206,7 +210,6 @@ export default {
 
     loadText() {
       return new Promise((resolve, reject) => {
-        // this.selectedHeadline.layers.filter(layer => layer.layerType === 'text').forEach(layer => {
         this.textLayers.forEach(layer => {
           let lines = splitLines(layer)
 
