@@ -14,7 +14,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm()" :loading="!submitDone">OK</v-btn>
+        <v-btn @click="submit()" class="green lighten-1 white--text" :disabled="checkForm" :loading="!submitDone">OK</v-btn>
         <v-btn @click="close()" class="red white--text">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
@@ -25,74 +25,22 @@
 <script>
 import { http } from '../config/http'
 import { mapMutations } from 'vuex'
+import { defaultLayer } from './defaultLayer.js'
 
 export default {
   data: () => ({
-    defaultLayer: {
-      new: true,
-      name: 'New Layer',
-      layerType: 'text',
-      anchor: {
-        x: 0.5,
-        y: 0.5
-      },
-      font: {
-        primary: {
-          color: '#000',
-          family: 'Arial',
-          shadow: {
-            blur: 0,
-            color: '#000',
-            offset: {
-              x: 0,
-              y: 0
-            },
-          },
-          size: 16,
-          style: {
-            bold: false,
-            italic: false,
-            underline: false
-          },
-        },
-        secondary: {
-          color: '#000',
-          family: 'Arial',
-          shadow: {
-            blur: 0,
-            color: '#000',
-            offset: {
-              x: 0,
-              y: 0
-            },
-          },
-          size: 16,
-          style: {
-            bold: false,
-            italic: false,
-            underline: false
-          },
-        }
-      },
-      image: '',
-      rotate: 0,
-      size: {
-        width: 0,
-        height: 0
-      },
-      text: '',
-      translate: {
-        x: 0,
-        y: 0
-      }
-      // zIndex: state.selectedHeadline.layers.length,
-    },
+    defaultLayer: defaultLayer,
     layerTypes: [
       { text: 'Text', value: 'text' },
       { text: 'Image', value: 'image'}
     ],
     submitDone: true
   }),
+  computed: {
+    checkForm() {
+      return this.defaultLayer.name === '' ? true : false
+    },
+  },
 
   methods: {
     ...mapMutations({
@@ -115,10 +63,6 @@ export default {
     close() {
       this.$emit('closeAdd')
       this.submitDone = true
-    },
-
-    checkForm() {
-      return this.defaultLayer.name === '' ? true : false
     },
 
     alert(success, callName, resource) {
