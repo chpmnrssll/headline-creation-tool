@@ -40,10 +40,10 @@
 </template>
 
 <script>
-import layerCanvas from '../components/layerCanvas'
-import tabLayers from '../components/tabLayers'
-import tabSettings from '../components/tabSettings'
 import { mapActions, mapMutations, mapState } from 'vuex'
+import layerCanvas from '../components/layerCanvas'
+import tabSettings from '../components/tabSettings'
+import tabLayers from '../components/tabLayers'
 
 export default {
   data: () => ({
@@ -59,23 +59,28 @@ export default {
     }),
     layout() {
       if (this.$vuetify.breakpoint.mdAndUp) {
-        return { row: true }
+        return {
+          row: true
+        }
       } else {
-        return { column: true }
+        return {
+          column: true
+        }
       }
     },
   },
 
   components: {
-    tabLayers: tabLayers,
+    layerCanvas: layerCanvas,
     tabSettings: tabSettings,
-    layerCanvas: layerCanvas
+    tabLayers: tabLayers,
   },
 
   methods: {
     ...mapActions({
       'defaultHeadline': 'data/defaultHeadline',
-      'loadHeadlines': 'data/loadHeadlines'
+      'loadHeadlines': 'data/loadHeadlines',
+      'loadHeadline': 'data/loadHeadline'
     }),
     ...mapMutations({
       'setHeadlineLoaded': 'data/setHeadlineLoaded',
@@ -85,19 +90,14 @@ export default {
 
   mounted() {
     if (this.$route.params.id) {
-      this.loadHeadlines().then(() => {
-        this.setSelectedHeadline(this.$route.params.id)
-        this.setHeadlineLoaded(true)
-      })
+      this.loadHeadline(this.$route.params.id)
+        .then(() => {
+          this.setSelectedHeadline(this.$route.params.id)
+          this.setHeadlineLoaded(true)
+        })
+    } else {
+      this.$router.push('/headlines')
     }
-    // if (!this.headlineLoaded) {
-    //   this.defaultHeadline().then(() => {
-    //     this.setHeadlineLoaded(true)
-    //   })
-    // } else {
-    //   console.log('load it yourself')
-    //   this.setHeadlineLoaded(true)
-    // }
   },
 
   watch: {
