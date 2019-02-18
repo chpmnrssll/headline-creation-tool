@@ -1,8 +1,9 @@
 //bring in the seperate models
 const Headline = require('./headline')
-//import other models in the same manner
+const Image = require('./image')
 
 //export em in a good ol' bundle
 module.exports = {
   Headline,
+  Image
 }

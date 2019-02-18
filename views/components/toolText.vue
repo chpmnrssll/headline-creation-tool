@@ -6,28 +6,28 @@
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" label="X"></v-slider>
+          <v-slider class="my-0" v-if="selectedLayer" thumb-label :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" label="X"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" type="number" label="px"></v-text-field>
+          <v-text-field class="my-0 pt-0" v-if="selectedLayer" :value="selectedLayer.translate.x" @input="setTranslateX" main="" :max="settings.background.width" type="number"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" label="Y"></v-slider>
+          <v-slider class="my-0" v-if="selectedLayer" thumb-label :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" label="Y"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" type="number" label="px"></v-text-field>
+          <v-text-field class="my-0 pt-0" v-if="selectedLayer" :value="selectedLayer.translate.y" @input="setTranslateY" main="" :max="settings.background.height" type="number"></v-text-field>
         </v-flex>
       </v-layout>
 
       <v-layout row ml-4>
         <v-flex xs9>
-          <v-slider v-if="selectedLayer" thumb-label :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" label="Rotation"></v-slider>
+          <v-slider class="my-0" v-if="selectedLayer" thumb-label :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" label="Rotation"></v-slider>
         </v-flex>
         <v-flex xs3 mx-4>
-          <v-text-field v-if="selectedLayer" :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" type="number" label="deg"></v-text-field>
+          <v-text-field class="my-0 pt-0" v-if="selectedLayer" :value="selectedLayer.rotation" @input="setRotation" min="0" max="360" type="number"></v-text-field>
         </v-flex>
       </v-layout>
     </v-expansion-panel-content>

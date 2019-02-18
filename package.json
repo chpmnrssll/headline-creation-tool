@@ -23,6 +23,7 @@
     "express": "^4.16.4",
     "fontfaceobserver": "^2.1.0",
     "mongoose": "^4.13.18",
+    "multer": "^1.4.1",
     "nodemon": "^1.18.9",
     "serve-favicon": "~2.4.5",
     "trunks-log": "^2.0.3",

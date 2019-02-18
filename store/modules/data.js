@@ -7,6 +7,7 @@ export default {
   state: {
     headlines: [],
     headlineLoaded: false,
+    images: [],
     refreshImages: false,
     refreshFonts: false,
     refreshText: false,

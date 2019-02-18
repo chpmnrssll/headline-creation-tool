@@ -4,12 +4,13 @@
  */
 
 const express = require('express')
-
 const headlineRoutes = require('./headlines')
+const imageRoutes = require('./images')
 
 const router = express.Router() //make a new router
 
-//tell it to use the headlineRoutes
+//tell it to use the routes
 router.use('/headlines', headlineRoutes)
+router.use('/images', imageRoutes)
 
 module.exports = router

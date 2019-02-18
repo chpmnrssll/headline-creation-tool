@@ -1,0 +1,115 @@
+2019-02-17, Updated install instructions with PM2
+2019-02-17, Update canvas display logic
+2019-02-17, Removed isValid(id)
+2019-02-17, Update mongoose model schema
+2019-02-17, Added load single headline action
+2019-02-17, Removed route names
+2019-02-17, Load headline by id or go to headlines list page
+2019-02-17, Extracted default new layer object to defaultLayer.js and move checkForm from Vue methods to computed props
+2019-02-17, Removed save dialog box
+2019-02-17, Moved roboto and material-icons fonts to main font list in fonts.styl
+2019-02-16, Moving to detached fork
+2019-02-16, Added font face observer for better font downloading control
+2019-02-14, Cleaning-up, re-factoring, fixing dialogs, and integrating save/load to mongoDB
+2019-02-14, Fix text layers not updating on font data change
+2019-02-14, Translate layers from top left, anchor is now only for rotation
+2019-02-14, Fix mouse select when container is scrolled
+2019-02-14, Update production publicPath
+2019-02-14, Update URL
+2019-02-14, Replaced cross-env with dot-env from npm
+2019-02-14, Added mouse click layer selection
+2019-02-14, Edit translations from origin at top left rather than center
+2019-02-14, Simplified state management, especially for fonts
+2019-02-14, Added pre-connect to google font server and corrected paths
+2019-02-14, Cleanup/re-factor with better naming
+2019-02-13, Enable gzip compression for dev server
+2019-02-13, Added dev and dev:build run scripts
+2019-02-12, Reload layers on component mounted()
+2019-02-12, Added compression express middleware
+2019-02-12, Moved font preview images to their own folder
+2019-02-12, Adjust title
+2019-02-12, Setup for moving to A2 unmanaged VPS
+2019-02-11, Added text shadow controls
+2019-02-11, Replace initial setTimeout with requestAnimationFrame
+2019-02-11, Updated mockup
+2019-02-11, Added text shadow mutations
+2019-02-11, Changed name and removed sprite-vue dependecy
+2019-02-11, Added marching ants selection border and fix lineHeights for multi-line text
+2019-02-11, Added more image controls
+2019-02-11, Adjust nav drawer and toolbar
+2019-02-11, Updated mockup
+2019-02-11, Added translate, rotation, and scale mutations
+2019-02-10, Implemented multi-line text layers, font lineHeight, and improved layout
+2019-02-10, Change default settings
+2019-02-10, Edit mockup data
+2019-02-09, Moved 'Save Headline' to menu drawer and cleaned up layout
+2019-02-09, Change default canvas size
+2019-02-09, Cleanup and sorting
+2019-02-09, Adjusted publicPath for production build
+2019-02-09, Added image previews for font dropdown list
+2019-02-08, Updated canvas setting controls for width, height, and background
+2019-02-08, Fix responsive layout switch column->row based on resolution
+2019-02-08, Removed extra dialog button triggers
+2019-02-07, Added lazy-loading for Google fonts
+2019-02-07, Move mockHeadline data to separate file
+2019-02-07, Added more UI options/controls and allow multiple secondary font sections in text layers
+2019-02-06, Removed SpriteJS, refactored with vanilla JS/canvas
+2019-02-02, Refactoring with Vuex
+2019-02-01, Refactoring with Vuex
+2019-02-01, Added a few google fonts
+2019-02-01, Converted to Vuex for better state management
+2019-02-01, Added babel-polyfill and vue-loader
+2019-01-31, Update node packages to latest
+2019-01-30, Remove users schema, added headlines schema, working on MongoDB
+2019-01-30, Decrease height of layer list
+2019-01-29, Change test data
+2019-01-29, App framework/design
+2019-01-28, UI updates
+2019-01-27, Added .jsbeautifyrc
+2019-01-27, Installed vue-colorpicker, node-sass, and sass-loader
+2019-01-27, Cleanup, split UI into components, testing
+2019-01-27, Duplicate in /views
+2019-01-24, Temp insert spritejs.min.js manually
+2019-01-24, Install SpriteJS
+2019-01-24, Setup SpriteJS
+2019-01-22, Update README
+2019-01-22, Update README
+2019-01-22, Updated README and .env.example
+2019-01-22, Change baseURL
+2019-01-22, Setup MEVN to work on A2 shared host
+2018-11-22, Merge branch 'master' of https://github.com/aturingmachine/mevn-stack
+2018-11-16, Merge pull request #5 from memory125/patch-1
+2018-11-06, Fix the issue on add more users.
+2018-10-25, Resolve issue w/ submit
+2018-09-05, remove morgan
+2018-09-05, New version of trunks!
+2018-09-01, Now uses trunks ^1.0.0
+2018-08-31, :tada: V1.2.1
+2018-07-19, Update Link to CoC in contributing guidline
+2018-07-06, Merge pull request #3 from locdown2311/patch-1
+2018-07-04, FIX "Existing Routes" gramar
+2018-06-26, Version 1.1.1 Dynamic Themes
+2018-06-21, Version 1.1
+2017-11-16, whitespace changes
+2017-11-08, changed delete splice to reload
+2017-11-08, fixed issue #2
+2017-11-03, added to readme
+2017-11-03, comments and removed unused regex
+2017-11-02, added .github/ and deleteDialog
+2017-11-02, ready for monday training
+2017-11-02, everything but alert working
+2017-11-01, moved some lines around
+2017-11-01, working on componenting this project
+2017-10-31, moving towards components for next training
+2017-10-30, resolve issue #1; remove redundant line
+2017-10-26, readme changes
+2017-10-25, comment changes in user controller
+2017-10-24, add code of conduct and contribution guide
+2017-10-24, clarification in script section
+2017-10-24, typo fixes
+2017-10-24, added in frontend structure, install instructions
+2017-10-24, i forgot to add the repo to the clone instruction
+2017-10-24, title fix
+2017-10-24, script changes in readme
+2017-10-24, fixed typo in readme
+2017-10-24, initial version
