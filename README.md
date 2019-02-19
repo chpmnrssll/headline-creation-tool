@@ -1,5 +1,7 @@
 # Headline Creation Tool and Rendering API
 
+![Headline Creation Tool](./headline-creation-tool.png)
+
 Based on the [MEVN stack](https://github.com/aturingmachine/mevn-stack)<br/>
 [**M**ongo](https://www.mongodb.com/) [**E**xpress](https://expressjs.com/) [**V**ueJS](https://vuejs.org/) [**N**ode](https://nodejs.org/en/)
 
