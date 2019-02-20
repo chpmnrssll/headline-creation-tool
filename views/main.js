@@ -10,9 +10,9 @@ import './stylus/main.styl'
 
 Vue.use(Vuetify, {
   theme: {
-    primary: '#9933cc', //Main color
+    primary: '#0d5173', //Main color
     primaryText: '#FFFFFF', //Color for text on primary
-    secondary: '#bb99cc', //Color for active nav
+    secondary: '#269dd9', //Color for active nav
     lightText: '#000000' //Dark Text for light Backgrounds
   }
 })

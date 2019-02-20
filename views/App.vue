@@ -107,16 +107,16 @@ export default {
     isDarkMode() {
       if (!this.isDarkMode) { //NOT dark mode
         this.$vuetify.theme = {
-          primary: '#9933cc', //Main color
+          primary: '#0d5173', //Main color
           primaryText: '#FFFFFF', //Color for text on primary
-          secondary: '#bb99cc', //Color for active nav
+          secondary: '#269dd9', //Color for active nav
           lightText: '#000000'
         }
       } else { //Dark mode
         this.$vuetify.theme = {
           primary: '#424242', //Main color
           primaryText: '#FFFFFF', //Color for text on primary
-          secondary: '#9933cc', //Color for active nav
+          secondary: '#0d5173', //Color for active nav
           lightText: '#FFFFFF'
         }
       }
