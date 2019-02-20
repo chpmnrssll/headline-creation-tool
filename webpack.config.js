@@ -6,7 +6,7 @@ module.exports = {
   entry: './views/main.js',
   output: {
     path: path.resolve(__dirname, './public'),
-    publicPath: '/',
+    publicPath: '/headline-creation-tool/',
     filename: 'build.js'
   },
   resolve: {
@@ -59,7 +59,7 @@ module.exports = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.output.publicPath = '/public/'
+  module.exports.output.publicPath = '/headline-creation-tool/'
   module.exports.devtool = 'source-map'
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
