@@ -5,61 +5,6 @@
 Based on the [MEVN stack](https://github.com/aturingmachine/mevn-stack)<br/>
 [**M**ongo](https://www.mongodb.com/) [**E**xpress](https://expressjs.com/) [**V**ueJS](https://vuejs.org/) [**N**ode](https://nodejs.org/en/)
 
-## Installation on A2 unmanaged VPS
-
-1. [Get SSH access](https://www.a2hosting.com/kb/getting-started-guide/accessing-your-account/using-ssh-secure-shell)
-
-2. Stop/Disable c-panel & httpd:
-```
-$ systemctl stop cpanel & systemctl disable cpanel
-$ systemctl stop httpd & systemctl disable httpd
-```
-
-3. [Install Node.js](https://linuxize.com/post/how-to-install-node-js-on-centos-7/)
-
-4. [Install PM2](http://pm2.keymetrics.io/docs/usage/quick-start/)
-
-5. [Install MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/#configure-the-package-management-system-yum)
-
-5. Start mongod:
-```
-$ systemctl start mongod
-```
-
-7. Clone repository:
-```
-$ git clone https://github.com/chpmnrssll/headline-creation-tool.git
-$ cd headline-creation-tool
-```
-
-8. Setup environment variables:
-```
-$ cp .env.example .env
-```
-**Changing the PORT variable in the .env will require you to change it in the `views/config/http.js` file.**
-
-8. Install node_modules
-```
-$ npm install
-```
-
-9. Build for production
-```
-$ npm run build
-```
-
-10. Start the server with PM2
-```
-$ pm2 start npm -- start
-```
-
-The server can be controlled/monitored with PM2:
-```
-$ pm2 list
-$ pm2 monit
-$ pm2 stop npm
-```
-
 ### Local Setup/Development
 
 Edit your environment variables in .env as needed.
@@ -101,7 +46,7 @@ A more detailed breakdown of the scripts are as follows:
 `--/middleware/`-- Any middleware you may need can go here.
 `--/routes/`-- All route definitions are here.
 `----/api.js`-- Routes for the API.
-`----/user.js`-- Routes specific to the user resource.
+`----/headlines.js`-- Routes specific to the headline resource.
 
 ##### Frontend
 
@@ -125,17 +70,17 @@ A more detailed breakdown of the scripts are as follows:
 
 ### Existing Routes
 
-All user endpoints are behind the `/api` endpoint.
+All headline endpoints are behind the `/api` endpoint.
 
 #### `GET`
-`/users` - returns a list of all users inside of an array called `data`.
-`/users/:id` - where `:id` is the id of a `user` resource. The resource is then returned in JSON format.
+`/headlines` - returns a list of all headlines inside of an array called `data`.
+`/headlines/:id` - where `:id` is the id of a `headline` resource. The resource is then returned in JSON format.
 
 #### `POST`
-`/users` - Creates a new `user` resource based on the payload of the request.
+`/headlines` - Creates a new `headline` resource based on the payload of the request.
 
 #### `DELETE`
-`/users/:id` - Delete a user resouce matching the `:id` specified.
+`/headlines/:id` - Delete a headline resouce matching the `:id` specified.
 
 #### `PUT`
-`/users` - Update a user based on the payload of the request
+`/headlines` - Update a headline based on the payload of the request
