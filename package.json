@@ -9,7 +9,8 @@
     "dev:serve": "nodemon -r dotenv/config ./bin/www",
     "dev:client": "webpack-dev-server --mode development --port 3030 --open --inline --hot --content-base ./public",
     "build": "webpack --mode production --progress --hide-modules",
-    "static": "npm run build && npm run dev:serve"
+    "static": "npm run build && npm run dev:serve",
+    "gh-pages": "npx push-dir --dir=public --branch=gh-pages"
   },
   "dependencies": {
     "axios": "^0.17.1",
