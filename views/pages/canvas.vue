@@ -96,7 +96,8 @@ export default {
           this.setHeadlineLoaded(true)
         })
     } else {
-      this.$router.push('/headlines')
+      // this.$router.push('/headlines')
+      this.defaultHeadline()
     }
   },
 

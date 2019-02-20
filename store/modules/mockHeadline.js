@@ -6,7 +6,7 @@ export default {
         x: 0.5,
         y: 0.5
       },
-      image: 'https://source.unsplash.com/640x320',
+      image: 'https://picsum.photos/640/320/?random',
       layerType: 'image',
       name: 'Random Image',
       rotation: 2.5,
